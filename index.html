@@ -6,7 +6,6 @@
     <style>
 
 
-
         table {
             width: 90%;
             background: #ccc;
@@ -15,9 +14,11 @@
             /*border-collapse:collapse合并内外边距
             (去除表格单元格默认的2个像素内外边距*/
         }
-        .rangeText{
+
+        .rangeText {
             width: 20px;
         }
+
         th, td {
             height: 25px;
             line-height: 25px;
@@ -60,9 +61,11 @@
         #clear_storage {
             width: 50%;
         }
-        .tag_range{
+
+        .tag_range {
             width: 35px;
         }
+
         @keyframes show {
             0% {
                 opacity: 0;
@@ -125,7 +128,7 @@
         ];
         var uiConfig = {
             "show_add": false,
-            "show_weight":false
+            "show_weight": false
         };
         var allData = {
             "姿势": {
@@ -262,9 +265,7 @@
                 "华丽": "gorgeous"
             }
         };
-        var myWeight={
-
-        };
+        var myWeight = {};
 
 
         let checkBoxs = new Array();
@@ -274,27 +275,28 @@
         function onCheckBoxChange() {
             let a = [];
             let b = [];
+
             for (var i = 0; i < checkBoxs.length; i++) {
                 let cb = checkBoxs[i];
                 let info = cb.getAttribute("my_info");
                 let group = cb.getAttribute("my_group");
                 if (info != null && group != null && cb.checked) {
-                   let label=cb.getAttribute("my_label");
-                   let fInfo=info;
-                   if(label!=null){
-                       let weight=myWeight[label];
-                       if(weight!=null&&weight!==0){
-                           let neg=weight<0;
-                           let abs=weight<0?(-weight):weight;
-                           for(var i=0;i<abs;i++){
-                               if(!neg){
-                                   fInfo="{"+fInfo+"}";
-                               }else{
-                                   fInfo="["+fInfo+"]";
-                               }
-                           }
-                       }
-                   }
+                    let label = cb.getAttribute("my_label");
+                    let fInfo = info;
+                    if (label != null) {
+                        let weight = myWeight[label];
+                        if (weight != null && weight !== 0) {
+                            let neg = weight < 0;
+                            let abs = weight < 0 ? (-weight) : weight;
+                            for (var j = 0; j < abs; j++) {
+                                if (!neg) {
+                                    fInfo = "{" + fInfo + "}";
+                                } else {
+                                    fInfo = "[" + fInfo + "]";
+                                }
+                            }
+                        }
+                    }
 
                     if (neg.indexOf(group) > -1) {
                         b.push(fInfo);
@@ -306,19 +308,28 @@
             document.getElementById("pos").value = a.join(",");
             document.getElementById("neg").value = b.join(",");
             saveChecked();
+
         }
 
-        var debug = false
+        var debug = !window.location.protocol.startsWith("http");
 
+        if (debug) {
+            // allData = {
+            //     "a": {
+            //         "l1": "l1",
+            //         "l2": "l2"
+            //     }
+            // }
+        }
 
-        function createRange(min,max,step,parent){
-            let range=document.createElement("input");
+        function createRange(min, max, step, parent) {
+            let range = document.createElement("input");
             range.setAttribute("type", "number");
             range.setAttribute("min", min);
             range.setAttribute("max", max);
             range.setAttribute("step", step);
-            range.setAttribute("class","tag_range");
-            if(parent!=null){
+            range.setAttribute("class", "tag_range");
+            if (parent != null) {
                 parent.appendChild(range)
             }
             return range
@@ -354,23 +365,23 @@
 
             myTd.appendChild(myText);
 
-            if( uiConfig.show_weight){
-                let rangeText = document.createElement("label");
-                rangeText.innerText="0";
-                rangeText.setAttribute("class","rangeText");
-                myTd.appendChild(rangeText);
+            if (uiConfig.show_weight) {
+                // let rangeText = document.createElement("label");
+                // rangeText.innerText = "0";
+                // rangeText.setAttribute("class", "rangeText");
+                // myTd.appendChild(rangeText);
 
-                let range=createRange(-5,5,1,myTd);
-                let mW=myWeight[key];
-                if(mW!=null){
-                    range.value=mW;
-                }else{
-                    range.value=0;
+                let range = createRange(-5, 5, 1, myTd);
+                let mW = myWeight[key];
+                if (mW != null) {
+                    range.value = mW;
+                } else {
+                    range.value = 0;
                 }
 
-                range.onchange=function () {
-                    rangeText.innerText=range.value
-                    myWeight[key]=range.value;
+                range.onchange = function () {
+                    // rangeText.innerText = range.value;
+                    myWeight[key] = range.value;
                     onCheckBoxChange();
                 }
             }
@@ -456,7 +467,7 @@
                     saveChecked();
                     window.alert("删除 " + key + " 立刻刷新窗口")
                     location.reload();
-                }
+                };
                 createBr(myTd);
             } else {
                 createBr(myTd);
@@ -477,7 +488,7 @@
                 }
             }
             saveStorage("checked_data", checked);
-            saveStorage("myWeight",myWeight);
+            saveStorage("myWeight", myWeight);
         }
 
 
@@ -531,6 +542,12 @@
         }
 
         function saveStorage(key, value) {
+            asyncStorage(key, value).then(result => {
+
+            })
+        }
+
+        async function asyncStorage(key, value) {
             var s = JSON.stringify(value);
             localStorage.setItem(key, s);
         }
@@ -543,7 +560,7 @@
             saveStorage("uiConfig", uiConfig);
         }
 
-        function loadUiConfig() {
+        async function loadUiConfig() {
             var s = localStorage.getItem("uiConfig");
             if (s != null) {
                 var pData = JSON.parse(s)
@@ -597,30 +614,30 @@
             };
             document.getElementById("clear_storage").onclick = function () {
                 clearStorage();
-            }
+            };
             var addCheck = document.getElementById("non_add")
-            addCheck.checked = uiConfig.show_add
+            addCheck.checked = uiConfig.show_add;
             addCheck.onclick = function () {
                 uiConfig.show_add = addCheck.checked;
                 saveUiConfig();
                 toast("重新加载后生效", 1000)
-            }
-            var wCheck=document.getElementById("weight_cb");
-            wCheck.checked=uiConfig.show_weight;
-            wCheck.onclick=function (){
+            };
+            var wCheck = document.getElementById("weight_cb");
+            wCheck.checked = uiConfig.show_weight;
+            wCheck.onclick = function () {
                 uiConfig.show_weight = wCheck.checked;
                 saveUiConfig();
                 toast("重新加载后生效", 1000)
-            }
+            };
             document.getElementById("reload").onclick = function () {
                 location.reload();
-            }
+            };
             document.getElementById("pos").onclick = function () {
                 copyToClip(document.getElementById("pos").value)
-            }
+            };
             document.getElementById("neg").onclick = function () {
                 copyToClip(document.getElementById("neg").value)
-            }
+            };
         }
 
         function copyToClip(content) {
@@ -633,12 +650,21 @@
             toast("已复制到剪贴板")
         }
 
-        window.onload = function () {
-            loadUiConfig();
-            loadStorage("myWeight",myWeight);
-            initTables();
-
+        async function loadWeightConfig() {
+            loadStorage("myWeight", myWeight);
         }
+
+        async function loadLocalData() {
+            await loadUiConfig();
+            await loadWeightConfig();
+        }
+
+        window.onload = function () {
+            loadLocalData().then(p => {
+                initTables();
+            });
+        };
+
 
     </script>
 </head>
@@ -702,6 +728,5 @@
 
 </body>
 </html>
-
 
 
