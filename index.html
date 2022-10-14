@@ -1,69 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <link rel="stylesheet" href="bootstrap.min.css"/>
+    <script src="bootstrap.bundle.min.js"></script>
+    <script src="index.js"></script>
+
     <style>
-
-
-        table {
-            width: 90%;
-            background: #ccc;
-            margin: 10px auto;
-            border-collapse: collapse;
-            /*border-collapse:collapse合并内外边距
-            (去除表格单元格默认的2个像素内外边距*/
+        #myTab{
+            margin-top: 5px;
         }
-
-        .rangeText {
-            width: 20px;
-        }
-
-        th, td {
-            height: 25px;
-            line-height: 25px;
-            text-align: left;
-            border: 1px solid #ccc;
-        }
-
-        th {
-            background: #eee;
-            font-weight: normal;
-        }
-
-        tr {
-            background: #fff;
-        }
-
-        tr:hover {
-            background: #f0f0a0;
-        }
-
-        td a {
-            color: #06f;
-            text-decoration: none;
-        }
-
-        td a:hover {
-            color: #06f;
-            text-decoration: underline;
-        }
-
-        textarea {
-            width: 100%;
-            height: 100px;
-        }
-
-        #my_cancel {
-            width: 50%;
-        }
-
-        #clear_storage {
-            width: 50%;
-        }
-
-        .tag_range {
-            width: 35px;
+        .tag_btn_group{
+            margin: 3px;
         }
 
         @keyframes show {
@@ -113,432 +62,10 @@
         .toliet {
             margin: 0 auto;
         }
-
-
     </style>
-
-    <script src="data.js"></script>
-    <script>
-
-
-        let must = [
-            "正面常用", "负面常用"
-        ];
-        let neg = [
-            "负面常用"
-        ];
-        var uiConfig = {
-            "show_add": false,
-            "show_weight": false
-        };
-        var allData = globalData;
-        var myWeight = {};
-
-
-        let checkBoxs = new Array();
-        let t2Groups = ["正面常用", "负面常用"];
-        let t1Groups = ["自定义", "优秀实践"];
-
-        function onCheckBoxChange() {
-            let a = [];
-            let b = [];
-
-            for (var i = 0; i < checkBoxs.length; i++) {
-                let cb = checkBoxs[i];
-                let info = cb.getAttribute("my_info");
-                let group = cb.getAttribute("my_group");
-                if (info != null && group != null && cb.checked) {
-                    let label = cb.getAttribute("my_label");
-                    let fInfo = info;
-                    if (label != null) {
-                        let weight = myWeight[label];
-                        if (weight != null && weight !== 0) {
-                            let neg = weight < 0;
-                            let abs = weight < 0 ? (-weight) : weight;
-                            for (var j = 0; j < abs; j++) {
-                                if (!neg) {
-                                    fInfo = "{" + fInfo + "}";
-                                } else {
-                                    fInfo = "[" + fInfo + "]";
-                                }
-                            }
-                        }
-                    }
-
-                    if (neg.indexOf(group) > -1) {
-                        b.push(fInfo);
-                    } else {
-                        a.push(fInfo);
-                    }
-                }
-            }
-            document.getElementById("pos").value = a.join(",");
-            document.getElementById("neg").value = b.join(",");
-            saveChecked();
-
-        }
-
-        var debug = !window.location.protocol.startsWith("http");
-
-        if (debug) {
-            // allData = {
-            //     "a": {
-            //         "l1": "l1",
-            //         "l2": "l2"
-            //     }
-            // }
-        }
-
-        function createRange(min, max, step, parent) {
-            let range = document.createElement("input");
-            range.setAttribute("type", "number");
-            range.setAttribute("min", min);
-            range.setAttribute("max", max);
-            range.setAttribute("step", step);
-            range.setAttribute("class", "tag_range");
-            if (parent != null) {
-                parent.appendChild(range)
-            }
-            return range
-        }
-
-        function addCheckBox(isBr, data, key, group, myTd, checked) {
-            let value = data[key];
-
-            let oCheckbox = document.createElement("input");
-
-            var toText = key;
-            if (debug) {
-                toText = value;
-            }
-            let myText = document.createTextNode(toText);
-
-
-            oCheckbox.setAttribute("type", "checkbox");
-            oCheckbox.setAttribute("class", "myCheck");
-            oCheckbox.setAttribute("my_label", key);
-            oCheckbox.setAttribute("my_info", value);
-            oCheckbox.setAttribute("my_group", group);
-
-            if (checked.indexOf(key) > -1) {
-                oCheckbox.checked = true;
-            }
-
-
-            oCheckbox.onclick = onCheckBoxChange;
-            checkBoxs.push(oCheckbox);
-
-            myTd.appendChild(oCheckbox);
-
-            myTd.appendChild(myText);
-
-            if (uiConfig.show_weight) {
-                // let rangeText = document.createElement("label");
-                // rangeText.innerText = "0";
-                // rangeText.setAttribute("class", "rangeText");
-                // myTd.appendChild(rangeText);
-
-                let range = createRange(-5, 5, 1, myTd);
-                let mW = myWeight[key];
-                if (mW != null) {
-                    range.value = mW;
-                } else {
-                    range.value = 0;
-                }
-
-                range.onchange = function () {
-                    // rangeText.innerText = range.value;
-                    myWeight[key] = range.value;
-                    onCheckBoxChange();
-                }
-            }
-
-
-            if (isBr) {
-                let myBr = document.createElement("br");
-                myTd.appendChild(myBr)
-            }
-        }
-
-        function createInputText(text, parent) {
-            let input = document.createElement("input");
-            input.setAttribute("type", "text");
-            input.setAttribute("class", "inputText");
-            input.placeholder = text;
-            if (parent != null) {
-                parent.appendChild(input)
-            }
-            return input
-        }
-
-        function createInputBtn(text, parent) {
-            let input = document.createElement("button");
-            input.innerText = text;
-            input.setAttribute("class", "inputBtn");
-            if (parent != null) {
-                parent.appendChild(input)
-            }
-            return input;
-        }
-
-        function createBr(parent) {
-            var br = document.createElement("br")
-            parent.appendChild(br)
-            return br;
-        }
-
-        function addGroupLabel(groupData, group, myTd) {
-            var groupText = group;
-            if (debug) {
-                groupText = "debug";
-            }
-            let gText = document.createTextNode(groupText);
-
-            myTd.appendChild(gText);
-
-            if (uiConfig.show_add) {
-                let inputKey = createInputText("中文", myTd);
-                let inputValue = createInputText("英文", myTd);
-
-                createInputBtn("添加", myTd).onclick = function () {
-                    let key = inputKey.value;
-                    let gData = groupData[group];
-                    if (key == null || key.length === 0) {
-                        window.alert("中文输入框 为空");
-                        return
-                    } else if (gData[key] != null) {
-                        window.alert("已经存在key " + key);
-                        return
-                    }
-                    let value = inputValue.value
-                    if (value == null || value.length === 0) {
-                        window.alert("英文输入框 为空");
-                        return
-                    }
-                    gData[key] = value;
-                    saveStorage(group, gData);
-                    window.alert("添加 " + key + ":" + value)
-                }
-                createInputBtn("删除", myTd).onclick = function () {
-                    let key = inputKey.value;
-                    let gData = groupData[group];
-                    if (key == null || key.length === 0) {
-                        window.alert("中文输入框 为空");
-                        return
-                    } else if (gData[key] == null) {
-                        window.alert("不存在key " + key);
-                        return
-                    }
-                    Reflect.deleteProperty(gData, key);
-                    saveStorage(group, gData);
-                    saveChecked();
-                    window.alert("删除 " + key + " 立刻刷新窗口")
-                    location.reload();
-                };
-                createBr(myTd);
-            } else {
-                createBr(myTd);
-            }
-
-
-        }
-
-
-        function saveChecked() {
-            var checked = [];
-            for (var i = 0; i < checkBoxs.length; i++) {
-                let cb = checkBoxs[i];
-                let info = cb.getAttribute("my_label");
-                let group = cb.getAttribute("my_group");
-                if (info != null && group != null && cb.checked) {
-                    checked.push(info);
-                }
-            }
-            saveStorage("checked_data", checked);
-            saveStorage("myWeight", myWeight);
-        }
-
-
-        function initTableUi(tbName, groupData, columnCnt, oneLine, isBr, checked) {
-            let tableContent = document.getElementById(tbName);
-            var myTr = null;
-            var groupCnt = 0;
-            for (let group in groupData) {
-                if (groupCnt++ % columnCnt === 0 || oneLine) {
-                    myTr = document.createElement("tr");
-                    tableContent.appendChild(myTr);
-                }
-                let myTd = document.createElement("td");
-                myTr.appendChild(myTd);
-
-                let data = groupData[group];
-                addGroupLabel(groupData, group, myTd);
-
-                for (let key in data) {
-                    addCheckBox(isBr, data, key, group, myTd, checked);
-                }
-            }
-        }
-
-        function resetCheck(resetAll) {
-            var checked = localStorage.getItem("checked_data")
-            if (checked == null) {
-                checked = [];
-            }
-            for (var i = 0; i < checkBoxs.length; i++) {
-                var cb = checkBoxs[i];
-                let info = cb.getAttribute("my_label");
-                var g = cb.getAttribute("my_group");
-                if (g != null && info != null && (!(checked.indexOf(info) > -1) || resetAll)) {
-                    cb.checked = must.indexOf(g) > -1
-                }
-            }
-            onCheckBoxChange();
-        }
-
-
-        function loadStorage(key, groupData) {
-            var s = localStorage.getItem(key);
-            if (s != null) {
-                var pData = JSON.parse(s)
-                for (let p in pData) {
-                    let pValue = pData[p];
-                    groupData[p] = pValue;
-                }
-            }
-        }
-
-        function saveStorage(key, value) {
-            asyncStorage(key, value).then(result => {
-
-            })
-        }
-
-        async function asyncStorage(key, value) {
-            var s = JSON.stringify(value);
-            localStorage.setItem(key, s);
-        }
-
-        function clearStorage() {
-            localStorage.clear()
-        }
-
-        function saveUiConfig() {
-            saveStorage("uiConfig", uiConfig);
-        }
-
-        async function loadUiConfig() {
-            var s = localStorage.getItem("uiConfig");
-            if (s != null) {
-                var pData = JSON.parse(s)
-                for (let p in pData) {
-                    let pValue = pData[p];
-                    uiConfig[p] = pValue;
-                }
-            }
-        }
-
-        function toast(text, time) {
-            let toast = document.getElementById('toast');
-            let toast_box = document.getElementsByClassName('toast_box')[0];
-            toast.innerHTML = text;
-            toast_box.style.animation = 'show 1.5s'
-            toast_box.style.display = 'inline-block';
-            setTimeout(function () {
-                toast_box.style.animation = 'hide 1.5s'
-                setTimeout(function () {
-                    toast_box.style.display = 'none';
-                }, 1400)
-            }, time)
-        }
-
-        function initTables() {
-            let l1 = {};
-            let l2 = {};
-            let l3 = {};
-            var checked = localStorage.getItem("checked_data")
-            for (let group in allData) {
-                let value = allData[group];
-                loadStorage(group, value);
-                if (t1Groups.indexOf(group) > -1) {
-                    l1[group] = value;
-                } else if (t2Groups.indexOf(group) > -1) {
-                    l2[group] = value;
-                } else {
-                    l3[group] = value;
-                }
-            }
-
-            if (checked == null) {
-                checked = [];
-            }
-            initTableUi("table1", l3, 1, false, false, checked);
-            initTableUi("table2", l2, 1, false, false, checked);
-            initTableUi("table3", l1, 1, false, false, checked);
-            resetCheck(false);
-            document.getElementById("my_cancel").onclick = function () {
-                resetCheck(true);
-            };
-            document.getElementById("clear_storage").onclick = function () {
-                clearStorage();
-            };
-            var addCheck = document.getElementById("non_add")
-            addCheck.checked = uiConfig.show_add;
-            addCheck.onclick = function () {
-                uiConfig.show_add = addCheck.checked;
-                saveUiConfig();
-                toast("重新加载后生效", 1000)
-            };
-            var wCheck = document.getElementById("weight_cb");
-            wCheck.checked = uiConfig.show_weight;
-            wCheck.onclick = function () {
-                uiConfig.show_weight = wCheck.checked;
-                saveUiConfig();
-                toast("重新加载后生效", 1000)
-            };
-            document.getElementById("reload").onclick = function () {
-                location.reload();
-            };
-            document.getElementById("pos").onclick = function () {
-                copyToClip(document.getElementById("pos").value)
-            };
-            document.getElementById("neg").onclick = function () {
-                copyToClip(document.getElementById("neg").value)
-            };
-        }
-
-        function copyToClip(content) {
-            const inputDom = document.createElement('input');
-            inputDom.setAttribute('value', content);
-            document.body.appendChild(inputDom);
-            inputDom.select();
-            document.execCommand('copy');
-            document.body.removeChild(inputDom);
-            toast("已复制到剪贴板")
-        }
-
-        async function loadWeightConfig() {
-            loadStorage("myWeight", myWeight);
-        }
-
-        async function loadLocalData() {
-            await loadUiConfig();
-            await loadWeightConfig();
-        }
-
-
-
-
-        window.onload = function () {
-            loadLocalData().then(p => {
-                initTables();
-            });
-
-        };
-
-
-    </script>
 </head>
+
+
 <body>
 <div id="hotal">
     <!-- 提示框 -->
@@ -547,57 +74,80 @@
     </div>
 
 </div>
+<div class="container">
 
 
-<table>
-    <tr>
-        <td>
-            <button id="my_cancel">重置选择框</button>
-
-        </td>
-        <td>
-            <button id="clear_storage">清空本地存储</button>
-        </td>
-    </tr>
-    <tr>
-        <td><input type="checkbox" id="non_add"/><label>显示tag添加按钮</label></td>
-        <td><input type="checkbox" id="weight_cb"/><label>显示权重按钮(增减tag权重)</label></td>
-        <td>
-            <button id="reload">重新加载</button>
-        </td>
-    </tr>
-</table>
-<table>
-    <tr>
-        <td>
-            <label>正面TAG(点击文本框复制到粘贴板)</label>
-            <br/>
-            <textarea id="pos"></textarea>
-        </td>
-
-    </tr>
-    <tr>
-        <td>
-            <label>负面TAG(点击文本框复制到粘贴板)</label>
-            <br/>
-            <textarea id="neg"></textarea>
-        </td>
-    </tr>
-</table>
-<table id="table1">
-
-</table>
-<table id="table2">
-
-</table>
-<table id="table3">
-
-</table>
+    <div class="container text-center">
 
 
-<br>
+        <div class="row align-items-start">
+            <div class="col">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="ctrl1">
+                    <label class="form-check-label" for="ctrl1">显示tag删除按钮</label>
+                </div>
+
+
+            </div>
+
+
+            <div class="col">
+
+                <div class="container-fluid">
+                    <button type="button" class="btn btn-primary" id="btn_clear">删除本地存储</button>
+                    <button type="button" class="btn btn-primary" id="btn_reload">重新加载页面</button>
+                    <button type="button" class="btn btn-primary" id="btn_reset">重置选择的Tag</button>
+                </div>
+            </div>
+
+
+
+        </div>
+
+
+        <div class="row">
+            <div class="input-group">
+                <span class="input-group-text">正面</span>
+                <textarea class="form-control" aria-label="With textarea" id="textarea_pos"></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-group">
+                <span class="input-group-text">负面</span>
+                <textarea class="form-control" aria-label="With textarea" id="textarea_neg"></textarea>
+            </div>
+        </div>
+    </div>
+
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+<!--        <li class="nav-item" role="presentation">-->
+<!--            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button"-->
+<!--                    role="tab" aria-controls="home" aria-selected="true">Home-->
+<!--            </button>-->
+<!--        </li>-->
+        <!-- <li class="nav-item" role="presentation">
+             <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
+                     role="tab" aria-controls="profile" aria-selected="false">Profile
+             </button>
+         </li>
+         <li class="nav-item" role="presentation">
+             <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button"
+                     role="tab" aria-controls="contact" aria-selected="false">Contact
+             </button>
+         </li>-->
+    </ul>
+    <div class="tab-content" id="myTabContent">
+<!--        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">-->
+
+<!--        </div>-->
+        <!--        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>-->
+        <!--        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>-->
+    </div>
+</div>
+
+</div>
+
 
 </body>
 </html>
-
-
