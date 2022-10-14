@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
+
+
+
         table {
             width: 90%;
             background: #ccc;
@@ -12,7 +15,9 @@
             /*border-collapse:collapse合并内外边距
             (去除表格单元格默认的2个像素内外边距*/
         }
-
+        .rangeText{
+            width: 20px;
+        }
         th, td {
             height: 25px;
             line-height: 25px;
@@ -51,9 +56,61 @@
         #my_cancel {
             width: 50%;
         }
-        #clear_storage{
+
+        #clear_storage {
             width: 50%;
         }
+        .tag_range{
+            width: 35px;
+        }
+        @keyframes show {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes hide {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .toast_box {
+            /* width: 100%; */
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            /* justify-content: center; */
+            z-index: 10;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        .toast_box p {
+            box-sizing: border-box;
+            padding: 10px 20px;
+            width: max-content;
+            /* 提示框的背景色 */
+            background: #707070;
+            color: #fff;
+            font-size: 16px;
+            text-align: center;
+            border-radius: 6px;
+            opacity: 0.8;
+        }
+
+        .toliet {
+            margin: 0 auto;
+        }
+
 
     </style>
 
@@ -66,8 +123,9 @@
         let neg = [
             "负面常用"
         ];
-        var uiConfig={
-            "show_add":true
+        var uiConfig = {
+            "show_add": false,
+            "show_weight":false
         };
         var allData = {
             "姿势": {
@@ -183,32 +241,35 @@
             },
 
             "优秀实践": {
-                "繁花草甸":"Flowery meadow",
-                "秃积雨云":"cumulonimbus calvus",
-                "鬃积雨云":"cumulonimbus capillatus",
-                "璀璨星空":"Bright stars",
-                "花丝带":"flower ribbon",
-                "天使":"angel",
-                "细节的水":"starry detailed water",
-                "细节的天空":"beautiful detailed starry sky",
-                "严肃":"serious",
-                "动漫":"anime",
-                "花丛":"flowering shrubs",
-                "蒲公英":"dandelion",
-                "向日葵":"sunflower"
+                "繁花草甸": "Flowery meadow",
+                "秃积雨云": "cumulonimbus calvus",
+                "鬃积雨云": "cumulonimbus capillatus",
+                "璀璨星空": "Bright stars",
+                "花丝带": "flower ribbon",
+                "天使": "angel",
+                "细节的水": "starry detailed water",
+                "细节的天空": "beautiful detailed starry sky",
+                "严肃": "serious",
+                "动漫": "anime",
+                "花丛": "flowering shrubs",
+                "蒲公英": "dandelion",
+                "向日葵": "sunflower"
 
             },
             "自定义": {
                 "漂亮眼睛": "beautiful detailed eyes",
                 "粉红长裙": "pink lucency full dress",
-                "华丽":"gorgeous"
+                "华丽": "gorgeous"
             }
+        };
+        var myWeight={
+
         };
 
 
         let checkBoxs = new Array();
         let t2Groups = ["正面常用", "负面常用"];
-        let t1Groups = ["自定义","优秀实践"];
+        let t1Groups = ["自定义", "优秀实践"];
 
         function onCheckBoxChange() {
             let a = [];
@@ -218,21 +279,52 @@
                 let info = cb.getAttribute("my_info");
                 let group = cb.getAttribute("my_group");
                 if (info != null && group != null && cb.checked) {
+                   let label=cb.getAttribute("my_label");
+                   let fInfo=info;
+                   if(label!=null){
+                       let weight=myWeight[label];
+                       if(weight!=null&&weight!==0){
+                           let neg=weight<0;
+                           let abs=weight<0?(-weight):weight;
+                           for(var i=0;i<abs;i++){
+                               if(!neg){
+                                   fInfo="{"+fInfo+"}";
+                               }else{
+                                   fInfo="["+fInfo+"]";
+                               }
+                           }
+                       }
+                   }
+
                     if (neg.indexOf(group) > -1) {
-                        b.push(info);
+                        b.push(fInfo);
                     } else {
-                        a.push(info);
+                        a.push(fInfo);
                     }
                 }
             }
-            document.getElementById("pos").innerHTML = a.join(",");
-            document.getElementById("neg").innerHTML = b.join(",");
+            document.getElementById("pos").value = a.join(",");
+            document.getElementById("neg").value = b.join(",");
             saveChecked();
         }
 
         var debug = false
 
-        function addCheckBox(isBr, data, key, group, myTd,checked) {
+
+        function createRange(min,max,step,parent){
+            let range=document.createElement("input");
+            range.setAttribute("type", "number");
+            range.setAttribute("min", min);
+            range.setAttribute("max", max);
+            range.setAttribute("step", step);
+            range.setAttribute("class","tag_range");
+            if(parent!=null){
+                parent.appendChild(range)
+            }
+            return range
+        }
+
+        function addCheckBox(isBr, data, key, group, myTd, checked) {
             let value = data[key];
 
             let oCheckbox = document.createElement("input");
@@ -250,8 +342,8 @@
             oCheckbox.setAttribute("my_info", value);
             oCheckbox.setAttribute("my_group", group);
 
-            if(checked.indexOf(key)>-1){
-                oCheckbox.checked=true;
+            if (checked.indexOf(key) > -1) {
+                oCheckbox.checked = true;
             }
 
 
@@ -261,6 +353,29 @@
             myTd.appendChild(oCheckbox);
 
             myTd.appendChild(myText);
+
+            if( uiConfig.show_weight){
+                let rangeText = document.createElement("label");
+                rangeText.innerText="0";
+                rangeText.setAttribute("class","rangeText");
+                myTd.appendChild(rangeText);
+
+                let range=createRange(-5,5,1,myTd);
+                let mW=myWeight[key];
+                if(mW!=null){
+                    range.value=mW;
+                }else{
+                    range.value=0;
+                }
+
+                range.onchange=function () {
+                    rangeText.innerText=range.value
+                    myWeight[key]=range.value;
+                    onCheckBoxChange();
+                }
+            }
+
+
             if (isBr) {
                 let myBr = document.createElement("br");
                 myTd.appendChild(myBr)
@@ -303,7 +418,7 @@
 
             myTd.appendChild(gText);
 
-            if(uiConfig.show_add){
+            if (uiConfig.show_add) {
                 let inputKey = createInputText("中文", myTd);
                 let inputValue = createInputText("英文", myTd);
 
@@ -322,11 +437,11 @@
                         window.alert("英文输入框 为空");
                         return
                     }
-                    gData[key]=value;
-                    saveStorage(group,gData);
-                    window.alert("添加 "+key + ":" + value)
+                    gData[key] = value;
+                    saveStorage(group, gData);
+                    window.alert("添加 " + key + ":" + value)
                 }
-                createInputBtn("删除",myTd).onclick=function (){
+                createInputBtn("删除", myTd).onclick = function () {
                     let key = inputKey.value;
                     let gData = groupData[group];
                     if (key == null || key.length === 0) {
@@ -336,38 +451,37 @@
                         window.alert("不存在key " + key);
                         return
                     }
-                    Reflect.deleteProperty(gData,key);
-                    saveStorage(group,gData);
+                    Reflect.deleteProperty(gData, key);
+                    saveStorage(group, gData);
                     saveChecked();
-                    window.alert("删除 "+key+" 立刻刷新窗口")
+                    window.alert("删除 " + key + " 立刻刷新窗口")
                     location.reload();
                 }
                 createBr(myTd);
-            }else{
+            } else {
                 createBr(myTd);
             }
-
 
 
         }
 
 
-        function saveChecked(){
-            var checked=[];
+        function saveChecked() {
+            var checked = [];
             for (var i = 0; i < checkBoxs.length; i++) {
                 let cb = checkBoxs[i];
                 let info = cb.getAttribute("my_label");
                 let group = cb.getAttribute("my_group");
                 if (info != null && group != null && cb.checked) {
-                   checked.push(info);
+                    checked.push(info);
                 }
             }
-            saveStorage("checked_data",checked);
-
+            saveStorage("checked_data", checked);
+            saveStorage("myWeight",myWeight);
         }
 
 
-        function initTableUi(tbName, groupData, columnCnt, oneLine, isBr,checked) {
+        function initTableUi(tbName, groupData, columnCnt, oneLine, isBr, checked) {
             let tableContent = document.getElementById(tbName);
             var myTr = null;
             var groupCnt = 0;
@@ -383,21 +497,21 @@
                 addGroupLabel(groupData, group, myTd);
 
                 for (let key in data) {
-                    addCheckBox(isBr, data, key, group, myTd,checked);
+                    addCheckBox(isBr, data, key, group, myTd, checked);
                 }
             }
         }
 
         function resetCheck(resetAll) {
-            var checked=localStorage.getItem("checked_data")
-            if(checked==null){
-                checked=[];
+            var checked = localStorage.getItem("checked_data")
+            if (checked == null) {
+                checked = [];
             }
             for (var i = 0; i < checkBoxs.length; i++) {
                 var cb = checkBoxs[i];
                 let info = cb.getAttribute("my_label");
                 var g = cb.getAttribute("my_group");
-                if (g != null && info!=null&&(!(checked.indexOf(info)>-1)||resetAll)) {
+                if (g != null && info != null && (!(checked.indexOf(info) > -1) || resetAll)) {
                     cb.checked = must.indexOf(g) > -1
                 }
             }
@@ -405,48 +519,63 @@
         }
 
 
-
-        function loadStorage(key,groupData) {
+        function loadStorage(key, groupData) {
             var s = localStorage.getItem(key);
             if (s != null) {
                 var pData = JSON.parse(s)
-                for(let p in pData){
-                    let pValue=pData[p];
-                    groupData[p]=pValue;
+                for (let p in pData) {
+                    let pValue = pData[p];
+                    groupData[p] = pValue;
                 }
             }
         }
 
-        function saveStorage(key,value) {
+        function saveStorage(key, value) {
             var s = JSON.stringify(value);
             localStorage.setItem(key, s);
         }
 
-        function clearStorage(){
+        function clearStorage() {
             localStorage.clear()
         }
-        function saveUiConfig(){
-            saveStorage("uiConfig",uiConfig);
+
+        function saveUiConfig() {
+            saveStorage("uiConfig", uiConfig);
         }
-        function  loadUiConfig(){
+
+        function loadUiConfig() {
             var s = localStorage.getItem("uiConfig");
             if (s != null) {
                 var pData = JSON.parse(s)
-                for(let p in pData){
-                    let pValue=pData[p];
-                    uiConfig[p]=pValue;
+                for (let p in pData) {
+                    let pValue = pData[p];
+                    uiConfig[p] = pValue;
                 }
             }
+        }
+
+        function toast(text, time) {
+            let toast = document.getElementById('toast');
+            let toast_box = document.getElementsByClassName('toast_box')[0];
+            toast.innerHTML = text;
+            toast_box.style.animation = 'show 1.5s'
+            toast_box.style.display = 'inline-block';
+            setTimeout(function () {
+                toast_box.style.animation = 'hide 1.5s'
+                setTimeout(function () {
+                    toast_box.style.display = 'none';
+                }, 1400)
+            }, time)
         }
 
         function initTables() {
             let l1 = {};
             let l2 = {};
             let l3 = {};
-            var checked=localStorage.getItem("checked_data")
+            var checked = localStorage.getItem("checked_data")
             for (let group in allData) {
                 let value = allData[group];
-                loadStorage(group,value);
+                loadStorage(group, value);
                 if (t1Groups.indexOf(group) > -1) {
                     l1[group] = value;
                 } else if (t2Groups.indexOf(group) > -1) {
@@ -456,33 +585,57 @@
                 }
             }
 
-            if(checked == null){
-                checked=[];
+            if (checked == null) {
+                checked = [];
             }
-            initTableUi("table1", l3, 3, false, false,checked);
-            initTableUi("table2", l2, 2, false, false,checked);
-            initTableUi("table3", l1, 1, false, false,checked);
+            initTableUi("table1", l3, 3, false, false, checked);
+            initTableUi("table2", l2, 2, false, false, checked);
+            initTableUi("table3", l1, 1, false, false, checked);
             resetCheck(false);
             document.getElementById("my_cancel").onclick = function () {
                 resetCheck(true);
             };
-            document.getElementById("clear_storage").onclick=function (){
+            document.getElementById("clear_storage").onclick = function () {
                 clearStorage();
             }
-            var addCheck=document.getElementById("non_add")
-            addCheck.checked=uiConfig.show_add
-            addCheck.onclick=function (){
-                uiConfig.show_add= addCheck.checked;
+            var addCheck = document.getElementById("non_add")
+            addCheck.checked = uiConfig.show_add
+            addCheck.onclick = function () {
+                uiConfig.show_add = addCheck.checked;
                 saveUiConfig();
-                window.alert("重新加载后生效")
+                toast("重新加载后生效", 1000)
             }
-            document.getElementById("reload").onclick=function (){
+            var wCheck=document.getElementById("weight_cb");
+            wCheck.checked=uiConfig.show_weight;
+            wCheck.onclick=function (){
+                uiConfig.show_weight = wCheck.checked;
+                saveUiConfig();
+                toast("重新加载后生效", 1000)
+            }
+            document.getElementById("reload").onclick = function () {
                 location.reload();
             }
+            document.getElementById("pos").onclick = function () {
+                copyToClip(document.getElementById("pos").value)
+            }
+            document.getElementById("neg").onclick = function () {
+                copyToClip(document.getElementById("neg").value)
+            }
+        }
+
+        function copyToClip(content) {
+            const inputDom = document.createElement('input');
+            inputDom.setAttribute('value', content);
+            document.body.appendChild(inputDom);
+            inputDom.select();
+            document.execCommand('copy');
+            document.body.removeChild(inputDom);
+            toast("已复制到剪贴板")
         }
 
         window.onload = function () {
             loadUiConfig();
+            loadStorage("myWeight",myWeight);
             initTables();
 
         }
@@ -490,6 +643,15 @@
     </script>
 </head>
 <body>
+<div id="hotal">
+    <!-- 提示框 -->
+    <div class="toast_box">
+        <p id="toast"></p>
+    </div>
+
+</div>
+
+
 <table>
     <tr>
         <td>
@@ -501,8 +663,11 @@
         </td>
     </tr>
     <tr>
-        <td><input type="checkbox" id="non_add"/><label>显示tag添加按钮</label> </td>
-        <td> <button id="reload">重新加载</button></td>
+        <td><input type="checkbox" id="non_add"/><label>显示tag添加按钮</label></td>
+        <td><input type="checkbox" id="weight_cb"/><label>显示权重按钮(增减tag权重)</label></td>
+        <td>
+            <button id="reload">重新加载</button>
+        </td>
     </tr>
 </table>
 
@@ -518,7 +683,7 @@
 <table>
     <tr>
         <td>
-            <label>正面TAG</label>
+            <label>正面TAG(点击文本框复制到粘贴板)</label>
             <br/>
             <textarea id="pos"></textarea>
         </td>
@@ -526,7 +691,7 @@
     </tr>
     <tr>
         <td>
-            <label>负面TAG</label>
+            <label>负面TAG(点击文本框复制到粘贴板)</label>
             <br/>
             <textarea id="neg"></textarea>
         </td>
