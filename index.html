@@ -117,6 +117,7 @@
 
     </style>
 
+    <script src="data.js"></script>
     <script>
 
 
@@ -659,10 +660,14 @@
             await loadWeightConfig();
         }
 
+
+      
+
         window.onload = function () {
             loadLocalData().then(p => {
                 initTables();
             });
+          
         };
 
 
