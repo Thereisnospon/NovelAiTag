@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        table {
+            width: 90%;
+            background: #ccc;
+            margin: 10px auto;
+            border-collapse: collapse;
+            /*border-collapse:collapse合并内外边距
+            (去除表格单元格默认的2个像素内外边距*/
+        }
+
+        th, td {
+            height: 25px;
+            line-height: 25px;
+            text-align: left;
+            border: 1px solid #ccc;
+        }
+
+        th {
+            background: #eee;
+            font-weight: normal;
+        }
+
+        tr {
+            background: #fff;
+        }
+
+        tr:hover {
+            background: #f0f0a0;
+        }
+
+        td a {
+            color: #06f;
+            text-decoration: none;
+        }
+
+        td a:hover {
+            color: #06f;
+            text-decoration: underline;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+        }
+
+        #my_cancel {
+            width: 50%;
+        }
+        #clear_storage{
+            width: 50%;
+        }
+
+    </style>
+
+    <script>
+
+
+        let must = [
+            "正面常用", "负面常用"
+        ];
+        let neg = [
+            "负面常用"
+        ];
+        var uiConfig={
+            "show_add":true
+        };
+        var allData = {
+            "姿势": {
+                "坐": "sitting",
+                "站": "stand",
+                "蹲着": "squat",
+                "趴": "grovel",
+                "躺": "lie",
+                "跳": "jump",
+                "跑": "run",
+                "走": "walk",
+                "飞": "fly",
+                "双手叉腰": "hands on hip"
+            },
+            "头发": {
+                "短发": "short hair",
+                "卷发": "curly hair",
+                "长发": "long hair",
+                "马尾": "pony-tail",
+                "双马尾": "bunches",
+            },
+            "发色": {
+                "黑": "black hair",
+                "白": "white hair",
+                "粉": "pin hair",
+                "金": "blond hair"
+            },
+            "衣服": {
+                "晚礼服": "evening dress",
+                "短裙": "Skirt",
+                "长裙": "Long skirt",
+                "水手服": "sailor suit",
+                "JK": "JK",
+                "黑色丝袜": "black silk stocking",
+                "白色丝袜": "white silk stocking",
+                "西装": "suit",
+                "马靴": "riding boots",
+                "吊带袜": "suspende",
+                "湿衣服": "wet clothes",
+                "发带": "hair lace",
+                "比基尼": "bikini"
+            },
+            "胸": {
+                "小": "small breast",
+                "中": "medium breast",
+                "大": "big breast"
+            },
+            "类型": {
+                "女孩": "girl",
+                "男孩": "boy",
+                "御姐": "adult lady like woman"
+            },
+            "身份": {
+                "女王": "queen",
+                "学生": "student",
+                "医生": "doctor",
+                "护士": "nurse",
+                "警察": "police",
+                "士兵": "soldier",
+                "骑士": "knight",
+                "女仆": "housemaid"
+            },
+            "露出": {
+                "肩膀": "Bare shoulders",
+                "大腿": "Bare thigh",
+                "手臂": "Bare arms",
+                "肚脐": "Bare navel"
+            },
+            "场景": {
+                "海边": "seaside",
+                "沙滩": "sandbeach",
+                "树林": "grove",
+                "城堡": "castle",
+                "室内": "indoor",
+                "床": "bed",
+                "椅子": "chair",
+                "窗帘": "curtain"
+            },
+            "物品": {
+                "书": "book",
+                "酒杯": "wine glass",
+                "蝴蝶": "butterfly",
+                "猫": "cat"
+            },
+            "妆容": {
+                "猫耳": "cat ear",
+                "猫尾": "cat tail"
+            },
+            "正面常用": {
+                "高质量": "best quality",
+                "高细节": "highly detailed"
+
+
+            },
+            "负面常用": {
+                "lowres": "lowres",
+                "bad anatomy": "bad anatomy",
+                "bad hands": "bad hands",
+                "text": "text",
+                "error": "error",
+                "missing fingers": "missing fingers",
+                "extra digit": "extra digit",
+                "ewer digits": "ewer digits",
+                "cropped": "cropped",
+                "worst quality": "worst quality",
+                "low quality": "low quality",
+                "normal quality": "normal quality",
+                "jpeg artifacts": "jpeg artifacts",
+                "signature": "signature",
+                "watermark": "watermark",
+                "username": "username",
+                "blurry": "blurry",
+            },
+
+            "优秀实践": {
+                "繁花草甸":"Flowery meadow",
+                "秃积雨云":"cumulonimbus calvus",
+                "鬃积雨云":"cumulonimbus capillatus",
+                "璀璨星空":"Bright stars",
+                "花丝带":"flower ribbon",
+                "天使":"angel",
+                "细节的水":"starry detailed water",
+                "细节的天空":"beautiful detailed starry sky",
+                "严肃":"serious",
+                "动漫":"anime",
+                "花丛":"flowering shrubs",
+                "蒲公英":"dandelion",
+                "向日葵":"sunflower"
+
+            },
+            "自定义": {
+                "漂亮眼睛": "beautiful detailed eyes",
+                "粉红长裙": "pink lucency full dress",
+                "华丽":"gorgeous"
+            }
+        };
+
+
+        let checkBoxs = new Array();
+        let t2Groups = ["正面常用", "负面常用"];
+        let t1Groups = ["自定义","优秀实践"];
+
+        function onCheckBoxChange() {
+            let a = [];
+            let b = [];
+            for (var i = 0; i < checkBoxs.length; i++) {
+                let cb = checkBoxs[i];
+                let info = cb.getAttribute("my_info");
+                let group = cb.getAttribute("my_group");
+                if (info != null && group != null && cb.checked) {
+                    if (neg.indexOf(group) > -1) {
+                        b.push(info);
+                    } else {
+                        a.push(info);
+                    }
+                }
+            }
+            document.getElementById("pos").innerHTML = a.join(",");
+            document.getElementById("neg").innerHTML = b.join(",");
+            saveChecked();
+        }
+
+        var debug = false
+
+        function addCheckBox(isBr, data, key, group, myTd,checked) {
+            let value = data[key];
+
+            let oCheckbox = document.createElement("input");
+
+            var toText = key;
+            if (debug) {
+                toText = value;
+            }
+            let myText = document.createTextNode(toText);
+
+
+            oCheckbox.setAttribute("type", "checkbox");
+            oCheckbox.setAttribute("class", "myCheck");
+            oCheckbox.setAttribute("my_label", key);
+            oCheckbox.setAttribute("my_info", value);
+            oCheckbox.setAttribute("my_group", group);
+
+            if(checked.indexOf(key)>-1){
+                oCheckbox.checked=true;
+            }
+
+
+            oCheckbox.onclick = onCheckBoxChange;
+            checkBoxs.push(oCheckbox);
+
+            myTd.appendChild(oCheckbox);
+
+            myTd.appendChild(myText);
+            if (isBr) {
+                let myBr = document.createElement("br");
+                myTd.appendChild(myBr)
+            }
+        }
+
+        function createInputText(text, parent) {
+            let input = document.createElement("input");
+            input.setAttribute("type", "text");
+            input.setAttribute("class", "inputText");
+            input.placeholder = text;
+            if (parent != null) {
+                parent.appendChild(input)
+            }
+            return input
+        }
+
+        function createInputBtn(text, parent) {
+            let input = document.createElement("button");
+            input.innerText = text;
+            input.setAttribute("class", "inputBtn");
+            if (parent != null) {
+                parent.appendChild(input)
+            }
+            return input;
+        }
+
+        function createBr(parent) {
+            var br = document.createElement("br")
+            parent.appendChild(br)
+            return br;
+        }
+
+        function addGroupLabel(groupData, group, myTd) {
+            var groupText = group;
+            if (debug) {
+                groupText = "debug";
+            }
+            let gText = document.createTextNode(groupText);
+
+            myTd.appendChild(gText);
+
+            if(uiConfig.show_add){
+                let inputKey = createInputText("中文", myTd);
+                let inputValue = createInputText("英文", myTd);
+
+                createInputBtn("添加", myTd).onclick = function () {
+                    let key = inputKey.value;
+                    let gData = groupData[group];
+                    if (key == null || key.length === 0) {
+                        window.alert("中文输入框 为空");
+                        return
+                    } else if (gData[key] != null) {
+                        window.alert("已经存在key " + key);
+                        return
+                    }
+                    let value = inputValue.value
+                    if (value == null || value.length === 0) {
+                        window.alert("英文输入框 为空");
+                        return
+                    }
+                    gData[key]=value;
+                    saveStorage(group,gData);
+                    window.alert("添加 "+key + ":" + value)
+                }
+                createInputBtn("删除",myTd).onclick=function (){
+                    let key = inputKey.value;
+                    let gData = groupData[group];
+                    if (key == null || key.length === 0) {
+                        window.alert("中文输入框 为空");
+                        return
+                    } else if (gData[key] == null) {
+                        window.alert("不存在key " + key);
+                        return
+                    }
+                    Reflect.deleteProperty(gData,key);
+                    saveStorage(group,gData);
+                    saveChecked();
+                    window.alert("删除 "+key+" 立刻刷新窗口")
+                    location.reload();
+                }
+                createBr(myTd);
+            }else{
+                createBr(myTd);
+            }
+
+
+
+        }
+
+
+        function saveChecked(){
+            var checked=[];
+            for (var i = 0; i < checkBoxs.length; i++) {
+                let cb = checkBoxs[i];
+                let info = cb.getAttribute("my_label");
+                let group = cb.getAttribute("my_group");
+                if (info != null && group != null && cb.checked) {
+                   checked.push(info);
+                }
+            }
+            saveStorage("checked_data",checked);
+
+        }
+
+
+        function initTableUi(tbName, groupData, columnCnt, oneLine, isBr,checked) {
+            let tableContent = document.getElementById(tbName);
+            var myTr = null;
+            var groupCnt = 0;
+            for (let group in groupData) {
+                if (groupCnt++ % columnCnt === 0 || oneLine) {
+                    myTr = document.createElement("tr");
+                    tableContent.appendChild(myTr);
+                }
+                let myTd = document.createElement("td");
+                myTr.appendChild(myTd);
+
+                let data = groupData[group];
+                addGroupLabel(groupData, group, myTd);
+
+                for (let key in data) {
+                    addCheckBox(isBr, data, key, group, myTd,checked);
+                }
+            }
+        }
+
+        function resetCheck(resetAll) {
+            var checked=localStorage.getItem("checked_data")
+            if(checked==null){
+                checked=[];
+            }
+            for (var i = 0; i < checkBoxs.length; i++) {
+                var cb = checkBoxs[i];
+                let info = cb.getAttribute("my_label");
+                var g = cb.getAttribute("my_group");
+                if (g != null && info!=null&&(!(checked.indexOf(info)>-1)||resetAll)) {
+                    cb.checked = must.indexOf(g) > -1
+                }
+            }
+            onCheckBoxChange();
+        }
+
+
+
+        function loadStorage(key,groupData) {
+            var s = localStorage.getItem(key);
+            if (s != null) {
+                var pData = JSON.parse(s)
+                for(let p in pData){
+                    let pValue=pData[p];
+                    groupData[p]=pValue;
+                }
+            }
+        }
+
+        function saveStorage(key,value) {
+            var s = JSON.stringify(value);
+            localStorage.setItem(key, s);
+        }
+
+        function clearStorage(){
+            localStorage.clear()
+        }
+        function saveUiConfig(){
+            saveStorage("uiConfig",uiConfig);
+        }
+        function  loadUiConfig(){
+            var s = localStorage.getItem("uiConfig");
+            if (s != null) {
+                var pData = JSON.parse(s)
+                for(let p in pData){
+                    let pValue=pData[p];
+                    uiConfig[p]=pValue;
+                }
+            }
+        }
+
+        function initTables() {
+            let l1 = {};
+            let l2 = {};
+            let l3 = {};
+            var checked=localStorage.getItem("checked_data")
+            for (let group in allData) {
+                let value = allData[group];
+                loadStorage(group,value);
+                if (t1Groups.indexOf(group) > -1) {
+                    l1[group] = value;
+                } else if (t2Groups.indexOf(group) > -1) {
+                    l2[group] = value;
+                } else {
+                    l3[group] = value;
+                }
+            }
+
+            if(checked == null){
+                checked=[];
+            }
+            initTableUi("table1", l3, 3, false, false,checked);
+            initTableUi("table2", l2, 2, false, false,checked);
+            initTableUi("table3", l1, 1, false, false,checked);
+            resetCheck(false);
+            document.getElementById("my_cancel").onclick = function () {
+                resetCheck(true);
+            };
+            document.getElementById("clear_storage").onclick=function (){
+                clearStorage();
+            }
+            var addCheck=document.getElementById("non_add")
+            addCheck.checked=uiConfig.show_add
+            addCheck.onclick=function (){
+                uiConfig.show_add= addCheck.checked;
+                saveUiConfig();
+                window.alert("重新加载后生效")
+            }
+            document.getElementById("reload").onclick=function (){
+                location.reload();
+            }
+        }
+
+        window.onload = function () {
+            loadUiConfig();
+            initTables();
+
+        }
+
+    </script>
+</head>
+<body>
+<table>
+    <tr>
+        <td>
+            <button id="my_cancel">重置选择框</button>
+
+        </td>
+        <td>
+            <button id="clear_storage">清空本地存储</button>
+        </td>
+    </tr>
+    <tr>
+        <td><input type="checkbox" id="non_add"/><label>显示tag添加按钮</label> </td>
+        <td> <button id="reload">重新加载</button></td>
+    </tr>
+</table>
+
+<table id="table1">
+
+</table>
+<table id="table2">
+
+</table>
+<table id="table3">
+
+</table>
+<table>
+    <tr>
+        <td>
+            <label>正面TAG</label>
+            <br/>
+            <textarea id="pos"></textarea>
+        </td>
+
+    </tr>
+    <tr>
+        <td>
+            <label>负面TAG</label>
+            <br/>
+            <textarea id="neg"></textarea>
+        </td>
+    </tr>
+</table>
+
+<br>
+
+</body>
+</html>
+
+
+
