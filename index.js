@@ -723,17 +723,18 @@ var uiConfig = {
     "show_add": false,
     "show_weight": false,
     "show_del": false,
-    "show_en":false
+    "show_en": false
 };
 let allData = globalData;
 var myDelete = {};
+var groupOrder = [];
 
 function onCheckBoxWeightChange(key, cb, badge, ch) {
     var mW = myWeight[key];
     if (mW == null) {
         mW = 0;
-    }else{
-        mW=parseInt(mW);
+    } else {
+        mW = parseInt(mW);
     }
     mW += ch;
     myWeight[key] = mW;
@@ -776,7 +777,7 @@ function onCheckBoxChange() {
     let po = a.join(",")
     let ne = b.join(",")
     document.getElementById("textarea_pos").value = po;
-    setToWebUiPos("Prompt",po);
+    setToWebUiPos("Prompt", po);
     document.getElementById("textarea_neg").value = ne;
     saveChecked();
 
@@ -826,9 +827,9 @@ function createTagBtnGroup(key, info, group) {
         "class": "btn btn-outline-primary",
         "for": "btn_" + key
     });
-    if(uiConfig.show_en){
-        checkLabel.innerText = key+"("+info+")";
-    }else{
+    if (uiConfig.show_en) {
+        checkLabel.innerText = key + "(" + info + ")";
+    } else {
         checkLabel.innerText = key;
     }
 
@@ -1113,6 +1114,36 @@ function saveChecked() {
     saveStorage("myWeight", myWeight);
 }
 
+async function loadGroupOrder() {
+   let s = localStorage.getItem("groupOrder");
+   if(s!=null){
+       groupOrder=JSON.parse(s);
+   }
+    if (groupOrder == null || groupOrder.length === 0) {
+        groupOrder = [];
+        for (let p in allData) {
+            groupOrder.push(p);
+        }
+    }
+}
+
+function clearGroupOrder() {
+    groupOrder = [];
+    saveGroupOrder([]);
+}
+
+function saveGroupOrder(order) {
+    for (let p in order) {
+        let data = allData[p];
+        if (data == null) {
+            allData[p] = {};
+        }
+    }
+    saveStorage("g2",["sss","b"]);
+    saveStorage("groupOrder", order);
+}
+
+
 async function loadDelete() {
     myDelete = localStorage.getItem("myDelete");
     if (myDelete == null) {
@@ -1126,13 +1157,14 @@ async function loadLocalData() {
     await loadCheckConfig();
     await loadWeightConfig();
     await loadLocalGroupConfig();
+    await loadGroupOrder();
 }
 
 async function clearLocal() {
     localStorage.clear();
 }
 
-function configUiCtrl(name){
+function configUiCtrl(name) {
     var ctrl1 = document.getElementById(name)
     ctrl1.checked = uiConfig[name];
     ctrl1.onclick = function () {
@@ -1142,25 +1174,78 @@ function configUiCtrl(name){
     };
 }
 
+
+function modifyGroupData() {
+    let data = document.getElementById("textera_group").value;
+    if (data == null || data.length === 0) {
+        toast("请输入合理的分组列表顺序", 2000);
+        return
+    }
+    let groups=data.split(",")
+    if(groups==null || groups.length===0){
+        toast("请输入合理的分组列表顺序", 2000);
+        return
+    }
+    if(data.indexOf("，")>-1){
+        toast("请不要使用中文逗号", 2000);
+        return
+    }
+    if(data.indexOf(" ")>-1){
+        toast("请不要使用空格，使用英文逗号分割", 2000);
+        return
+    }
+    let st=[];
+    for(let i in groups){
+        let key=groups[i];
+        if(key!=null && key.trim().length>0){
+            if(st.indexOf(key)>-1){
+                toast("存在相同分组 "+key, 2000);
+                return;
+            }else{
+                st.push(key);
+            }
+            let groupData=groups[i];
+            if(groupData==null&&!(key.startsWith("m"))){
+                toast("新增的自定义分组 "+key+" 没有以m开头,或者不要修改当前已有的分组名",3000);
+                return;
+            }
+        }
+
+    }
+    groupOrder=st;
+    saveGroupOrder(st);
+    toast("保存分组顺序成功,重新加载页面后生效",2000);
+}
+
 function parseAll() {
     let navUi = document.getElementById("myTab");
     let navContent = document.getElementById("myTabContent");
 
     var active = true;
-    for (let group in allData) {
+    for (let i in groupOrder) {
+        let group = groupOrder[i];
+        if (group != null) {
+            let tab = createNavTab(navUi, navContent, group, active);
+            active = false;
 
-        let tab = createNavTab(navUi, navContent, group, active);
-        active = false;
+            let layout = createTagGroupLayout(group, allData[group]);
 
-        let layout = createTagGroupLayout(group, allData[group]);
+            tab.appendChild(layout);
+        }
 
-        tab.appendChild(layout);
     }
     resetCheck(false);
 
 
     configUiCtrl("show_en");
     configUiCtrl("show_del");
+
+    document.getElementById("textera_group").value = groupOrder.join(",");
+    document.getElementById("btn_group_reset").onclick = function () {
+        clearGroupOrder();
+        toast("重新加载页面后生效", 2000);
+    }
+    document.getElementById("btn_group_modify").onclick = modifyGroupData;
 
     document.getElementById("textarea_pos").onclick = function () {
         copyToClip(document.getElementById("textarea_pos").value)
@@ -1175,14 +1260,19 @@ function parseAll() {
         location.reload();
     };
     document.getElementById("btn_clear").onclick = function () {
-        clearLocal().then(function (p) {
-            location.reload();
-        })
+        let confirm=window.confirm("删除本地存储可以解决大部分bug，但是意味着分组顺序以及添加tag会被清空")
+        if(confirm){
+            clearLocal().then(function (p) {
+                location.reload();
+            })
+        }
+
+
     };
     onCheckBoxChange();
 }
 
-function setToWebUiPos(k,data) {
+function setToWebUiPos(k, data) {
     // try {
     //     if (chrome == null || chrome.devtools == null) {
     //         toast("null")

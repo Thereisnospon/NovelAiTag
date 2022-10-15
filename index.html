@@ -3,6 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
+    <title>NovelAI魔导书</title>
+    <link rel="icon" type="image/x-icon" href="icon.png" />
     <link rel="stylesheet" href="bootstrap.min.css"/>
     <script src="bootstrap.bundle.min.js"></script>
     <script src="index.js"></script>
@@ -68,7 +70,7 @@
 </head>
 
 
-<body>
+<body >
 <div id="hotal">
     <!-- 提示框 -->
     <div class="toast_box">
@@ -86,22 +88,31 @@
 
 
         <div class="row">
-            <p>
-                <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    打开/关闭 功能介绍&获取帮助
 
-                </a>
+            <div class="input-group">
+                <span class="input-group-text">魔导</span>
+                <textarea class="form-control" aria-label="With textarea" id="textera_tabs" disabled></textarea>
 
+                <div class="btn-group">
+                    <a class="btn btn-primary btn-sm" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                        功能介绍&bug帮助
+                    </a>
 
-                <a class="btn btn-primary" data-bs-toggle="collapse" href="#col2" role="button" aria-expanded="false" aria-controls="col2">
-                    打开/关闭 UI控制面板
+                    <a class="btn btn-primary btn-sm" data-bs-toggle="collapse" href="#col2" role="button" aria-expanded="false" aria-controls="col2">
+                        UI控制面板
 
-                </a>
-            </p>
+                    </a>
+                    <a class="btn btn-primary btn-sm" data-bs-toggle="collapse" href="#col3" role="button" aria-expanded="false" aria-controls="col3">
+                        分类/TAB 排序/增删
+                    </a>
+                </div>
+
+            </div>
+
 
             <div class="collapse" id="col2">
 
-                <p>
+
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="show_del">
                     <label class="form-check-label" for="show_del">显示tag删除按钮</label>
@@ -110,32 +121,47 @@
                     <input class="form-check-input" type="checkbox" id="show_en">
                     <label class="form-check-label" for="show_en">显示TAG英文</label>
                 </div>
-                </p>
+
             </div>
             <div class="collapse" id="collapseExample">
                 <div class="card card-body">
-                    1. TAG 点击左边是减少权重，中间是打开关闭 TAG ，右边是增加权重，没有打开 TAG 只增减权重不会添加TAG。
+                    <p>0.删除本地存储可以解决大部分bug，但是意味着分组顺序以及添加tag会被清空</p>
+                   <p> 1. TAG 点击左边是减少权重，中间是打开关闭 TAG ，右边是增加权重，没有打开 TAG 只增减权重不会添加TAG。</p>
+                    <p> 2. 分组管理用法：在文本框调节分组顺序，或者新增删除分组.
+                        比如是 [头,脚] 改成 [m1 头]
+                        相当于 头 分类的顺序调节到最后,并且删掉了 脚分组，而且增加了一个 m1 分组
+                        新增的分组必须以 m 开头，分组之间用英文逗号,分割</p>
                     <a href="https://space.bilibili.com/6537379" class="link-primary" target="_blank">点击查看-B站完整功能视频介绍</a>
                 </div>
             </div>
+
+            <div class="collapse" id="col3">
+                <div class="input-group">
+                    <span class="input-group-text">分类</span>
+                    <textarea class="form-control" aria-label="With textarea" id="textera_group"></textarea>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary btn-sm" id="btn_group_reset">重置分组顺序</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="btn_group_modify">修改分组/TAB</button>
+                    </div>
+
+                </div>
+
+            </div>
         </div>
         <div class="row">
-            <div class="row align-items-center">
-                <div class="col">
-                    <button type="button" class="btn btn-primary" id="btn_clear">删除本地存储</button>
-                </div>
-                <div class="col">
-                    <button type="button" class="btn btn-primary" id="btn_reload">重新加载页面</button>
-                </div>
-                <div class="col">
-                    <button type="button" class="btn btn-primary" id="btn_reset">重置选择的Tag</button>
-                </div>
+
+            <div class="input-group">
+                <span class="input-group-text">操作</span>
+                <textarea class="form-control" aria-label="With textarea" id="textera_holder" disabled>
+
+                </textarea>
+                <button type="button" class="btn btn-sm btn-danger" id="btn_clear">删除本地存储(谨慎)</button>
+                <button type="button" class="btn btn-sm btn-primary" id="btn_reload">重载页面</button>
+                <button type="button" class="btn btn-sm btn-primary" id="btn_reset">重置Tag</button>
             </div>
-            <div class="container-fluid">
 
 
-
-            </div>
         </div>
 
         <div class="row">
