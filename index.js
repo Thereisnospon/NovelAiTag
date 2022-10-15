@@ -1,15 +1,69 @@
 let globalData = {
-    "姿势": {
-        "坐": "sitting",
-        "站": "stand",
-        "蹲着": "squat",
-        "趴": "grovel",
-        "躺": "lie",
-        "跳": "jump",
-        "跑": "run",
-        "走": "walk",
-        "飞": "fly",
-        "双手叉腰": "hands on hip"
+
+    "优秀实践": {
+        "繁花草甸": "Flowery meadow",
+        "秃积雨云": "cumulonimbus calvus",
+        "鬃积雨云": "cumulonimbus capillatus",
+        "璀璨星空": "Bright stars",
+        "花丝带": "flower ribbon",
+        "细节的水": "starry detailed water",
+        "细节的天空": "beautiful detailed starry sky",
+        "花丛": "flowering shrubs",
+
+    },
+    "画质": {
+        "格子的": "checkered",
+        "低分辨率": "lowres",
+        "高分辨率": "highres",
+        "超高分辨率": "absurdres",
+        "极高分辨率": "incredibly_absurdres",
+        "超级高分辨率大文件": "huge_filesize",
+        "壁纸": "wallpaper",
+        "点阵图": "pixel_art",
+        "单色图片": "monochrome",
+        "色彩斑斓的": "colorful",
+    },
+    "风格": {
+        "原画": "artbook",
+        "游戏": "game_cg",
+        "漫画": "comic",
+        "四格": "4koma",
+        "格式图片": "animated_gif",
+        "抱枕": "dakimakura",
+        "角色扮演": "cosplay",
+        "穿越": "crossover",
+        "暗的": "dark",
+        "亮的": "light",
+        "晚上": "night",
+        "猎奇": "guro",
+        "写实": "realistic",
+        "照片": "photo",
+        "真实": "real",
+        "风景": "landscape/scenery",
+        "城市风景": "cityscape",
+        "科技幻想": "science_fiction",
+        "原创": "original",
+        "拙劣的模仿": "parody",
+        "拟人": "personification",
+        "视觉错误": "optical_illusion",
+        "名画模仿": "fine_art_parody",
+        "素描": "sketch",
+        "传统媒体（基本上是手绘稿）": "traditional_media",
+        "透明水彩绘": "watercolor_(medium)",
+        "剪影": "silhouette",
+        "封面": "covr",
+        "专辑": "album",
+        "图上有字样": "sample",
+        "背影像": "back",
+        "半身像": "bust",
+        "侧面绘": "profile",
+        "表情绘（各种表情）": "expressions",
+        "一部作品中的主要人物集齐": "everyone",
+        "一列列小图组成大图": "column_lineup",
+        "透明的背景": "transparent_background",
+        "简单的背景无背景": "simple_background",
+        "渐变的背景": "gradient_background",
+        "背景是前景的放大版": "zoom_layer"
     },
     "头发": {
         "短发": "short hair",
@@ -46,7 +100,7 @@ let globalData = {
         "波浪形头发": "wavy hair",
         "卷发": "curly_hair",
         "收拢": "hair in takes",
-        "发带": "scrunchie",
+
         "粉色花": "hair pink flowers",
         "呆毛": "ahoge",
         "多根呆毛": "antenna hair",
@@ -57,6 +111,7 @@ let globalData = {
         "俩包子头": "double_bun",
         "凌乱发型": "messy_hair"
     },
+
     "发色": {
         "白": "white hair",
         "金": "blonde hair ",
@@ -79,10 +134,10 @@ let globalData = {
         "黑色丝袜": "black silk stocking",
         "白色丝袜": "white silk stocking",
         "西装": "suit",
-        "马靴": "riding boots",
+
         "吊带袜": "suspende",
         "湿衣服": "wet clothes",
-        "发带": "hair lace",
+
         "比基尼": "bikini",
         "领子": "sailor collar",
         "帽子": "hat",
@@ -148,7 +203,6 @@ let globalData = {
         "自行车短裤": "bike_shorts",
         "海豚短裤": "dolphin shorts",
         "腰带": "belt",
-        "比基尼（前加颜色）": "bikini",
         "吊索比基尼": "sling bikini",
         "比基尼乳罩": "bikini_top",
         "上身比基尼": " bikini top only ",
@@ -287,6 +341,7 @@ let globalData = {
         "肩背书包": "satchel",
         "手机": "smartphone "
     },
+
     "胸": {
         "小": "small breast",
         "中": "medium breast",
@@ -434,12 +489,25 @@ let globalData = {
         "头发上耳朵": "hair ear",
         "尖耳": "pointy ears"
     },
-    "动作": {
+    "基础动作":{
+        "坐": "sitting",
+        "站": "stand",
+        "蹲着": "squat",
+        "趴": "grovel",
+        "躺": "lie",
+        "跳": "jump",
+        "跑": "run",
+        "走": "walk",
+        "飞": "fly",
         "歪头": "head tilt",
         "回头": "looking back",
         "向下看": "looking down",
         "向上看": "looking up",
         "闻": "smelling",
+        "睡觉": "sleeping",
+        "洗澡": "bathing",
+    },
+    "手动作":{
         "手放在嘴边": "hand_to_mouth",
         "手放头旁边": "arm at side ",
         "手放脑后": "arms behind head",
@@ -468,6 +536,9 @@ let globalData = {
         "招手": "waving",
         "敬礼": "salute",
         "张手": "spread_arms",
+        "双手叉腰": "hands on hip"
+    },
+    "腿动作":{
         "张开腿": "spread legs",
         "二郎腿": "crossed_legs",
         "曲腿至胸": "fetal_position",
@@ -486,6 +557,10 @@ let globalData = {
         "下跪": "kneeling",
         "抽烟": "smoking",
         "用手支撑住": "arm_support",
+    },
+    "复合动作": {
+        "拥抱": "hug",
+        "膝枕": "lap_pillow",
 
         "公主抱": "princess_carry",
         "战斗姿态": "fighting_stance",
@@ -496,10 +571,6 @@ let globalData = {
         "背对背": "back-to-back",
         "手对手": "symmetrical_hand_pose",
         "眼对眼（对视）": "eye_contact",
-        "拥抱": "hug",
-        "膝枕": "lap_pillow",
-        "睡觉": "sleeping",
-        "洗澡": "bathing",
         "掏耳勺": "mimikaki",
         "牵手": "holding_hands",
         "四肢趴地": "all_fours",
@@ -530,10 +601,6 @@ let globalData = {
         "酒杯": "wine glass",
         "蝴蝶": "butterfly",
         "猫": "cat"
-    },
-    "妆容": {
-        "猫耳": "cat ear",
-        "猫尾": "cat tail"
     },
     "天气": {
         "白天": "day",
@@ -569,60 +636,7 @@ let globalData = {
         "熟女": "milf",
         "后宫": "harem"
     },
-    "画质": {
-        "格子的": "checkered",
-        "低分辨率": "lowres",
-        "高分辨率": "highres",
-        "超高分辨率": "absurdres",
-        "极高分辨率": "incredibly_absurdres",
-        "超级高分辨率大文件": "huge_filesize",
-        "壁纸": "wallpaper",
-        "点阵图": "pixel_art",
-        "单色图片": "monochrome",
-        "色彩斑斓的": "colorful",
-    },
-    "风格": {
-        "原画": "artbook",
-        "游戏": "game_cg",
-        "漫画": "comic",
-        "四格": "4koma",
-        "格式图片": "animated_gif",
-        "抱枕": "dakimakura",
-        "角色扮演": "cosplay",
-        "穿越": "crossover",
-        "暗的": "dark",
-        "亮的": "light",
-        "晚上": "night",
-        "猎奇": "guro",
-        "写实": "realistic",
-        "照片": "photo",
-        "真实": "real",
-        "风景": "landscape/scenery",
-        "城市风景": "cityscape",
-        "科技幻想": "science_fiction",
-        "原创": "original",
-        "拙劣的模仿": "parody",
-        "拟人": "personification",
-        "视觉错误": "optical_illusion",
-        "名画模仿": "fine_art_parody",
-        "素描": "sketch",
-        "传统媒体（基本上是手绘稿）": "traditional_media",
-        "透明水彩绘": "watercolor_(medium)",
-        "剪影": "silhouette",
-        "封面": "covr",
-        "专辑": "album",
-        "图上有字样": "sample",
-        "背影像": "back",
-        "半身像": "bust",
-        "侧面绘": "profile",
-        "表情绘（各种表情）": "expressions",
-        "一部作品中的主要人物集齐": "everyone",
-        "一列列小图组成大图": "column_lineup",
-        "透明的背景": "transparent_background",
-        "简单的背景无背景": "simple_background",
-        "渐变的背景": "gradient_background",
-        "背景是前景的放大版": "zoom_layer"
-    },
+
     "环境": {
         "天空": "sky",
         "大海": "sea",
@@ -653,11 +667,14 @@ let globalData = {
     },
     "正面常用": {
         "高质量": "best quality",
-        "高细节": "highly detailed"
-
-
+        "高细节": "highly detailed",
+        "杰作":"masterpiece",
+        "超细节":"ultra-detailed",
+        "插图":"illustration",
     },
+
     "负面常用": {
+        "nsfw":"nsfw",
         "lowres": "lowres",
         "bad anatomy": "bad anatomy",
         "bad hands": "bad hands",
@@ -665,7 +682,7 @@ let globalData = {
         "error": "error",
         "missing fingers": "missing fingers",
         "extra digit": "extra digit",
-        "ewer digits": "ewer digits",
+        "fewer digits": "fewer digits",
         "cropped": "cropped",
         "worst quality": "worst quality",
         "low quality": "low quality",
@@ -675,24 +692,11 @@ let globalData = {
         "watermark": "watermark",
         "username": "username",
         "blurry": "blurry",
+        "missing arms":"missing arms",
+        "long neck":"long neck",
+        "Humpbacked":"Humpbacked"
     },
 
-    "优秀实践": {
-        "繁花草甸": "Flowery meadow",
-        "秃积雨云": "cumulonimbus calvus",
-        "鬃积雨云": "cumulonimbus capillatus",
-        "璀璨星空": "Bright stars",
-        "花丝带": "flower ribbon",
-        "天使": "angel",
-        "细节的水": "starry detailed water",
-        "细节的天空": "beautiful detailed starry sky",
-        "严肃": "serious",
-        "动漫": "anime",
-        "花丛": "flowering shrubs",
-        "蒲公英": "dandelion",
-        "向日葵": "sunflower"
-
-    },
     "自定义": {
         "漂亮眼睛": "beautiful detailed eyes",
         "粉红长裙": "pink lucency full dress",
@@ -1186,6 +1190,30 @@ async function loadLocalData() {
     await loadWeightConfig();
     await loadLocalGroupConfig();
     await loadGroupOrder();
+    await checkData();
+}
+
+async function checkData(){
+    let kSet={};
+    let vKet={};
+    for(let g in allData){
+        let gData=allData[g];
+        for(let key in gData){
+            let value=gData[key];
+            let aKeyGroup=kSet[key];
+            if(aKeyGroup!=null){
+                console.log("重复的 key "+g+":"+key+" 与 "+aKeyGroup+":"+key);
+            }else{
+                kSet[key]=g;
+            }
+            let aValueGroup=vKet[value];
+            if(aValueGroup!=null){
+                console.log("重复的 value "+g+":"+value+" 与 "+aValueGroup+":"+value);
+            }else{
+                vKet[value]=g;
+            }
+        }
+    }
 }
 
 async function clearLocal() {
