@@ -180,7 +180,7 @@ let globalData = {
         "日式丁字裤": "fundoshi",
         "女用贴身内衣裤": "lingerie"
     },
-    "鞋子":{
+    "鞋子": {
         "鞋子": "shoes ",
         "靴子": "boots",
         "乐福鞋": "loafers",
@@ -215,7 +215,7 @@ let globalData = {
         "大腿系带": "thigh strap",
         "短裤下的紧身裤": "legwear under shorts"
     },
-    "装饰":{
+    "装饰": {
         "光环": "halo",
         "迷你礼帽": "mini_top_hat",
         "贝雷帽": "beret",
@@ -343,7 +343,7 @@ let globalData = {
         "油库里": "yukkuri_shiteitte_ne",
         "百合": "yuri"
     },
-    "表情":{
+    "表情": {
         "微笑": "smirk",
         "诱惑笑": "seductive smile",
         "露齿而笑": "grin",
@@ -394,7 +394,7 @@ let globalData = {
         "血在脸上": "blood on face",
         "唾液": "saliva"
     },
-    "二次元":{
+    "二次元": {
         "食物在脸上（食物可替换）": "food on face",
         "淡淡腮红": "light blush",
         "面纹": "facepaint",
@@ -434,7 +434,7 @@ let globalData = {
         "头发上耳朵": "hair ear",
         "尖耳": "pointy ears"
     },
-    "动作":{
+    "动作": {
         "歪头": "head tilt",
         "回头": "looking back",
         "向下看": "looking down",
@@ -536,7 +536,7 @@ let globalData = {
         "猫耳": "cat ear",
         "猫尾": "cat tail"
     },
-    "天气":{
+    "天气": {
         "白天": "day",
         "黄昏": "dusk",
         "夜晚": "night",
@@ -550,7 +550,7 @@ let globalData = {
         "落日": "sunset",
         "月亮": "moon",
     },
-    "类型":{
+    "类型": {
         "单人": "solo",
         "多个": "multiple girls",
         "小女孩": "little girl",
@@ -570,7 +570,7 @@ let globalData = {
         "熟女": "milf",
         "后宫": "harem"
     },
-    "画质":{
+    "画质": {
         "格子的": "checkered",
         "低分辨率": "lowres",
         "高分辨率": "highres",
@@ -708,33 +708,37 @@ function createElement(name, params) {
     }
     return element;
 }
+
 let must = [
     "正面常用", "负面常用"
 ];
 let neg = [
     "负面常用"
 ];
-var checkTab=null;
+var checkTab = null;
 let myWeight = {};
 let checkBoxs = [];
 var checked = [];
 var uiConfig = {
     "show_add": false,
     "show_weight": false,
-    "show_del":false
+    "show_del": false,
+    "show_en":false
 };
-let allData=globalData;
-var myDelete={
+let allData = globalData;
+var myDelete = {};
 
-};
-function onCheckBoxWeightChange(key, badge,ch) {
+function onCheckBoxWeightChange(key, cb, badge, ch) {
     var mW = myWeight[key];
     if (mW == null) {
         mW = 0;
+    }else{
+        mW=parseInt(mW);
     }
     mW += ch;
     myWeight[key] = mW;
-    badge.innerText=mW;
+    badge.innerText = mW;
+
     onCheckBoxChange();
 }
 
@@ -769,8 +773,11 @@ function onCheckBoxChange() {
             }
         }
     }
-    document.getElementById("textarea_pos").value = a.join(",");
-    document.getElementById("textarea_neg").value = b.join(",");
+    let po = a.join(",")
+    let ne = b.join(",")
+    document.getElementById("textarea_pos").value = po;
+    setToWebUiPos("Prompt",po);
+    document.getElementById("textarea_neg").value = ne;
     saveChecked();
 
 }
@@ -804,6 +811,9 @@ function createTagBtnGroup(key, info, group) {
         "class": "btn-check",
         "autocomplete": "off",
         "id": "btn_" + key
+        // "data-bs-toggle":"tooltip",
+        // "data-bs-placement":"top",
+        // "data-bs-title":info
     });
 
     checkBoxs.push(checkBtn);
@@ -816,7 +826,12 @@ function createTagBtnGroup(key, info, group) {
         "class": "btn btn-outline-primary",
         "for": "btn_" + key
     });
-    checkLabel.innerText = key;
+    if(uiConfig.show_en){
+        checkLabel.innerText = key+"("+info+")";
+    }else{
+        checkLabel.innerText = key;
+    }
+
     let checkBadge = createElement("span", {
         "class": "badge bg-secondary"
     });
@@ -829,10 +844,10 @@ function createTagBtnGroup(key, info, group) {
     }
     checkBtn.onclick = onCheckBoxChange;
     leftBtn.onclick = function () {
-        onCheckBoxWeightChange(key, checkBadge,-1);
+        onCheckBoxWeightChange(key, checkBtn, checkBadge, -1);
     };
     rightBtn.onclick = function () {
-        onCheckBoxWeightChange(key,checkBadge, 1);
+        onCheckBoxWeightChange(key, checkBtn, checkBadge, 1);
     };
 
     checkBtn.setAttribute("my_label", key);
@@ -845,39 +860,41 @@ function createTagBtnGroup(key, info, group) {
     groupLayout.appendChild(checkLabel);
     groupLayout.appendChild(rightBtn);
 
-    if(uiConfig.show_del){
+    if (uiConfig.show_del) {
 
         let delBtn = createElement("button", {
             "type": "button",
             "class": "btn btn-warning",
             "id": "btn_" + key + "_del"
         });
-        delBtn.onclick=function (){
+        delBtn.onclick = function () {
 
-                deleteTag(group,key);
-                toast("重新加载后生效",1000);
-                
+            deleteTag(group, key);
+            toast("重新加载后生效", 1000);
+
         };
-        delBtn.innerText="删除"
+        delBtn.innerText = "删除"
         groupLayout.appendChild(delBtn);
     }
     return groupLayout;
 }
-function isGroupData(group,key){
-    let g=globalData[group];
-    if(g==null) return false;
-    return g[key]!=null;
-}
-function deleteTag(group,key){
-  let gData=  allData[group];
-  if(gData!=null){
-      let kData=gData[key];
-      if(kData!=null){
-          Reflect.deleteProperty(gData, key);
-          saveStorage(group, gData);
 
-      }
-  }
+function isGroupData(group, key) {
+    let g = globalData[group];
+    if (g == null) return false;
+    return g[key] != null;
+}
+
+function deleteTag(group, key) {
+    let gData = allData[group];
+    if (gData != null) {
+        let kData = gData[key];
+        if (kData != null) {
+            Reflect.deleteProperty(gData, key);
+            saveStorage(group, gData);
+
+        }
+    }
 }
 
 /*
@@ -885,36 +902,36 @@ function deleteTag(group,key){
                 <input type="text" class="form-control" placeholder="Server" aria-label="Server">
                 <button type="button" class="btn btn-primary">新增</button>
  */
-function createGroupAdd(group){
-    let div=createElement("div",{
-       "class":"row"
+function createGroupAdd(group) {
+    let div = createElement("div", {
+        "class": "row"
     });
-    let d3=createElement("div",{
-        "class":"input-group mb-3"
+    let d3 = createElement("div", {
+        "class": "input-group mb-3"
     });
-    let u1=createElement("input",{
-        "type":"text",
-        "class":"form-control",
-        "placeholder":"tag名字",
-        "aria-label":"tag名字"
+    let u1 = createElement("input", {
+        "type": "text",
+        "class": "form-control",
+        "placeholder": "tag名字",
+        "aria-label": "tag名字"
     })
-    let u2=createElement("input",{
-        "type":"text",
-        "class":"form-control",
-        "placeholder":"tag内容",
-        "aria-label":"tag内容"
+    let u2 = createElement("input", {
+        "type": "text",
+        "class": "form-control",
+        "placeholder": "tag内容",
+        "aria-label": "tag内容"
     })
-    let btn=createElement("button",{
-       "type":"button",
-       "class":"btn btn-primary"
+    let btn = createElement("button", {
+        "type": "button",
+        "class": "btn btn-primary"
     });
-    btn.innerText="新增 tag"
+    btn.innerText = "新增 tag"
     div.appendChild(d3);
     d3.appendChild(u1);
     d3.appendChild(u2);
     d3.appendChild(btn);
 
-    btn.onclick=function (){
+    btn.onclick = function () {
         let key = u1.value;
         let gData = allData[group];
         if (key == null || key.length === 0) {
@@ -931,7 +948,7 @@ function createGroupAdd(group){
         }
         gData[key] = value;
         saveStorage(group, gData);
-        toast("添加成功,重新加载页面后生效",1000);
+        toast("添加成功,重新加载页面后生效", 1000);
 
     }
     return div;
@@ -941,7 +958,7 @@ function createTagGroupLayout(group, groupData) {
     let layout = createElement("div", {
         "class": "container-sm"
     });
-    let gadd=createGroupAdd(group);
+    let gadd = createGroupAdd(group);
     layout.appendChild(gadd);
 
     for (let key in groupData) {
@@ -1066,8 +1083,8 @@ async function loadUiConfig() {
 
 async function loadCheckConfig() {
     checked = localStorage.getItem("checked_data")
-    if(checked==null){
-        checked=[];
+    if (checked == null) {
+        checked = [];
     }
 }
 
@@ -1095,10 +1112,11 @@ function saveChecked() {
     saveStorage("checked_data", checked);
     saveStorage("myWeight", myWeight);
 }
-async  function  loadDelete(){
-    myDelete=localStorage.getItem("myDelete");
-    if(myDelete==null){
-        myDelete={};
+
+async function loadDelete() {
+    myDelete = localStorage.getItem("myDelete");
+    if (myDelete == null) {
+        myDelete = {};
     }
 }
 
@@ -1110,8 +1128,18 @@ async function loadLocalData() {
     await loadLocalGroupConfig();
 }
 
-async  function clearLocal(){
+async function clearLocal() {
     localStorage.clear();
+}
+
+function configUiCtrl(name){
+    var ctrl1 = document.getElementById(name)
+    ctrl1.checked = uiConfig[name];
+    ctrl1.onclick = function () {
+        uiConfig[name] = ctrl1.checked;
+        saveUiConfig();
+        toast("点击重新加载后生效", 2000);
+    };
 }
 
 function parseAll() {
@@ -1119,7 +1147,7 @@ function parseAll() {
     let navContent = document.getElementById("myTabContent");
 
     var active = true;
-    for (let group in allData ) {
+    for (let group in allData) {
 
         let tab = createNavTab(navUi, navContent, group, active);
         active = false;
@@ -1130,13 +1158,9 @@ function parseAll() {
     }
     resetCheck(false);
 
-    var ctrl1 = document.getElementById("ctrl1")
-    ctrl1.checked = uiConfig.show_del;
-    ctrl1.onclick = function () {
-        uiConfig.show_del = ctrl1.checked;
-        saveUiConfig();
-        toast("点击重新加载后生效", 1000);
-    };
+
+    configUiCtrl("show_en");
+    configUiCtrl("show_del");
 
     document.getElementById("textarea_pos").onclick = function () {
         copyToClip(document.getElementById("textarea_pos").value)
@@ -1148,18 +1172,52 @@ function parseAll() {
         resetCheck(true);
     };
     document.getElementById("btn_reload").onclick = function () {
-      location.reload();
+        location.reload();
     };
     document.getElementById("btn_clear").onclick = function () {
-        clearLocal().then(function (p){
+        clearLocal().then(function (p) {
             location.reload();
         })
     };
     onCheckBoxChange();
 }
 
+function setToWebUiPos(k,data) {
+    // try {
+    //     if (chrome == null || chrome.devtools == null) {
+    //         toast("null")
+    //         return
+    //     }
+    //
+    //
+    //
+    //     chrome.devtools.inspectedWindow.eval(
+    //         "document.getElementById(\"component-30\")",
+    //         function (p,ex) {
+    //             toast("tag "+ex+" "+p.length);
+    //             for(var i=0;i<p.length;i++){
+    //
+    //                 var textera=p.item(i);
+    //                 var tag=textera.getAttribute("placeholder");
+    //                 toast("tag "+tag+" "+textera,1000);
+    //                 if(tag==k){
+    //                     textera.value=data;
+    //                 }
+    //
+    //             }
+    //         }
+    //     )
+    //
+    // } catch (e) {
+    //
+    //     toast("err,"+e)
+    // }
+}
+
 window.onload = function () {
     loadLocalData().then(p => {
         parseAll();
+        // const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        // const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
     })
 };

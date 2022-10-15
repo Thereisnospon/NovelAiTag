@@ -58,7 +58,9 @@
             border-radius: 6px;
             opacity: 0.8;
         }
-
+        .custom-tooltip {
+            --bs-tooltip-bg: var(--bs-primary);
+        }
         .toliet {
             margin: 0 auto;
         }
@@ -74,37 +76,67 @@
     </div>
 
 </div>
+
+
+
 <div class="container">
 
 
     <div class="container text-center">
 
 
-        <div class="row align-items-start">
-            <label>紧急公告:点击左右边按钮是增减权重，点中间才是添加 tag,交流群 789546203</label>
-            <div class="col">
+        <div class="row">
+            <p>
+                <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    打开/关闭 功能介绍&获取帮助
+
+                </a>
+
+
+                <a class="btn btn-primary" data-bs-toggle="collapse" href="#col2" role="button" aria-expanded="false" aria-controls="col2">
+                    打开/关闭 UI控制面板
+
+                </a>
+            </p>
+
+            <div class="collapse" id="col2">
+
+                <p>
                 <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="ctrl1">
-                    <label class="form-check-label" for="ctrl1">显示tag删除按钮</label>
+                    <input class="form-check-input" type="checkbox" id="show_del">
+                    <label class="form-check-label" for="show_del">显示tag删除按钮</label>
                 </div>
-
-
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="show_en">
+                    <label class="form-check-label" for="show_en">显示TAG英文</label>
+                </div>
+                </p>
             </div>
-
-
-            <div class="col">
-
-                <div class="container-fluid">
+            <div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                    1. TAG 点击左边是减少权重，中间是打开关闭 TAG ，右边是增加权重，没有打开 TAG 只增减权重不会添加TAG。
+                    <a href="https://space.bilibili.com/6537379" class="link-primary" target="_blank">点击查看-B站完整功能视频介绍</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="row align-items-center">
+                <div class="col">
                     <button type="button" class="btn btn-primary" id="btn_clear">删除本地存储</button>
+                </div>
+                <div class="col">
                     <button type="button" class="btn btn-primary" id="btn_reload">重新加载页面</button>
+                </div>
+                <div class="col">
                     <button type="button" class="btn btn-primary" id="btn_reset">重置选择的Tag</button>
                 </div>
             </div>
+            <div class="container-fluid">
 
 
 
+            </div>
         </div>
-
 
         <div class="row">
             <div class="input-group">
@@ -148,7 +180,5 @@
 </div>
 
 </div>
-
-
 </body>
 </html>
