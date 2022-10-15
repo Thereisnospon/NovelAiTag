@@ -477,7 +477,6 @@ let globalData = {
         "婴儿姿势": "fetal position",
         "靠墙": " against wall",
         "趴着": "on_stomach",
-        "坐": "sitting on",
         "正坐": "seiza",
         "割坐": "wariza/w-sitting",
         "侧身坐": "yokozuwari",
@@ -487,7 +486,7 @@ let globalData = {
         "下跪": "kneeling",
         "抽烟": "smoking",
         "用手支撑住": "arm_support",
-        "": "caramelldansen",
+
         "公主抱": "princess_carry",
         "战斗姿态": "fighting_stance",
         "颠倒的": "upside-down",
@@ -743,9 +742,30 @@ function onCheckBoxWeightChange(key, cb, badge, ch) {
     onCheckBoxChange();
 }
 
+function hasChild(childNs,key){
+    for(var i=0;i<childNs.length;i++){
+        var d=childNs[i];
+
+      let label=  d.getAttribute("my_label");
+      if(label!=null&&label===key){
+          return true;
+      }
+    }
+    return false;
+}
+
 function onCheckBoxChange() {
     let a = [];
     let b = [];
+
+    let selectDiv=document.getElementById("selected_btn_div");
+    let childrens=selectDiv.children;
+
+    let childNs=[];
+    for(var i=0;i<childrens.length;i++){
+        var d=childrens.item(i);
+        childNs.push(d);
+    }
     for (var i = 0; i < checkBoxs.length; i++) {
         let cb = checkBoxs[i];
         let info = cb.getAttribute("my_info");
@@ -766,12 +786,20 @@ function onCheckBoxChange() {
                         }
                     }
                 }
+                if(!hasChild(childNs,label)){
+                    let danger=neg.indexOf(group)>-1;
+                    let selectBtn=createSelectedBtn(label,danger,group+":"+label);
+                    selectDiv.appendChild(selectBtn);
+                }
+
+                if (neg.indexOf(group) > -1) {
+                    b.push(fInfo);
+                } else {
+                    a.push(fInfo);
+                }
             }
-            if (neg.indexOf(group) > -1) {
-                b.push(fInfo);
-            } else {
-                a.push(fInfo);
-            }
+
+
         }
     }
     let po = a.join(",")
@@ -1217,6 +1245,34 @@ function modifyGroupData() {
     toast("保存分组顺序成功,重新加载页面后生效",2000);
 }
 
+/*
+  <button type="button" class="btn btn-primary">Primary</button>
+ */
+function createSelectedBtn(key,danger,text){
+    let btn=createElement("button",{
+        "type":"button",
+        "class":danger?"btn btn-warning btn-sm":"btn btn-primary btn-sm",
+        "my_label":key
+    });
+    btn.innerText=text;
+    btn.onclick=function (){
+        for (var i = 0; i < checkBoxs.length; i++) {
+            let cb = checkBoxs[i];
+            let label = cb.getAttribute("my_label");
+            if (label != null && label===key) {
+                cb.checked=false;
+                let par=btn.parentNode;
+                if(par!=null){
+                    par.removeChild(btn);
+                }
+                break;
+            }
+        }
+        onCheckBoxChange();
+    }
+    return btn;
+}
+
 function parseAll() {
     let navUi = document.getElementById("myTab");
     let navContent = document.getElementById("myTabContent");
@@ -1239,6 +1295,8 @@ function parseAll() {
 
     configUiCtrl("show_en");
     configUiCtrl("show_del");
+
+    document.getElementById("selected_btn_div");
 
     document.getElementById("textera_group").value = groupOrder.join(",");
     document.getElementById("btn_group_reset").onclick = function () {
