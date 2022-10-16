@@ -106,7 +106,10 @@
                         分类/TAB 排序/增删
                     </a>
                     <a class="btn btn-primary btn-sm" data-bs-toggle="collapse" href="#col4" role="button" aria-expanded="false" aria-controls="col4">
-                        批量导入TAG
+                        TAG批量导入/出
+                    </a>
+                    <a class="btn btn-danger btn-sm" data-bs-toggle="collapse" href="#col5" role="button" aria-expanded="false" aria-controls="col4">
+                        随机抽卡
                     </a>
                 </div>
 
@@ -155,20 +158,44 @@
 
             <div class="collapse" id="col4">
                 <div class="input-group">
-                    <span class="input-group-text">批量</span>
-                    <select class="form-select form-select-sm" aria-label="Default select example" id="batch_group_select">
+                    <span class="input-group-text">分组</span>
+                    <select class="form-select-sm" aria-label="Default select example" id="batch_group_select">
 <!--                        <option selected>Open this select menu</option>-->
 <!--                        <option value="1">One</option>-->
 <!--                        <option value="2">Two</option>-->
 <!--                        <option value="3">Three</option>-->
                     </select>
-                    <textarea class="form-control" aria-label="With textarea" id="batch_group_text"  style="resize:none"  placeholder="(在此输入)批量导入，每条数据一行,tag名字和tag内容用英文逗号隔开。如 头发,hair"></textarea>
+                    <span class="input-group-text">分隔符</span>
+                    <select class="form-select-sm" aria-label="Default select example" id="batch_group_select_split">
+                        <option value="," >,</option>
+                        <option value=":" >:</option>
+                        <option value="@" >@</option>
+                        <option value="$" >$</option>
+                    </select>
+                    <textarea class="form-control" aria-label="With textarea" id="batch_group_text"  style="resize:none"  placeholder="(在此输入)批量导入，每条数据一行,tag名字和tag内容用分割符号隔开。如选择了英文逗号则是 头发,hair， 如果选择了英文冒号，则头发:hair "></textarea>
                     <button type="button" class="btn btn-primary btn-sm" id="batch_group_btn">批量导入</button>
-
+                    <button type="button" class="btn btn-primary btn-sm" id="batch_group_print">批量导出</button>
 
                 </div>
 
             </div>
+
+            <div class="collapse" id="col5">
+                <div class="input-group">
+                    <span class="input-group-text">抽卡</span>
+                    <textarea class="form-control" aria-label="With textarea" id="textera_go" disabled></textarea>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-danger btn-sm" id="btn_rnd1">每分组随机+1</button>
+                        <button type="button" class="btn btn-success btn-sm" id="btn_rnd2">每分组随机-1</button>
+                        <button type="button" class="btn btn-danger btn-sm" id="btn_rnd3">随机一个分组+1</button>
+                        <button type="button" class="btn btn-success btn-sm" id="btn_rnd4">随机一个分组-1</button>
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
         <div class="row">
 
