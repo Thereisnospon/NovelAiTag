@@ -1146,6 +1146,7 @@ function getAllCanRandomGroup(){
     return data;
 }
 
+
 function randomAllInc(){
     let all=getAllCanRandomGroup();
     forEachArray(all,function (p) {
@@ -1153,16 +1154,40 @@ function randomAllInc(){
     })
     onTagsUiChange();
 }
+
 function randomAllDec(){
     let all=getAllCanRandomGroup();
+
     forEachArray(all,function (p) {
         randGroupMinus(p,1,false);
     })
     onTagsUiChange();
 }
 
+function checkBoxCount(checks,check){
+    var count=0;
+    for(let i=0;i<checks.length;i++){
+        if(checks[i].checked && check){
+            count++;
+        }else if(!checks[i].checked && !check){
+            count++;
+        }
+    }
+    return count;
+}
+
 function randomOneInc(){
-    let all=getAllCanRandomGroup();
+    let toALL=getAllCanRandomGroup();
+    let all=[];
+    for(let i in toALL){
+        let g=toALL[i];
+        let checks=getGroupAllCheck(g);
+
+        if(checkBoxCount(checks,true)>0){
+            all.push(g);
+        }
+    }
+
     if(all.length<=0){
         return
     }
@@ -1170,6 +1195,15 @@ function randomOneInc(){
     randGroupPlus(all[rnd],1);
 }
 function randomOneDec(){
+    let toALL=getAllCanRandomGroup();
+    let all=[];
+    for(let i in toALL){
+        let g=toALL[i];
+        let checks=getGroupAllCheck(g);
+        if(checkBoxCount(checks,false)>0){
+            all.push(g);
+        }
+    }
     if(all.length<=0){
         return
     }
