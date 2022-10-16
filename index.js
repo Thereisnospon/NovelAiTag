@@ -489,7 +489,7 @@ let globalData = {
         "头发上耳朵": "hair ear",
         "尖耳": "pointy ears"
     },
-    "基础动作":{
+    "基础动作": {
         "坐": "sitting",
         "站": "stand",
         "蹲着": "squat",
@@ -507,7 +507,7 @@ let globalData = {
         "睡觉": "sleeping",
         "洗澡": "bathing",
     },
-    "手动作":{
+    "手动作": {
         "手放在嘴边": "hand_to_mouth",
         "手放头旁边": "arm at side ",
         "手放脑后": "arms behind head",
@@ -538,7 +538,7 @@ let globalData = {
         "张手": "spread_arms",
         "双手叉腰": "hands on hip"
     },
-    "腿动作":{
+    "腿动作": {
         "张开腿": "spread legs",
         "二郎腿": "crossed_legs",
         "曲腿至胸": "fetal_position",
@@ -668,13 +668,13 @@ let globalData = {
     "正面常用": {
         "高质量": "best quality",
         "高细节": "highly detailed",
-        "杰作":"masterpiece",
-        "超细节":"ultra-detailed",
-        "插图":"illustration",
+        "杰作": "masterpiece",
+        "超细节": "ultra-detailed",
+        "插图": "illustration",
     },
 
     "负面常用": {
-        "nsfw":"nsfw",
+        "nsfw": "nsfw",
         "lowres": "lowres",
         "bad anatomy": "bad anatomy",
         "bad hands": "bad hands",
@@ -692,9 +692,9 @@ let globalData = {
         "watermark": "watermark",
         "username": "username",
         "blurry": "blurry",
-        "missing arms":"missing arms",
-        "long neck":"long neck",
-        "Humpbacked":"Humpbacked"
+        "missing arms": "missing arms",
+        "long neck": "long neck",
+        "Humpbacked": "Humpbacked"
     },
 
     "自定义": {
@@ -720,7 +720,7 @@ let neg = [
 ];
 var checkTab = null;
 let myWeight = {};
-let checkBoxs = [];
+
 var checked = [];
 var uiConfig = {
     "show_add": false,
@@ -746,64 +746,92 @@ function onCheckBoxWeightChange(key, cb, badge, ch) {
     onCheckBoxChange();
 }
 
-function hasChild(childNs,key){
-    for(var i=0;i<childNs.length;i++){
-        var d=childNs[i];
+function getChildKeyChild(childNs, key) {
+    for (var i = 0; i < childNs.length; i++) {
+        var d = childNs[i];
 
-      let label=  d.getAttribute("my_label");
-      if(label!=null&&label===key){
-          return true;
-      }
+        let label = d.getAttribute("my_label");
+        if (label != null && label === key) {
+            return d;
+        }
     }
-    return false;
+    return null;
+}
+
+let _textUiElements = {
+    "checkBox_array": [],
+    "uiMap": {
+        "自定义": {
+            "短发": {
+                "checkBoxs": [],
+                "quickBtn": null
+            }
+        }
+    }
+};
+
+let uiElements = {
+    "checkBox_array": [],
+    "uiMap": {}
+};
+
+function getStandardTagCheck() {
+    return uiElements.checkBox_array;
+}
+
+function getWeightInfo(key, info) {
+    let weight = myWeight[key];
+    var fInfo = info;
+    if (weight != null && weight !== 0) {
+        let neg = weight < 0;
+        let abs = weight < 0 ? (-weight) : weight;
+        for (var j = 0; j < abs; j++) {
+            if (!neg) {
+                fInfo = "{" + fInfo + "}";
+            } else {
+                fInfo = "[" + fInfo + "]";
+            }
+        }
+    }
+    return fInfo;
+}
+
+function isNegativeGroup(group) {
+    return neg.indexOf(group) > -1;
 }
 
 function onCheckBoxChange() {
     let a = [];
     let b = [];
 
-    let selectDiv=document.getElementById("selected_btn_div");
-    let childrens=selectDiv.children;
-
-    let childNs=[];
-    for(var i=0;i<childrens.length;i++){
-        var d=childrens.item(i);
-        childNs.push(d);
-    }
+    let selectDiv = document.getElementById("selected_btn_div");
+    let checkBoxs = getStandardTagCheck();
     for (var i = 0; i < checkBoxs.length; i++) {
         let cb = checkBoxs[i];
         let info = cb.getAttribute("my_info");
         let group = cb.getAttribute("my_group");
-        if (info != null && group != null && cb.checked) {
-            let label = cb.getAttribute("my_label");
-            let fInfo = info;
-            if (label != null) {
-                let weight = myWeight[label];
-                if (weight != null && weight !== 0) {
-                    let neg = weight < 0;
-                    let abs = weight < 0 ? (-weight) : weight;
-                    for (var j = 0; j < abs; j++) {
-                        if (!neg) {
-                            fInfo = "{" + fInfo + "}";
-                        } else {
-                            fInfo = "[" + fInfo + "]";
-                        }
-                    }
-                }
-                if(!hasChild(childNs,label)){
-                    let danger=neg.indexOf(group)>-1;
-                    let selectBtn=createSelectedBtn(label,danger,group+":"+label);
-                    selectDiv.appendChild(selectBtn);
-                }
-
-                if (neg.indexOf(group) > -1) {
-                    b.push(fInfo);
-                } else {
-                    a.push(fInfo);
-                }
+        let label = cb.getAttribute("my_label");
+        if (info == null || group == null || label == null) {
+            continue;
+        }
+        let uiEle = getOrPutUiGP(group, label);
+        let quickBtn = uiEle.quickBtn;
+        if (cb.checked) {
+            if (quickBtn == null) {
+                let selectBtn = createSelectedBtn(group, label, isNegativeGroup(group));
+                selectDiv.appendChild(selectBtn);
             }
-
-
+            let weighInfo=getWeightInfo(label,info);
+            if (isNegativeGroup(group)) {
+                b.push(weighInfo);
+            } else {
+                a.push(weighInfo);
+            }
+        } else {
+            if (quickBtn != null) {
+                uiEle.quickBtn = null;
+                tryRemoveFromParent(quickBtn);
+            }
         }
     }
     let po = a.join(",")
@@ -848,8 +876,9 @@ function createTagBtnGroup(key, info, group) {
         // "data-bs-placement":"top",
         // "data-bs-title":info
     });
-
+    let checkBoxs = getStandardTagCheck()
     checkBoxs.push(checkBtn);
+    getOrPutUiGP(group, key).checkBoxs.push(checkBtn);
 
     if (checked.indexOf(key) > -1) {
         checkBtn.checked = true;
@@ -1062,6 +1091,7 @@ function resetCheck(resetAll) {
     if (checked == null) {
         checked = [];
     }
+    let checkBoxs = getStandardTagCheck()
     for (var i = 0; i < checkBoxs.length; i++) {
         var cb = checkBoxs[i];
         let info = cb.getAttribute("my_label");
@@ -1134,6 +1164,7 @@ async function loadLocalGroupConfig() {
 
 function saveChecked() {
     var checked = [];
+    let checkBoxs = getStandardTagCheck()
     for (var i = 0; i < checkBoxs.length; i++) {
         let cb = checkBoxs[i];
         let info = cb.getAttribute("my_label");
@@ -1147,10 +1178,10 @@ function saveChecked() {
 }
 
 async function loadGroupOrder() {
-   let s = localStorage.getItem("groupOrder");
-   if(s!=null){
-       groupOrder=JSON.parse(s);
-   }
+    let s = localStorage.getItem("groupOrder");
+    if (s != null) {
+        groupOrder = JSON.parse(s);
+    }
     if (groupOrder == null || groupOrder.length === 0) {
         groupOrder = [];
         for (let p in allData) {
@@ -1171,7 +1202,7 @@ function saveGroupOrder(order) {
             allData[p] = {};
         }
     }
-    saveStorage("g2",["sss","b"]);
+    saveStorage("g2", ["sss", "b"]);
     saveStorage("groupOrder", order);
 }
 
@@ -1193,24 +1224,24 @@ async function loadLocalData() {
     await checkData();
 }
 
-async function checkData(){
-    let kSet={};
-    let vKet={};
-    for(let g in allData){
-        let gData=allData[g];
-        for(let key in gData){
-            let value=gData[key];
-            let aKeyGroup=kSet[key];
-            if(aKeyGroup!=null){
-                console.log("重复的 key "+g+":"+key+" 与 "+aKeyGroup+":"+key);
-            }else{
-                kSet[key]=g;
+async function checkData() {
+    let kSet = {};
+    let vKet = {};
+    for (let g in allData) {
+        let gData = allData[g];
+        for (let key in gData) {
+            let value = gData[key];
+            let aKeyGroup = kSet[key];
+            if (aKeyGroup != null) {
+                console.log("重复的 key " + g + ":" + key + " 与 " + aKeyGroup + ":" + key);
+            } else {
+                kSet[key] = g;
             }
-            let aValueGroup=vKet[value];
-            if(aValueGroup!=null){
-                console.log("重复的 value "+g+":"+value+" 与 "+aValueGroup+":"+value);
-            }else{
-                vKet[value]=g;
+            let aValueGroup = vKet[value];
+            if (aValueGroup != null) {
+                console.log("重复的 value " + g + ":" + value + " 与 " + aValueGroup + ":" + value);
+            } else {
+                vKet[value] = g;
             }
         }
     }
@@ -1237,65 +1268,92 @@ function modifyGroupData() {
         toast("请输入合理的分组列表顺序", 2000);
         return
     }
-    let groups=data.split(",")
-    if(groups==null || groups.length===0){
+    let groups = data.split(",")
+    if (groups == null || groups.length === 0) {
         toast("请输入合理的分组列表顺序", 2000);
         return
     }
-    if(data.indexOf("，")>-1){
+    if (data.indexOf("，") > -1) {
         toast("请不要使用中文逗号", 2000);
         return
     }
-    if(data.indexOf(" ")>-1){
+    if (data.indexOf(" ") > -1) {
         toast("请不要使用空格，使用英文逗号分割", 2000);
         return
     }
-    let st=[];
-    for(let i in groups){
-        let key=groups[i];
-        if(key!=null && key.trim().length>0){
-            if(st.indexOf(key)>-1){
-                toast("存在相同分组 "+key, 2000);
+    let st = [];
+    for (let i in groups) {
+        let key = groups[i];
+        if (key != null && key.trim().length > 0) {
+            if (st.indexOf(key) > -1) {
+                toast("存在相同分组 " + key, 2000);
                 return;
-            }else{
+            } else {
                 st.push(key);
             }
-            let groupData=groups[i];
-            if(groupData==null&&!(key.startsWith("m"))){
-                toast("新增的自定义分组 "+key+" 没有以m开头,或者不要修改当前已有的分组名",3000);
+            let groupData = groups[i];
+            if (groupData == null && !(key.startsWith("m"))) {
+                toast("新增的自定义分组 " + key + " 没有以m开头,或者不要修改当前已有的分组名", 3000);
                 return;
             }
         }
 
     }
-    groupOrder=st;
+    groupOrder = st;
     saveGroupOrder(st);
-    toast("保存分组顺序成功,重新加载页面后生效",2000);
+    toast("保存分组顺序成功,重新加载页面后生效", 2000);
 }
 
-/*
-  <button type="button" class="btn btn-primary">Primary</button>
- */
-function createSelectedBtn(key,danger,text){
-    let btn=createElement("button",{
-        "type":"button",
-        "class":danger?"btn btn-warning btn-sm":"btn btn-primary btn-sm",
-        "my_label":key
-    });
-    btn.innerText=text;
-    btn.onclick=function (){
-        for (var i = 0; i < checkBoxs.length; i++) {
-            let cb = checkBoxs[i];
-            let label = cb.getAttribute("my_label");
-            if (label != null && label===key) {
-                cb.checked=false;
-                let par=btn.parentNode;
-                if(par!=null){
-                    par.removeChild(btn);
-                }
-                break;
-            }
+function getOrPutUiGP(group, key) {
+    let uiMap = uiElements["uiMap"];
+    var groupData = uiMap[group];
+    if (groupData == null) {
+        groupData = {};
+        uiMap[group]=groupData;
+    }
+    var keyData = groupData[key];
+    if (keyData == null) {
+        keyData = {
+            "checkBoxs": []
         }
+        groupData[key]=keyData;
+    }
+    return keyData
+}
+
+function forEachArray(array, call) {
+    for (var i = 0; i < array.length; i++) {
+        var data = array[i];
+        call(data);
+    }
+}
+
+function tryRemoveFromParent(child) {
+    let parent = child.parentNode;
+    if (parent != null) {
+        parent.removeChild(child);
+    }
+}
+
+function createSelectedBtn(group, key, danger) {
+    let text = group + ":" + key
+    let btn = createElement("button", {
+        "type": "button",
+        "class": danger ? "btn btn-warning btn-sm" : "btn btn-primary btn-sm",
+        "my_label": key
+    });
+    btn.innerText = text;
+    getOrPutUiGP(group, key).quickBtn = btn;
+
+
+    btn.onclick = function () {
+        let uiData = getOrPutUiGP(group, key)
+        let childChecks = uiData.checkBoxs;
+        forEachArray(childChecks, function (cb) {
+            cb.checked = false;
+        })
+        uiData.quickBtn = null;
+        tryRemoveFromParent(btn);
         onCheckBoxChange();
     }
     return btn;
@@ -1346,8 +1404,8 @@ function parseAll() {
         location.reload();
     };
     document.getElementById("btn_clear").onclick = function () {
-        let confirm=window.confirm("删除本地存储可以解决大部分bug，但是意味着分组顺序以及添加tag会被清空")
-        if(confirm){
+        let confirm = window.confirm("删除本地存储可以解决大部分bug，但是意味着分组顺序以及添加tag会被清空")
+        if (confirm) {
             clearLocal().then(function (p) {
                 location.reload();
             })
