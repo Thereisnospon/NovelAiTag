@@ -5,7 +5,7 @@ let globalData = {
         "秃积雨云": "cumulonimbus calvus",
         "鬃积雨云": "cumulonimbus capillatus",
         "璀璨星空": "Bright stars",
-        "花丝带": "flower ribbon",
+
         "细节的水": "starry detailed water",
         "细节的天空": "beautiful detailed starry sky",
         "花丛": "flowering shrubs",
@@ -13,7 +13,6 @@ let globalData = {
     },
     "画质": {
         "格子的": "checkered",
-        "低分辨率": "lowres",
         "高分辨率": "highres",
         "超高分辨率": "absurdres",
         "极高分辨率": "incredibly_absurdres",
@@ -34,7 +33,7 @@ let globalData = {
         "穿越": "crossover",
         "暗的": "dark",
         "亮的": "light",
-        "晚上": "night",
+
         "猎奇": "guro",
         "写实": "realistic",
         "照片": "photo",
@@ -135,7 +134,7 @@ let globalData = {
         "白色丝袜": "white silk stocking",
         "西装": "suit",
 
-        "吊带袜": "suspende",
+
         "湿衣服": "wet clothes",
 
         "比基尼": "bikini",
@@ -291,7 +290,6 @@ let globalData = {
         "发饰": "hair ornament",
         "心形": "heart hair ornament",
         "创可贴": "bandaid",
-        "发包": "hair bun",
         "锥形发髻": "cone hair bun",
         "双发髻": "double bun",
         "半无框的眼镜": "semi-rimless eyewear",
@@ -316,7 +314,6 @@ let globalData = {
         "领带": "necktie",
         "十字架": "cross necklace",
         "吊坠": "pendant",
-        "珠宝": "jewelry",
         "围巾": "scarf",
         "臂章": "armband",
         "臂环": "armlet",
@@ -376,12 +373,11 @@ let globalData = {
         "后宫": "harem",
         "偶像": "idol",
         "兽耳萝莉模式": "kemonomimi_mode",
-        "萝莉": "loli",
+
         "魔法少女": "magical_girl",
         "男人": "male",
         "美人鱼": "mermaid",
         "巫女": "miko",
-        "熟女": "milf",
         "迷你女孩": "minigirl",
         "怪物": "monster",
         "魔幻少女": "multiple_girls",
@@ -389,7 +385,6 @@ let globalData = {
         "非人": "no_humans",
         "修女": "nun",
         "护士": "nurse",
-        "正太": "shota",
         "空姐": "stewardess",
         "吸血鬼": "vampire",
         "女服务员": "waitress",
@@ -419,14 +414,13 @@ let globalData = {
         "生气": "angry",
         "苦恼的": "annoyed",
         "皱眉": "frown",
-        "认真": "smirk",
         "严肃": "serious",
         "鄙夷": "jitome",
         "锐利": "scowl",
         "疯狂的": "crazy",
         "黑化的": "dark_persona",
         "得意": "smug",
-        "调皮脸": "naughty_face",
+
         "一只眼睛闭上": "one eye closed",
         "半闭眼睛": "half-closed eyes",
         "鼻血": "nosebleed",
@@ -460,7 +454,6 @@ let globalData = {
         "白色眉毛": "white eyebrows",
         "吊眼角": "tsurime",
         "渐变眼": "gradient_eyes",
-        "美丽的细节眼睛": "beautiful detailed eyes",
         "垂眼角": "tareme",
         "猫眼": "slit pupils ",
         "异色瞳": "heterochromia ",
@@ -613,7 +606,6 @@ let globalData = {
         "多云": "cloudy",
         "满月": "full_moon",
         "太阳": "sun",
-        "落日": "sunset",
         "月亮": "moon",
     },
     "类型": {
@@ -633,8 +625,7 @@ let globalData = {
         "成熟女性": "mature female",
         "成熟": "mature",
         "痴女": "female pervert",
-        "熟女": "milf",
-        "后宫": "harem"
+        "熟女": "milf"
     },
 
     "环境": {
@@ -652,8 +643,6 @@ let globalData = {
         "秋": "in autumn",
         "冬": "in winter",
         "夏威夷": "in hawaii",
-        "城市风景": "cityscape",
-        "风景": "landscape",
         "好天": "beautiful detailed sky",
         "好水": "beautiful detailed water",
         "海滩上": "on the beach",
@@ -699,7 +688,6 @@ let globalData = {
 
     "自定义": {
         "漂亮眼睛": "beautiful detailed eyes",
-        "粉红长裙": "pink lucency full dress",
         "华丽": "gorgeous"
     }
 };
@@ -721,6 +709,7 @@ var uiConfig = {
     "show_en": false
 };
 let allData = globalData;
+let allKeyData={};
 var myDelete = {};
 var groupOrder = [];
 let _textUiElements = {
@@ -1017,7 +1006,12 @@ function createGroupAdd(group) {
 
     btn.onclick = function () {
         let key = tagNameInput.value;
-        let gData = allData[group];
+        var gData = allData[group];
+        if(gData==null && groupOrder.indexOf(group)>-1){
+            gData={};
+            allData[group]={};
+            console.log("fix bug")
+        }
         if (key == null || key.length === 0) {
             window.alert("tag内容输入框 为空");
             return
@@ -1130,6 +1124,7 @@ function loadStorage(key, groupData) {
     var s = localStorage.getItem(key);
     if (s != null) {
         var pData = JSON.parse(s)
+
         for (let p in pData) {
             let pValue = pData[p];
             groupData[p] = pValue;
@@ -1178,10 +1173,31 @@ async function loadWeightConfig() {
 }
 
 async function loadLocalGroupConfig() {
+    let allG={};
+    let s = localStorage.getItem("groupOrder");
+
+    if (s != null) {
+        let gOr=JSON.parse(s);
+        if(gOr!=null){
+            for(let i in gOr){
+                let g=gOr[i];
+                allG[g]=true;
+            }
+        }
+
+    }
     for (let group in allData) {
-        let value = allData[group];
+        allG[group]=true;
+    }
+    for (let group in allG) {
+        var value = allData[group];
+        if(value==null){
+            value={};
+            allData[group]=value;
+        }
         loadStorage(group, value);
     }
+    console.log(allG)
 }
 
 function saveChecked() {
@@ -1218,10 +1234,12 @@ function clearGroupOrder() {
 }
 
 function saveGroupOrder(order) {
-    for (let p in order) {
+    for (let i in order) {
+        let p=order[i];
         let data = allData[p];
         if (data == null) {
             allData[p] = {};
+            saveStorage(p,{});
         }
     }
     saveStorage("groupOrder", order);
@@ -1372,12 +1390,64 @@ function createSelectedBtn(group, key, danger) {
     return btn;
 }
 
+
+function tryAddBatch(group,text){
+   let lines=text.split(/[\s\n]/)
+    var count=0;
+
+    let gData=allData[group];
+    if(gData!=null){
+        for(let i in lines){
+            let line=lines[i];
+            let data=line.split(",");
+            if(data!=null && data.length===2){
+                let k=data[0];
+                let v=data[1];
+                if(k!=null && v!=null){
+                    if(gData[k]==null){
+                        gData[k]=v;
+                        count++;
+                    }
+                }
+            }
+        }
+        saveStorage(group,gData);
+    }
+    toast("批量添加 "+count+" 条数据，重新加载页面生效",2000)
+
+}
+
+function initBatchGroup(){
+    let inputSelect=document.getElementById("batch_group_select");
+    let inputText=document.getElementById("batch_group_text");
+    let inputBtn=document.getElementById("batch_group_btn");
+    var sle=true;
+    for (var i=groupOrder.length-1;i>0;i--) {
+        let group = groupOrder[i];
+        if (group != null) {
+            let optionEle=createElement("option",{
+                "value":group
+            })
+
+            optionEle.innerText=group;
+            if(sle){
+                optionEle.selected=true
+                sle=false;
+            }
+            inputSelect.appendChild(optionEle);
+        }
+    }
+    inputBtn.onclick=function (){
+        tryAddBatch(inputSelect.options[inputSelect.selectedIndex].value,inputText.value)
+    }
+}
 function parseAll() {
     let navUi = document.getElementById("myTab");
     let navContent = document.getElementById("myTabContent");
 
     var active = true;
     for (let i in groupOrder) {
+
         let group = groupOrder[i];
         if (group != null) {
             let tab = createNavTab(navUi, navContent, group, active);
@@ -1394,7 +1464,7 @@ function parseAll() {
 
     configUiCtrlElement("show_en");
     configUiCtrlElement("show_del");
-
+    initBatchGroup();
     document.getElementById("selected_btn_div");
 
     document.getElementById("textera_group").value = groupOrder.join(",");

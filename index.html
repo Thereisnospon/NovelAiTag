@@ -105,6 +105,9 @@
                     <a class="btn btn-primary btn-sm" data-bs-toggle="collapse" href="#col3" role="button" aria-expanded="false" aria-controls="col3">
                         分类/TAB 排序/增删
                     </a>
+                    <a class="btn btn-primary btn-sm" data-bs-toggle="collapse" href="#col4" role="button" aria-expanded="false" aria-controls="col4">
+                        批量导入TAG
+                    </a>
                 </div>
 
             </div>
@@ -144,6 +147,24 @@
                         <button type="button" class="btn btn-primary btn-sm" id="btn_group_reset">重置分组顺序</button>
                         <button type="button" class="btn btn-primary btn-sm" id="btn_group_modify">修改分组/TAB</button>
                     </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="collapse" id="col4">
+                <div class="input-group">
+                    <span class="input-group-text">批量</span>
+                    <select class="form-select form-select-sm" aria-label="Default select example" id="batch_group_select">
+<!--                        <option selected>Open this select menu</option>-->
+<!--                        <option value="1">One</option>-->
+<!--                        <option value="2">Two</option>-->
+<!--                        <option value="3">Three</option>-->
+                    </select>
+                    <textarea class="form-control" aria-label="With textarea" id="batch_group_text"  style="resize:none"  placeholder="(在此输入)批量导入，每条数据一行,tag名字和tag内容用英文逗号隔开。如 头发,hair"></textarea>
+                    <button type="button" class="btn btn-primary btn-sm" id="batch_group_btn">批量导入</button>
+
 
                 </div>
 
