@@ -740,7 +740,7 @@ let uiElements = {
 };
 
 /**
- * 创建一个 UiElement
+ * 创建一个 html element
  * @param name
  * @param params
  * @returns {*}
@@ -753,6 +753,13 @@ function createElement(name, params) {
     return element;
 }
 
+/**
+ * 更新一个 tag 的权重
+ * @param key
+ * @param cb
+ * @param badge
+ * @param chValue
+ */
 function onCheckBoxWeightChange(key, cb, badge, chValue) {
     var weight = myWeight[key];
     if (weight == null) {
@@ -763,35 +770,53 @@ function onCheckBoxWeightChange(key, cb, badge, chValue) {
     weight += chValue;
     myWeight[key] = weight;
     badge.innerText = weight;
-    onCheckBoxChange();
+    onTagsUiChange();
 }
 
+/**
+ * 获取标准显示的 tag 的 checkBox
+ * @returns {[]}
+ */
 function getStandardTagCheck() {
     return uiElements.checkBox_array;
 }
 
+/**
+ * 获取 加权显示的 tag
+ * @param key
+ * @param info
+ * @returns {string}
+ */
 function getWeightInfo(key, info) {
     let weight = myWeight[key];
-    var fInfo = info;
+    var weightInfo = info;
     if (weight != null && weight !== 0) {
         let neg = weight < 0;
         let abs = weight < 0 ? (-weight) : weight;
         for (var j = 0; j < abs; j++) {
             if (!neg) {
-                fInfo = "{" + fInfo + "}";
+                weightInfo = "{" + weightInfo + "}";
             } else {
-                fInfo = "[" + fInfo + "]";
+                weightInfo = "[" + weightInfo + "]";
             }
         }
     }
-    return fInfo;
+    return weightInfo;
 }
 
+/**
+ * 是否为 负面关键词 group
+ * @param group
+ * @returns {boolean}
+ */
 function isNegativeGroup(group) {
     return neg.indexOf(group) > -1;
 }
 
-function onCheckBoxChange() {
+/**
+ * 刷新 tag ui
+ */
+function onTagsUiChange() {
     let positiveTags = [];
     let negativeTags = [];
     let quickTagLayout = document.getElementById("selected_btn_div");
@@ -834,6 +859,13 @@ function onCheckBoxChange() {
 
 }
 
+/**
+ * 创建一个标准的 tag 组
+ * @param key
+ * @param info
+ * @param group
+ * @returns {*}
+ */
 function createTagBtnGroup(key, info, group) {
 
     let groupLayout = createElement("div", {
@@ -895,7 +927,7 @@ function createTagBtnGroup(key, info, group) {
     } else {
         checkBadge.innerText = 0;
     }
-    checkBtn.onclick = onCheckBoxChange;
+    checkBtn.onclick = onTagsUiChange;
     leftBtn.onclick = function () {
         onCheckBoxWeightChange(key, checkBtn, checkBadge, -1);
     };
@@ -932,12 +964,12 @@ function createTagBtnGroup(key, info, group) {
     return groupLayout;
 }
 
-function isGroupData(group, key) {
-    let g = globalData[group];
-    if (g == null) return false;
-    return g[key] != null;
-}
 
+/**
+ * 删除 tag
+ * @param group
+ * @param key
+ */
 function deleteTag(group, key) {
     let gData = allData[group];
     if (gData != null) {
@@ -945,15 +977,14 @@ function deleteTag(group, key) {
         if (kData != null) {
             Reflect.deleteProperty(gData, key);
             saveStorage(group, gData);
-
         }
     }
 }
 
-/*
-   <input type="text" class="form-control" placeholder="Username" aria-label="Username">
-                <input type="text" class="form-control" placeholder="Server" aria-label="Server">
-                <button type="button" class="btn btn-primary">新增</button>
+/**
+ * 创建一个 tag 添加面板
+ * @param group
+ * @returns {*}
  */
 function createGroupAdd(group) {
     let div = createElement("div", {
@@ -962,13 +993,13 @@ function createGroupAdd(group) {
     let d3 = createElement("div", {
         "class": "input-group mb-3"
     });
-    let u1 = createElement("input", {
+    let tagNameInput = createElement("input", {
         "type": "text",
         "class": "form-control",
         "placeholder": "tag名字",
         "aria-label": "tag名字"
     })
-    let u2 = createElement("input", {
+    let tagValueInput = createElement("input", {
         "type": "text",
         "class": "form-control",
         "placeholder": "tag内容",
@@ -980,12 +1011,12 @@ function createGroupAdd(group) {
     });
     btn.innerText = "新增 tag"
     div.appendChild(d3);
-    d3.appendChild(u1);
-    d3.appendChild(u2);
+    d3.appendChild(tagNameInput);
+    d3.appendChild(tagValueInput);
     d3.appendChild(btn);
 
     btn.onclick = function () {
-        let key = u1.value;
+        let key = tagNameInput.value;
         let gData = allData[group];
         if (key == null || key.length === 0) {
             window.alert("tag内容输入框 为空");
@@ -994,7 +1025,7 @@ function createGroupAdd(group) {
             window.alert("已经存在tag " + key);
             return
         }
-        let value = u2.value
+        let value = tagValueInput.value
         if (value == null || value.length === 0) {
             window.alert("tag内容 为空");
             return
@@ -1091,7 +1122,7 @@ function resetCheck(resetAll) {
             cb.checked = must.indexOf(g) > -1
         }
     }
-    onCheckBoxChange();
+    onTagsUiChange();
 }
 
 
@@ -1336,7 +1367,7 @@ function createSelectedBtn(group, key, danger) {
         })
         uiData.quickBtn = null;
         tryRemoveFromParent(btn);
-        onCheckBoxChange();
+        onTagsUiChange();
     }
     return btn;
 }
@@ -1395,7 +1426,7 @@ function parseAll() {
 
 
     };
-    onCheckBoxChange();
+    onTagsUiChange();
 }
 
 function setToWebUiPos(k, data) {
