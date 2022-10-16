@@ -663,7 +663,6 @@ let globalData = {
     },
 
     "负面常用": {
-        "nsfw": "nsfw",
         "lowres": "lowres",
         "bad anatomy": "bad anatomy",
         "bad hands": "bad hands",
@@ -709,7 +708,7 @@ var uiConfig = {
     "show_en": false
 };
 let allData = globalData;
-let allKeyData={};
+let allKeyData = {};
 var myDelete = {};
 var groupOrder = [];
 let _textUiElements = {
@@ -890,7 +889,9 @@ function createTagBtnGroup(key, info, group) {
     });
 
     getStandardTagCheck().push(checkBtn);
-    getOrPutUiGP(group, key).checkBoxs.push(checkBtn);
+    let holder= getOrPutUiGP(group, key);
+    holder.mainCheck=checkBtn;
+    holder.checkBoxs.push(checkBtn);
 
     if (checked.indexOf(key) > -1) {
         checkBtn.checked = true;
@@ -970,8 +971,71 @@ function deleteTag(group, key) {
     }
 }
 
+
+
+function getGroupAllCheck(group){
+    let data=getOrUiGroup(group);
+    let checks=[];
+    for(let k in data){
+        let kData=data[k];
+        if(kData!=null){
+            checks.push(kData.mainCheck);
+        }
+    }
+    return checks;
+}
+
+function randGroupPlusOne(checks,group){
+    let opData=[];
+    for(let i=0;i<checks.length;i++){
+        let cb=checks[i];
+        if(!cb.checked){
+            opData.push(cb);
+        }
+    }
+    if(opData.length>0){
+        let rnd=Math.floor(Math.random()*(opData.length));
+        opData[rnd].checked=true;
+    }
+}
+function randGroupMinusOne(checks,group){
+    let opData=[];
+    for(let i=0;i<checks.length;i++){
+        let cb=checks[i];
+        if(cb.checked){
+            opData.push(cb);
+        }
+    }
+    if(opData.length>0){
+        let rnd=Math.floor(Math.random()*(opData.length));
+        opData[rnd].checked=false;
+    }
+
+}
+function randGroupPlus(group, num,refresh) {
+    let checks=getGroupAllCheck(group);
+
+    for(var i=0;i<num;i++){
+        randGroupPlusOne(checks,group);
+    }
+    if(refresh!==false){
+        onTagsUiChange();
+    }
+
+}
+
+function randGroupMinus(group, num,refresh) {
+    let checks=getGroupAllCheck(group);
+    for(var i=0;i<num;i++){
+        randGroupMinusOne(checks,group);
+    }
+    if(refresh!==false){
+        onTagsUiChange();
+    }
+}
+
 /**
- * 创建一个 tag 添加面板
+ * 创建一个 tag 添加面板c
  * @param group
  * @returns {*}
  */
@@ -998,18 +1062,42 @@ function createGroupAdd(group) {
         "type": "button",
         "class": "btn btn-primary"
     });
+    let rP=createElement("button",{
+        "type":"button",
+        "class":"btn btn-danger"
+    });
+
+    let rJ=createElement("button",{
+        "type":"button",
+        "class":"btn btn-success"
+    });
+
+    rP.onclick=function (){
+        randGroupPlus(group,1)
+    }
+    rJ.onclick=function (){
+        randGroupMinus(group,1)
+    }
+
+
+    rP.innerText="随机+";
+    rJ.innerText="随机-";
+
     btn.innerText = "新增 tag"
     div.appendChild(d3);
     d3.appendChild(tagNameInput);
     d3.appendChild(tagValueInput);
     d3.appendChild(btn);
 
+    d3.appendChild(rJ);
+    d3.appendChild(rP);
+
     btn.onclick = function () {
         let key = tagNameInput.value;
         var gData = allData[group];
-        if(gData==null && groupOrder.indexOf(group)>-1){
-            gData={};
-            allData[group]={};
+        if (gData == null && groupOrder.indexOf(group) > -1) {
+            gData = {};
+            allData[group] = {};
             console.log("fix bug")
         }
         if (key == null || key.length === 0) {
@@ -1046,6 +1134,58 @@ function createTagGroupLayout(group, groupData) {
     }
     return layout
 
+}
+
+function getAllCanRandomGroup(){
+    let data=[];
+    for(let g in allData){
+        if(!(must.indexOf(g)>-1)){
+            data.push(g);
+        }
+    }
+    return data;
+}
+
+function randomAllInc(){
+    let all=getAllCanRandomGroup();
+    forEachArray(all,function (p) {
+        randGroupPlus(p,1,false);
+    })
+    onTagsUiChange();
+}
+function randomAllDec(){
+    let all=getAllCanRandomGroup();
+    forEachArray(all,function (p) {
+        randGroupMinus(p,1,false);
+    })
+    onTagsUiChange();
+}
+
+function randomOneInc(){
+    let all=getAllCanRandomGroup();
+    if(all.length<=0){
+        return
+    }
+    let rnd=Math.floor(Math.random()*(all.length));
+    randGroupPlus(all[rnd],1);
+}
+function randomOneDec(){
+    if(all.length<=0){
+        return
+    }
+    let rnd=Math.floor(Math.random()*(all.length));
+    randGroupMinus(all[rnd],1);
+}
+
+function initRandLayout(){
+    let rAllInc=document.getElementById("btn_rnd1");
+    let rAllDec=document.getElementById("btn_rnd2");
+    let rOnInc=document.getElementById("btn_rnd3");
+    let rOneInc=document.getElementById("btn_rnd4");
+    rAllInc.onclick=randomAllInc;
+    rAllDec.onclick=randomAllDec;
+    rOnInc.onclick=randomOneInc;
+    rOneInc.onclick=randomOneDec;
 }
 
 function createNavTab(navUl, navContent, tabName, active) {
@@ -1119,6 +1259,14 @@ function resetCheck(resetAll) {
     onTagsUiChange();
 }
 
+function loadLocalStorage(key) {
+    var s = localStorage.getItem(key);
+    if (s != null) {
+        var pData = JSON.parse(s)
+        return pData;
+    }
+    return null;
+}
 
 function loadStorage(key, groupData) {
     var s = localStorage.getItem(key);
@@ -1173,27 +1321,27 @@ async function loadWeightConfig() {
 }
 
 async function loadLocalGroupConfig() {
-    let allG={};
+    let allG = {};
     let s = localStorage.getItem("groupOrder");
 
     if (s != null) {
-        let gOr=JSON.parse(s);
-        if(gOr!=null){
-            for(let i in gOr){
-                let g=gOr[i];
-                allG[g]=true;
+        let gOr = JSON.parse(s);
+        if (gOr != null) {
+            for (let i in gOr) {
+                let g = gOr[i];
+                allG[g] = true;
             }
         }
 
     }
     for (let group in allData) {
-        allG[group]=true;
+        allG[group] = true;
     }
     for (let group in allG) {
         var value = allData[group];
-        if(value==null){
-            value={};
-            allData[group]=value;
+        if (value == null) {
+            value = {};
+            allData[group] = value;
         }
         loadStorage(group, value);
     }
@@ -1235,11 +1383,11 @@ function clearGroupOrder() {
 
 function saveGroupOrder(order) {
     for (let i in order) {
-        let p=order[i];
+        let p = order[i];
         let data = allData[p];
         if (data == null) {
             allData[p] = {};
-            saveStorage(p,{});
+            saveStorage(p, {});
         }
     }
     saveStorage("groupOrder", order);
@@ -1335,6 +1483,16 @@ function modifyGroupData() {
     toast("保存分组顺序成功,重新加载页面后生效", 2000);
 }
 
+function getOrUiGroup(group) {
+    let uiMap = uiElements["uiMap"];
+    var groupData = uiMap[group];
+    if (groupData == null) {
+        groupData = {};
+        uiMap[group] = groupData;
+    }
+    return groupData;
+}
+
 function getOrPutUiGP(group, key) {
     let uiMap = uiElements["uiMap"];
     var groupData = uiMap[group];
@@ -1391,56 +1549,90 @@ function createSelectedBtn(group, key, danger) {
 }
 
 
-function tryAddBatch(group,text){
-   let lines=text.split(/[\s\n]/)
-    var count=0;
+function tryAddBatch(group, text) {
+    let lines = text.split(/[\s\n]/)
+    var count = 0;
 
-    let gData=allData[group];
-    if(gData!=null){
-        for(let i in lines){
-            let line=lines[i];
-            let data=line.split(",");
-            if(data!=null && data.length===2){
-                let k=data[0];
-                let v=data[1];
-                if(k!=null && v!=null){
-                    if(gData[k]==null){
-                        gData[k]=v;
+    let gData = allData[group];
+    let splitChar = getSplitChar();
+    if (gData != null) {
+        for (let i in lines) {
+            let line = lines[i];
+            let data = line.split(splitChar);
+            if (data != null && data.length === 2) {
+                let k = data[0];
+                let v = data[1];
+                if (k != null && v != null) {
+                    if (gData[k] == null) {
+                        gData[k] = v;
                         count++;
                     }
                 }
             }
         }
-        saveStorage(group,gData);
+        saveStorage(group, gData);
     }
-    toast("批量添加 "+count+" 条数据，重新加载页面生效",2000)
+    toast("批量添加 " + count + " 条数据，重新加载页面生效", 2000)
 
 }
 
-function initBatchGroup(){
-    let inputSelect=document.getElementById("batch_group_select");
-    let inputText=document.getElementById("batch_group_text");
-    let inputBtn=document.getElementById("batch_group_btn");
-    var sle=true;
-    for (var i=groupOrder.length-1;i>0;i--) {
+function getSplitChar() {
+    let splitSelect = document.getElementById("batch_group_select_split");
+    return splitSelect.options[splitSelect.selectedIndex].value
+}
+
+function getBatchSelectGroup() {
+    let inputSelect = document.getElementById("batch_group_select");
+    return inputSelect.options[inputSelect.selectedIndex].value;
+}
+
+
+function printBatchTag(group, textArea) {
+    let toData = [];
+    let spc = getSplitChar();
+
+    let storageData = allData[group];
+    console.log(storageData);
+    for (let key in storageData) {
+        let value = storageData[key];
+        if (key != null && value != null) {
+            toData.push(key + spc + value)
+        }
+    }
+    let cpData=toData.join("\n");
+    textArea.value = cpData;
+    toast("分组 "+group+"的数据已经 拷贝到粘贴板",2000);
+}
+
+function initBatchGroup() {
+    let inputSelect = document.getElementById("batch_group_select");
+    let inputText = document.getElementById("batch_group_text");
+    let inputBtn = document.getElementById("batch_group_btn");
+    let inputPrint = document.getElementById("batch_group_print");
+    var sle = true;
+    for (var i = groupOrder.length - 1; i > 0; i--) {
         let group = groupOrder[i];
         if (group != null) {
-            let optionEle=createElement("option",{
-                "value":group
+            let optionEle = createElement("option", {
+                "value": group
             })
 
-            optionEle.innerText=group;
-            if(sle){
-                optionEle.selected=true
-                sle=false;
+            optionEle.innerText = group;
+            if (sle) {
+                optionEle.selected = true
+                sle = false;
             }
             inputSelect.appendChild(optionEle);
         }
     }
-    inputBtn.onclick=function (){
-        tryAddBatch(inputSelect.options[inputSelect.selectedIndex].value,inputText.value)
+    inputBtn.onclick = function () {
+        tryAddBatch(getBatchSelectGroup(), inputText.value);
+    }
+    inputPrint.onclick = function () {
+        printBatchTag(getBatchSelectGroup(), inputText);
     }
 }
+
 function parseAll() {
     let navUi = document.getElementById("myTab");
     let navContent = document.getElementById("myTabContent");
@@ -1496,6 +1688,7 @@ function parseAll() {
 
 
     };
+    initRandLayout();
     onTagsUiChange();
 }
 
