@@ -704,13 +704,6 @@ let globalData = {
     }
 };
 
-function createElement(name, params) {
-    let element = document.createElement(name);
-    for (let key in params) {
-        element.setAttribute(key, params[key]);
-    }
-    return element;
-}
 
 let must = [
     "正面常用", "负面常用"
@@ -720,7 +713,6 @@ let neg = [
 ];
 var checkTab = null;
 let myWeight = {};
-
 var checked = [];
 var uiConfig = {
     "show_add": false,
@@ -731,33 +723,6 @@ var uiConfig = {
 let allData = globalData;
 var myDelete = {};
 var groupOrder = [];
-
-function onCheckBoxWeightChange(key, cb, badge, ch) {
-    var mW = myWeight[key];
-    if (mW == null) {
-        mW = 0;
-    } else {
-        mW = parseInt(mW);
-    }
-    mW += ch;
-    myWeight[key] = mW;
-    badge.innerText = mW;
-
-    onCheckBoxChange();
-}
-
-function getChildKeyChild(childNs, key) {
-    for (var i = 0; i < childNs.length; i++) {
-        var d = childNs[i];
-
-        let label = d.getAttribute("my_label");
-        if (label != null && label === key) {
-            return d;
-        }
-    }
-    return null;
-}
-
 let _textUiElements = {
     "checkBox_array": [],
     "uiMap": {
@@ -769,11 +734,37 @@ let _textUiElements = {
         }
     }
 };
-
 let uiElements = {
     "checkBox_array": [],
     "uiMap": {}
 };
+
+/**
+ * 创建一个 UiElement
+ * @param name
+ * @param params
+ * @returns {*}
+ */
+function createElement(name, params) {
+    let element = document.createElement(name);
+    for (let key in params) {
+        element.setAttribute(key, params[key]);
+    }
+    return element;
+}
+
+function onCheckBoxWeightChange(key, cb, badge, chValue) {
+    var weight = myWeight[key];
+    if (weight == null) {
+        weight = 0;
+    } else {
+        weight = parseInt(weight);
+    }
+    weight += chValue;
+    myWeight[key] = weight;
+    badge.innerText = weight;
+    onCheckBoxChange();
+}
 
 function getStandardTagCheck() {
     return uiElements.checkBox_array;
@@ -801,31 +792,30 @@ function isNegativeGroup(group) {
 }
 
 function onCheckBoxChange() {
-    let a = [];
-    let b = [];
-
-    let selectDiv = document.getElementById("selected_btn_div");
-    let checkBoxs = getStandardTagCheck();
-    for (var i = 0; i < checkBoxs.length; i++) {
-        let cb = checkBoxs[i];
-        let info = cb.getAttribute("my_info");
-        let group = cb.getAttribute("my_group");
-        let label = cb.getAttribute("my_label");
-        if (info == null || group == null || label == null) {
+    let positiveTags = [];
+    let negativeTags = [];
+    let quickTagLayout = document.getElementById("selected_btn_div");
+    let tagCheckBoxs = getStandardTagCheck();
+    for (var i = 0; i < tagCheckBoxs.length; i++) {
+        let tagCbUi = tagCheckBoxs[i];
+        let tagValue = tagCbUi.getAttribute("tagValue");
+        let tagGroup = tagCbUi.getAttribute("tagGroup");
+        let tagKey = tagCbUi.getAttribute("tagKey");
+        if (tagValue == null || tagGroup == null || tagKey == null) {
             continue;
         }
-        let uiEle = getOrPutUiGP(group, label);
+        let uiEle = getOrPutUiGP(tagGroup, tagKey);
         let quickBtn = uiEle.quickBtn;
-        if (cb.checked) {
+        if (tagCbUi.checked) {
             if (quickBtn == null) {
-                let selectBtn = createSelectedBtn(group, label, isNegativeGroup(group));
-                selectDiv.appendChild(selectBtn);
+                let tagQuickBtn = createSelectedBtn(tagGroup, tagKey, isNegativeGroup(tagGroup));
+                quickTagLayout.appendChild(tagQuickBtn);
             }
-            let weighInfo=getWeightInfo(label,info);
-            if (isNegativeGroup(group)) {
-                b.push(weighInfo);
+            let weighInfo = getWeightInfo(tagKey, tagValue);
+            if (isNegativeGroup(tagGroup)) {
+                negativeTags.push(weighInfo);
             } else {
-                a.push(weighInfo);
+                positiveTags.push(weighInfo);
             }
         } else {
             if (quickBtn != null) {
@@ -834,11 +824,12 @@ function onCheckBoxChange() {
             }
         }
     }
-    let po = a.join(",")
-    let ne = b.join(",")
-    document.getElementById("textarea_pos").value = po;
-    setToWebUiPos("Prompt", po);
-    document.getElementById("textarea_neg").value = ne;
+    let positive = positiveTags.join(",")
+    let negative = negativeTags.join(",")
+
+    document.getElementById("textarea_pos").value = positive;
+    document.getElementById("textarea_neg").value = negative;
+
     saveChecked();
 
 }
@@ -876,8 +867,8 @@ function createTagBtnGroup(key, info, group) {
         // "data-bs-placement":"top",
         // "data-bs-title":info
     });
-    let checkBoxs = getStandardTagCheck()
-    checkBoxs.push(checkBtn);
+
+    getStandardTagCheck().push(checkBtn);
     getOrPutUiGP(group, key).checkBoxs.push(checkBtn);
 
     if (checked.indexOf(key) > -1) {
@@ -912,9 +903,9 @@ function createTagBtnGroup(key, info, group) {
         onCheckBoxWeightChange(key, checkBtn, checkBadge, 1);
     };
 
-    checkBtn.setAttribute("my_label", key);
-    checkBtn.setAttribute("my_info", info);
-    checkBtn.setAttribute("my_group", group);
+    checkBtn.setAttribute("tagKey", key);
+    checkBtn.setAttribute("tagValue", info);
+    checkBtn.setAttribute("tagGroup", group);
 
     checkLabel.appendChild(checkBadge);
     groupLayout.appendChild(leftBtn);
@@ -1094,8 +1085,8 @@ function resetCheck(resetAll) {
     let checkBoxs = getStandardTagCheck()
     for (var i = 0; i < checkBoxs.length; i++) {
         var cb = checkBoxs[i];
-        let info = cb.getAttribute("my_label");
-        var g = cb.getAttribute("my_group");
+        let info = cb.getAttribute("tagKey");
+        var g = cb.getAttribute("tagGroup");
         if (g != null && info != null && (!(checked.indexOf(info) > -1) || resetAll)) {
             cb.checked = must.indexOf(g) > -1
         }
@@ -1166,11 +1157,11 @@ function saveChecked() {
     var checked = [];
     let checkBoxs = getStandardTagCheck()
     for (var i = 0; i < checkBoxs.length; i++) {
-        let cb = checkBoxs[i];
-        let info = cb.getAttribute("my_label");
-        let group = cb.getAttribute("my_group");
-        if (info != null && group != null && cb.checked) {
-            checked.push(info);
+        let tagCbUi = checkBoxs[i];
+        let tagKey = tagCbUi.getAttribute("tagKey");
+        let tagGroup = tagCbUi.getAttribute("tagGroup");
+        if (tagKey != null && tagGroup != null && tagCbUi.checked) {
+            checked.push(tagKey);
         }
     }
     saveStorage("checked_data", checked);
@@ -1202,29 +1193,20 @@ function saveGroupOrder(order) {
             allData[p] = {};
         }
     }
-    saveStorage("g2", ["sss", "b"]);
     saveStorage("groupOrder", order);
 }
 
 
-async function loadDelete() {
-    myDelete = localStorage.getItem("myDelete");
-    if (myDelete == null) {
-        myDelete = {};
-    }
-}
-
 async function loadLocalData() {
-    await loadDelete();
     await loadUiConfig();
     await loadCheckConfig();
     await loadWeightConfig();
     await loadLocalGroupConfig();
     await loadGroupOrder();
-    await checkData();
+    await checkGroupData();
 }
 
-async function checkData() {
+async function checkGroupData() {
     let kSet = {};
     let vKet = {};
     for (let g in allData) {
@@ -1251,7 +1233,7 @@ async function clearLocal() {
     localStorage.clear();
 }
 
-function configUiCtrl(name) {
+function configUiCtrlElement(name) {
     var ctrl1 = document.getElementById(name)
     ctrl1.checked = uiConfig[name];
     ctrl1.onclick = function () {
@@ -1309,14 +1291,14 @@ function getOrPutUiGP(group, key) {
     var groupData = uiMap[group];
     if (groupData == null) {
         groupData = {};
-        uiMap[group]=groupData;
+        uiMap[group] = groupData;
     }
     var keyData = groupData[key];
     if (keyData == null) {
         keyData = {
             "checkBoxs": []
         }
-        groupData[key]=keyData;
+        groupData[key] = keyData;
     }
     return keyData
 }
@@ -1340,7 +1322,7 @@ function createSelectedBtn(group, key, danger) {
     let btn = createElement("button", {
         "type": "button",
         "class": danger ? "btn btn-warning btn-sm" : "btn btn-primary btn-sm",
-        "my_label": key
+        "tagKey": key
     });
     btn.innerText = text;
     getOrPutUiGP(group, key).quickBtn = btn;
@@ -1379,8 +1361,8 @@ function parseAll() {
     resetCheck(false);
 
 
-    configUiCtrl("show_en");
-    configUiCtrl("show_del");
+    configUiCtrlElement("show_en");
+    configUiCtrlElement("show_del");
 
     document.getElementById("selected_btn_div");
 
