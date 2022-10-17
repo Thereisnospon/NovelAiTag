@@ -941,7 +941,7 @@ function createTagBtnGroup(key, info, group) {
     }
     checkBtn.onclick = function (){
         if(checkBtn.checked && uiConfig.show_cp1){
-            copyToClip(key,false);
+            copyToClip(info,false);
         }
         onTagsUiChange();
     };
