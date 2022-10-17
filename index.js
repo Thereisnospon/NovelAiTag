@@ -706,7 +706,9 @@ var uiConfig = {
     "show_weight": false,
     "show_del": false,
     "show_en": false,
-    "show_yuan":false
+    "show_yuan": false,
+    "show_numq": false,
+    "show_cp1":false
 };
 let allData = globalData;
 let allKeyData = {};
@@ -779,22 +781,35 @@ function getStandardTagCheck() {
 function getWeightInfo(key, info) {
     let weight = myWeight[key];
     var weightInfo = info;
-    var posL="{";
-    var posR="}";
-    if(uiConfig.show_yuan){
-        posL="(";
-        posR=")";
+    var posL = "{";
+    var posR = "}";
+    if (uiConfig.show_yuan) {
+        posL = "(";
+        posR = ")";
     }
     if (weight != null && weight !== 0) {
         let neg = weight < 0;
         let abs = weight < 0 ? (-weight) : weight;
-        for (var j = 0; j < abs; j++) {
-            if (!neg) {
-                weightInfo = posL + weightInfo + posR;
-            } else {
-                weightInfo = "[" + weightInfo + "]";
+        var numWeight = 1.0;
+        if (uiConfig.show_numq) {
+            for (var j = 0; j < abs; j++) {
+                if (neg) {
+                    numWeight = numWeight * 0.952;
+                } else {
+                    numWeight = numWeight * 1.1;
+                }
+            }
+            weightInfo = "(" + weightInfo + ":" + numWeight.toFixed(2) + ")"
+        } else {
+            for (var j = 0; j < abs; j++) {
+                if (!neg) {
+                    weightInfo = posL + weightInfo + posR;
+                } else {
+                    weightInfo = "[" + weightInfo + "]";
+                }
             }
         }
+
     }
     return weightInfo;
 }
@@ -900,7 +915,7 @@ function createTagBtnGroup(key, info, group) {
     holder.mainCheck = checkBtn;
     holder.checkBoxs.push(checkBtn);
 
-    if (checked.indexOf(group+"_"+key) > -1) {
+    if (checked.indexOf(group + "_" + key) > -1) {
         checkBtn.checked = true;
     }
 
@@ -924,7 +939,12 @@ function createTagBtnGroup(key, info, group) {
     } else {
         checkBadge.innerText = 0;
     }
-    checkBtn.onclick = onTagsUiChange;
+    checkBtn.onclick = function (){
+        if(checkBtn.checked && uiConfig.show_cp1){
+            copyToClip(key,false);
+        }
+        onTagsUiChange();
+    };
     leftBtn.onclick = function () {
         onCheckBoxWeightChange(key, checkBtn, checkBadge, -1);
     };
@@ -1275,14 +1295,17 @@ function toast(text, time) {
     }, time)
 }
 
-function copyToClip(content) {
+function copyToClip(content,t2) {
     const inputDom = document.createElement('input');
     inputDom.setAttribute('value', content);
     document.body.appendChild(inputDom);
     inputDom.select();
     document.execCommand('copy');
     document.body.removeChild(inputDom);
-    toast("已复制到剪贴板")
+    if(t2!==false){
+        toast("已复制到剪贴板")
+    }
+
 }
 
 function resetCheck(resetAll) {
@@ -1295,7 +1318,7 @@ function resetCheck(resetAll) {
         var cb = checkBoxs[i];
         let info = cb.getAttribute("tagKey");
         var g = cb.getAttribute("tagGroup");
-        if (g != null && info != null && (!(checked.indexOf(g+"_"+info) > -1) || resetAll)) {
+        if (g != null && info != null && (!(checked.indexOf(g + "_" + info) > -1) || resetAll)) {
             cb.checked = must.indexOf(g) > -1
         }
     }
@@ -1399,7 +1422,7 @@ function saveChecked() {
         let tagKey = tagCbUi.getAttribute("tagKey");
         let tagGroup = tagCbUi.getAttribute("tagGroup");
         if (tagKey != null && tagGroup != null && tagCbUi.checked) {
-            checked.push(tagGroup+"_"+tagKey);
+            checked.push(tagGroup + "_" + tagKey);
         }
     }
     saveStorage("checked_data", checked);
@@ -1438,6 +1461,17 @@ function saveGroupOrder(order) {
     saveStorage("groupOrder", order);
 }
 
+async function loadNegDat(){
+    for (let i in groupOrder) {
+        let n=groupOrder[i];
+        if(n.startsWith("负面")){
+            if(!neg.indexOf(n)>-1){
+                neg.push(n)
+            }
+        }
+    }
+}
+
 async function loadLocalData() {
     await loadUiConfig();
     await loadCheckConfig();
@@ -1445,7 +1479,8 @@ async function loadLocalData() {
     await loadLocalGroupConfig();
     await loadGroupOrder();
     await checkGroupData();
-    await parseMagicBook();
+    await loadNegDat();
+    // await parseMagicBook();
 }
 
 async function checkGroupData() {
@@ -1595,15 +1630,18 @@ function createSelectedBtn(group, key, danger) {
 
 
 function tryAddBatch(group, text) {
-    let lines = text.split(/[\s\n]/)
+    let lines = text.split(/[\n]/)
     var count = 0;
 
     let gData = allData[group];
     let splitChar = getSplitChar();
     if (gData != null) {
+
         for (let i in lines) {
             let line = lines[i];
+
             let data = line.split(splitChar);
+            console.log(line,data);
             if (data != null && data.length === 2) {
                 let k = data[0];
                 let v = data[1];
@@ -1716,8 +1754,8 @@ async function parseMagicBook() {
     let nG = gKey + "-负"
     allData[pG] = posx;
     allData[nG] = negx;
-    neg=[]
-    must=[]
+    neg = []
+    must = []
     neg.push(nG);
     must.push(pG);
     must.push(nG);
@@ -1754,10 +1792,11 @@ function parseAll() {
 
     }
     resetCheck(false);
-
-   configUiCtrlElement("show_yuan");
+    configUiCtrlElement("show_numq");
+    configUiCtrlElement("show_yuan");
     configUiCtrlElement("show_en");
     configUiCtrlElement("show_del");
+    configUiCtrlElement("show_cp1");
     initBatchGroup();
     document.getElementById("selected_btn_div");
 
