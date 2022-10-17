@@ -7,6 +7,8 @@
     <link rel="icon" type="image/x-icon" href="icon.png" />
     <link rel="stylesheet" href="bootstrap.min.css"/>
     <script src="bootstrap.bundle.min.js"></script>
+    <script src="magic_trans.js"></script>
+    <script src="magic_book.js"></script>
     <script src="index.js"></script>
 
     <style>
@@ -127,7 +129,10 @@
                     <input class="form-check-input" type="checkbox" id="show_en">
                     <label class="form-check-label" for="show_en">显示TAG英文</label>
                 </div>
-
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="show_yuan">
+                    <label class="form-check-label" for="show_en">圆括号加权</label>
+                </div>
             </div>
             <div class="collapse" id="collapseExample">
                 <div class="card card-body">
@@ -137,6 +142,7 @@
                         比如是 [头,脚] 改成 [m1 头]
                         相当于 头 分类的顺序调节到最后,并且删掉了 脚分组，而且增加了一个 m1 分组
                         新增的分组必须以 m 开头，分组之间用英文逗号,分割</p>
+                    <p>ui控制面板可以调节加权括号</p>
                     <a href="https://space.bilibili.com/6537379" class="link-primary" target="_blank">点击查看-B站完整功能视频介绍</a>
                 </div>
             </div>

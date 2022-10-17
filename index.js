@@ -692,10 +692,10 @@ let globalData = {
 };
 
 
-let must = [
+var must = [
     "正面常用", "负面常用"
 ];
-let neg = [
+var neg = [
     "负面常用"
 ];
 var checkTab = null;
@@ -705,7 +705,8 @@ var uiConfig = {
     "show_add": false,
     "show_weight": false,
     "show_del": false,
-    "show_en": false
+    "show_en": false,
+    "show_yuan":false
 };
 let allData = globalData;
 let allKeyData = {};
@@ -778,12 +779,18 @@ function getStandardTagCheck() {
 function getWeightInfo(key, info) {
     let weight = myWeight[key];
     var weightInfo = info;
+    var posL="{";
+    var posR="}";
+    if(uiConfig.show_yuan){
+        posL="(";
+        posR=")";
+    }
     if (weight != null && weight !== 0) {
         let neg = weight < 0;
         let abs = weight < 0 ? (-weight) : weight;
         for (var j = 0; j < abs; j++) {
             if (!neg) {
-                weightInfo = "{" + weightInfo + "}";
+                weightInfo = posL + weightInfo + posR;
             } else {
                 weightInfo = "[" + weightInfo + "]";
             }
@@ -889,11 +896,11 @@ function createTagBtnGroup(key, info, group) {
     });
 
     getStandardTagCheck().push(checkBtn);
-    let holder= getOrPutUiGP(group, key);
-    holder.mainCheck=checkBtn;
+    let holder = getOrPutUiGP(group, key);
+    holder.mainCheck = checkBtn;
     holder.checkBoxs.push(checkBtn);
 
-    if (checked.indexOf(key) > -1) {
+    if (checked.indexOf(group+"_"+key) > -1) {
         checkBtn.checked = true;
     }
 
@@ -972,64 +979,65 @@ function deleteTag(group, key) {
 }
 
 
-
-function getGroupAllCheck(group){
-    let data=getOrUiGroup(group);
-    let checks=[];
-    for(let k in data){
-        let kData=data[k];
-        if(kData!=null){
+function getGroupAllCheck(group) {
+    let data = getOrUiGroup(group);
+    let checks = [];
+    for (let k in data) {
+        let kData = data[k];
+        if (kData != null) {
             checks.push(kData.mainCheck);
         }
     }
     return checks;
 }
 
-function randGroupPlusOne(checks,group){
-    let opData=[];
-    for(let i=0;i<checks.length;i++){
-        let cb=checks[i];
-        if(!cb.checked){
+function randGroupPlusOne(checks, group) {
+    let opData = [];
+    for (let i = 0; i < checks.length; i++) {
+        let cb = checks[i];
+        if (!cb.checked) {
             opData.push(cb);
         }
     }
-    if(opData.length>0){
-        let rnd=Math.floor(Math.random()*(opData.length));
-        opData[rnd].checked=true;
+    if (opData.length > 0) {
+        let rnd = Math.floor(Math.random() * (opData.length));
+        opData[rnd].checked = true;
     }
 }
-function randGroupMinusOne(checks,group){
-    let opData=[];
-    for(let i=0;i<checks.length;i++){
-        let cb=checks[i];
-        if(cb.checked){
+
+function randGroupMinusOne(checks, group) {
+    let opData = [];
+    for (let i = 0; i < checks.length; i++) {
+        let cb = checks[i];
+        if (cb.checked) {
             opData.push(cb);
         }
     }
-    if(opData.length>0){
-        let rnd=Math.floor(Math.random()*(opData.length));
-        opData[rnd].checked=false;
+    if (opData.length > 0) {
+        let rnd = Math.floor(Math.random() * (opData.length));
+        opData[rnd].checked = false;
     }
 
 }
-function randGroupPlus(group, num,refresh) {
-    let checks=getGroupAllCheck(group);
 
-    for(var i=0;i<num;i++){
-        randGroupPlusOne(checks,group);
+function randGroupPlus(group, num, refresh) {
+    let checks = getGroupAllCheck(group);
+
+    for (var i = 0; i < num; i++) {
+        randGroupPlusOne(checks, group);
     }
-    if(refresh!==false){
+    if (refresh !== false) {
         onTagsUiChange();
     }
 
 }
 
-function randGroupMinus(group, num,refresh) {
-    let checks=getGroupAllCheck(group);
-    for(var i=0;i<num;i++){
-        randGroupMinusOne(checks,group);
+function randGroupMinus(group, num, refresh) {
+    let checks = getGroupAllCheck(group);
+    for (var i = 0; i < num; i++) {
+        randGroupMinusOne(checks, group);
     }
-    if(refresh!==false){
+    if (refresh !== false) {
         onTagsUiChange();
     }
 }
@@ -1062,26 +1070,26 @@ function createGroupAdd(group) {
         "type": "button",
         "class": "btn btn-primary"
     });
-    let rP=createElement("button",{
-        "type":"button",
-        "class":"btn btn-danger"
+    let rP = createElement("button", {
+        "type": "button",
+        "class": "btn btn-danger"
     });
 
-    let rJ=createElement("button",{
-        "type":"button",
-        "class":"btn btn-success"
+    let rJ = createElement("button", {
+        "type": "button",
+        "class": "btn btn-success"
     });
 
-    rP.onclick=function (){
-        randGroupPlus(group,1)
+    rP.onclick = function () {
+        randGroupPlus(group, 1)
     }
-    rJ.onclick=function (){
-        randGroupMinus(group,1)
+    rJ.onclick = function () {
+        randGroupMinus(group, 1)
     }
 
 
-    rP.innerText="随机+";
-    rJ.innerText="随机-";
+    rP.innerText = "随机+";
+    rJ.innerText = "随机-";
 
     btn.innerText = "新增 tag"
     div.appendChild(d3);
@@ -1136,10 +1144,10 @@ function createTagGroupLayout(group, groupData) {
 
 }
 
-function getAllCanRandomGroup(){
-    let data=[];
-    for(let g in allData){
-        if(!(must.indexOf(g)>-1)){
+function getAllCanRandomGroup() {
+    let data = [];
+    for (let g in allData) {
+        if (!(must.indexOf(g) > -1)) {
             data.push(g);
         }
     }
@@ -1147,79 +1155,80 @@ function getAllCanRandomGroup(){
 }
 
 
-function randomAllInc(){
-    let all=getAllCanRandomGroup();
-    forEachArray(all,function (p) {
-        randGroupPlus(p,1,false);
+function randomAllInc() {
+    let all = getAllCanRandomGroup();
+    forEachArray(all, function (p) {
+        randGroupPlus(p, 1, false);
     })
     onTagsUiChange();
 }
 
-function randomAllDec(){
-    let all=getAllCanRandomGroup();
+function randomAllDec() {
+    let all = getAllCanRandomGroup();
 
-    forEachArray(all,function (p) {
-        randGroupMinus(p,1,false);
+    forEachArray(all, function (p) {
+        randGroupMinus(p, 1, false);
     })
     onTagsUiChange();
 }
 
-function checkBoxCount(checks,check){
-    var count=0;
-    for(let i=0;i<checks.length;i++){
-        if(checks[i].checked && check){
+function checkBoxCount(checks, check) {
+    var count = 0;
+    for (let i = 0; i < checks.length; i++) {
+        if (checks[i].checked && check) {
             count++;
-        }else if(!checks[i].checked && !check){
+        } else if (!checks[i].checked && !check) {
             count++;
         }
     }
     return count;
 }
 
-function randomOneInc(){
-    let toALL=getAllCanRandomGroup();
-    let all=[];
-    for(let i in toALL){
-        let g=toALL[i];
-        let checks=getGroupAllCheck(g);
+function randomOneInc() {
+    let toALL = getAllCanRandomGroup();
+    let all = [];
+    for (let i in toALL) {
+        let g = toALL[i];
+        let checks = getGroupAllCheck(g);
 
-        if(checkBoxCount(checks,true)>0){
+        if (checkBoxCount(checks, true) > 0) {
             all.push(g);
         }
     }
 
-    if(all.length<=0){
+    if (all.length <= 0) {
         return
     }
-    let rnd=Math.floor(Math.random()*(all.length));
-    randGroupPlus(all[rnd],1);
+    let rnd = Math.floor(Math.random() * (all.length));
+    randGroupPlus(all[rnd], 1);
 }
-function randomOneDec(){
-    let toALL=getAllCanRandomGroup();
-    let all=[];
-    for(let i in toALL){
-        let g=toALL[i];
-        let checks=getGroupAllCheck(g);
-        if(checkBoxCount(checks,false)>0){
+
+function randomOneDec() {
+    let toALL = getAllCanRandomGroup();
+    let all = [];
+    for (let i in toALL) {
+        let g = toALL[i];
+        let checks = getGroupAllCheck(g);
+        if (checkBoxCount(checks, false) > 0) {
             all.push(g);
         }
     }
-    if(all.length<=0){
+    if (all.length <= 0) {
         return
     }
-    let rnd=Math.floor(Math.random()*(all.length));
-    randGroupMinus(all[rnd],1);
+    let rnd = Math.floor(Math.random() * (all.length));
+    randGroupMinus(all[rnd], 1);
 }
 
-function initRandLayout(){
-    let rAllInc=document.getElementById("btn_rnd1");
-    let rAllDec=document.getElementById("btn_rnd2");
-    let rOnInc=document.getElementById("btn_rnd3");
-    let rOneInc=document.getElementById("btn_rnd4");
-    rAllInc.onclick=randomAllInc;
-    rAllDec.onclick=randomAllDec;
-    rOnInc.onclick=randomOneInc;
-    rOneInc.onclick=randomOneDec;
+function initRandLayout() {
+    let rAllInc = document.getElementById("btn_rnd1");
+    let rAllDec = document.getElementById("btn_rnd2");
+    let rOnInc = document.getElementById("btn_rnd3");
+    let rOneInc = document.getElementById("btn_rnd4");
+    rAllInc.onclick = randomAllInc;
+    rAllDec.onclick = randomAllDec;
+    rOnInc.onclick = randomOneInc;
+    rOneInc.onclick = randomOneDec;
 }
 
 function createNavTab(navUl, navContent, tabName, active) {
@@ -1286,7 +1295,7 @@ function resetCheck(resetAll) {
         var cb = checkBoxs[i];
         let info = cb.getAttribute("tagKey");
         var g = cb.getAttribute("tagGroup");
-        if (g != null && info != null && (!(checked.indexOf(info) > -1) || resetAll)) {
+        if (g != null && info != null && (!(checked.indexOf(g+"_"+info) > -1) || resetAll)) {
             cb.checked = must.indexOf(g) > -1
         }
     }
@@ -1379,7 +1388,7 @@ async function loadLocalGroupConfig() {
         }
         loadStorage(group, value);
     }
-    console.log(allG)
+
 }
 
 function saveChecked() {
@@ -1390,11 +1399,13 @@ function saveChecked() {
         let tagKey = tagCbUi.getAttribute("tagKey");
         let tagGroup = tagCbUi.getAttribute("tagGroup");
         if (tagKey != null && tagGroup != null && tagCbUi.checked) {
-            checked.push(tagKey);
+            checked.push(tagGroup+"_"+tagKey);
         }
     }
     saveStorage("checked_data", checked);
     saveStorage("myWeight", myWeight);
+
+
 }
 
 async function loadGroupOrder() {
@@ -1427,7 +1438,6 @@ function saveGroupOrder(order) {
     saveStorage("groupOrder", order);
 }
 
-
 async function loadLocalData() {
     await loadUiConfig();
     await loadCheckConfig();
@@ -1435,6 +1445,7 @@ async function loadLocalData() {
     await loadLocalGroupConfig();
     await loadGroupOrder();
     await checkGroupData();
+    await parseMagicBook();
 }
 
 async function checkGroupData() {
@@ -1633,9 +1644,9 @@ function printBatchTag(group, textArea) {
             toData.push(key + spc + value)
         }
     }
-    let cpData=toData.join("\n");
+    let cpData = toData.join("\n");
     textArea.value = cpData;
-    toast("分组 "+group+"的数据已经 拷贝到粘贴板",2000);
+    toast("分组 " + group + "的数据已经 拷贝到粘贴板", 2000);
 }
 
 function initBatchGroup() {
@@ -1667,14 +1678,71 @@ function initBatchGroup() {
     }
 }
 
+var translate = {};
+
+
+function formatMagicStr(str) {
+    return str.replace("-", " ").replace("_", " ")
+}
+
+function fillMagic(from, to, weights) {
+
+    for (let i in from) {
+        let k = from[i];
+        let format = formatMagicStr(k)
+        let w = weights[k];
+        var tran = translate[format];
+        if (tran == null) {
+            tran = k;
+        }
+        if (w != null) {
+            myWeight[tran] = w;
+        }
+        to[tran] = k;
+    }
+}
+
+let magicBooksOrder = [];
+
+async function parseMagicBook() {
+    translate = window.magic_trans;
+    let magicBook = window.magic_books[0];
+    let posx = {};
+    let negx = {};
+    fillMagic(magicBook.pos, posx, magicBook.weight)
+    fillMagic(magicBook.neg, negx, magicBook.weight)
+    let gKey = "魔法书-" + magicBook.name
+    let pG = gKey + "-正"
+    let nG = gKey + "-负"
+    allData[pG] = posx;
+    allData[nG] = negx;
+    neg=[]
+    must=[]
+    neg.push(nG);
+    must.push(pG);
+    must.push(nG);
+    magicBooksOrder.push(pG);
+    magicBooksOrder.push(nG);
+}
+
 function parseAll() {
     let navUi = document.getElementById("myTab");
     let navContent = document.getElementById("myTabContent");
 
     var active = true;
-    for (let i in groupOrder) {
 
-        let group = groupOrder[i];
+    let groups = [];
+    for (let i in groupOrder) {
+        groups.push(groupOrder[i]);
+    }
+    for (let i in magicBooksOrder) {
+        groups.push(magicBooksOrder[i]);
+    }
+
+
+    for (let i in groups) {
+
+        let group = groups[i];
         if (group != null) {
             let tab = createNavTab(navUi, navContent, group, active);
             active = false;
@@ -1687,7 +1755,7 @@ function parseAll() {
     }
     resetCheck(false);
 
-
+   configUiCtrlElement("show_yuan");
     configUiCtrlElement("show_en");
     configUiCtrlElement("show_del");
     initBatchGroup();
