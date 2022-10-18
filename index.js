@@ -2080,7 +2080,7 @@ function parseAll() {
     }
 
     if(currentMagic!=null){
-        showTipsInfo("已经选择了魔法书 "+currentMagic.name+" 正面tag和负面tag 会全面替换,除了 tag 之外，还需要额外手动设置参数 \n"+currentMagic.option);
+        showTipsInfo("手动设置参数 "+currentMagic.option+" \n正式开启魔法书 "+currentMagic.name+" 正面tag和负面tag 会全面替换");
     }
 
     for (let i in groups) {
