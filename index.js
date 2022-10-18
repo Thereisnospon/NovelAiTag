@@ -898,11 +898,18 @@ let globalData = {
 };
 
 
-var must = [
+
+var innerMust = [
     "正面常用", "负面常用"
 ];
-var neg = [
+var innerNeg = [
     "负面常用", "负面实践"
+];
+var diyMust=[
+
+];
+var diyNeg=[
+
 ];
 var checkTab = null;
 let myWeight = {};
@@ -914,7 +921,8 @@ var uiConfig = {
     "show_en": false,
     "show_yuan": false,
     "show_numq": false,
-    "show_cp1": false
+    "show_cp1": false,
+    "select_magic":""
 };
 let allData = globalData;
 let allKeyData = {};
@@ -935,6 +943,7 @@ let uiElements = {
     "checkBox_array": [],
     "uiMap": {}
 };
+let magicBooks=window.magic_books;
 
 /**
  * 创建一个 html element
@@ -1026,7 +1035,10 @@ function getWeightInfo(group,key, info) {
  * @returns {boolean}
  */
 function isNegativeGroup(group) {
-    return neg.indexOf(group) > -1;
+    return innerNeg.indexOf(group) > -1 || diyMust.indexOf(group)>-1;
+}
+function isMustGroup(group) {
+    return innerMust.indexOf(group) > -1 ||diyNeg.indexOf(group)>-1;
 }
 function tryResetWeight(group,key){
     let wKey=group+"_"+key;
@@ -1035,7 +1047,7 @@ function tryResetWeight(group,key){
         Reflect.deleteProperty(myWeight,wKey);
         getOrPutUiGP(group, key).checkBadge.innerText=0;
     }
-   
+
 }
 /**
  * 刷新 tag ui
@@ -1384,7 +1396,7 @@ function createTagGroupLayout(group, groupData) {
 function getAllCanRandomGroup() {
     let data = [];
     for (let g in allData) {
-        if (!(must.indexOf(g) > -1)) {
+        if (!isMustGroup(g)) {
             data.push(g);
         }
     }
@@ -1539,7 +1551,7 @@ function resetCheck(resetAll, restMust) {
             if (restMust === true) {
                 cb.checked = false;
             } else {
-                cb.checked = must.indexOf(g) > -1
+                cb.checked = isMustGroup(g);
             }
         }
     }
@@ -1686,11 +1698,12 @@ function saveGroupOrder(order) {
 }
 
 async function loadNegDat() {
+
     for (let i in groupOrder) {
         let n = groupOrder[i];
         if (n.startsWith("负面")) {
-            if (!neg.indexOf(n) > -1) {
-                neg.push(n)
+            if (!isNegativeGroup(n)) {
+                diyNeg.push(n)
             }
         }
     }
@@ -1704,7 +1717,7 @@ async function loadLocalData() {
     await loadGroupOrder();
     await checkGroupData();
     await loadNegDat();
-    // await parseMagicBook();
+    await parseMagicBook();
 }
 
 async function checkGroupData() {
@@ -1910,6 +1923,41 @@ function printBatchTag(group, textArea) {
     textArea.value = cpData;
     toast("分组 " + group + "的数据已经 拷贝到粘贴板", 2000);
 }
+function getSelectBook() {
+    let splitSelect = document.getElementById("magic_book_select");
+    return splitSelect.options[splitSelect.selectedIndex].value
+}
+function initMagicBookGroup(){
+    let bookNames=getMagicBookNames();
+    let inputBtn=document.getElementById("magic_book_text_import");
+    let disableBtn=document.getElementById("magic_book_text_disable");
+    let inputSelect=document.getElementById("magic_book_select");
+    var sle = true;
+    for(let i in bookNames){
+        let bookName=bookNames[i];
+        let optionEle = createElement("option", {
+            "value": bookName
+        })
+
+        optionEle.innerText = bookName;
+        if (sle) {
+            optionEle.selected = true
+            sle = false;
+        }
+        inputSelect.appendChild(optionEle);
+    }
+    inputBtn.onclick=function (){
+        let book=getSelectBook();
+        uiConfig.select_magic=book
+        saveUiConfig();
+        toast("加载魔法书 "+book+" 成功，重新加载后生效", 2000);
+    }
+    disableBtn.onclick=function (){
+        uiConfig.select_magic="";
+        saveUiConfig();
+        toast("已经禁用魔法书,重新加载后生效", 2000);
+    }
+}
 
 function initBatchGroup() {
     let inputSelect = document.getElementById("batch_group_select");
@@ -1966,9 +2014,38 @@ function fillMagic(group,from, to, weights) {
 
 let magicBooksOrder = [];
 
+function getMagicBookNames(){
+    let names=[];
+    for(let i in magicBooks){
+        let magicBook =magicBooks[i];
+        names.push(magicBook.name);
+    }
+    return names;
+}
+var currentMagic=null;
+
+function showTipsInfo(text){
+    document.getElementById("textera_holder").value=text;
+}
 async function parseMagicBook() {
     translate = window.magic_trans;
-    let magicBook = window.magic_books[0];
+
+    let selectBook=uiConfig.select_magic;
+    var magicBook=null;
+    for(let i in magicBooks){
+        let book=magicBooks[i];
+        if(book.name===selectBook){
+            magicBook=book;
+            break;
+        }
+    }
+    if(magicBook==null){
+        return;
+    }
+    currentMagic=magicBook;
+
+
+
     let posx = {};
     let negx = {};
     let gKey = "魔法书-" + magicBook.name
@@ -1979,11 +2056,11 @@ async function parseMagicBook() {
 
     allData[pG] = posx;
     allData[nG] = negx;
-    neg = []
-    must = []
-    neg.push(nG);
-    must.push(pG);
-    must.push(nG);
+    innerNeg = [];
+    innerMust = [];
+    innerNeg.push(nG);
+    innerMust.push(pG);
+    innerMust.push(nG);
     magicBooksOrder.push(pG);
     magicBooksOrder.push(nG);
 }
@@ -2002,6 +2079,9 @@ function parseAll() {
         groups.push(magicBooksOrder[i]);
     }
 
+    if(currentMagic!=null){
+        showTipsInfo("已经选择了魔法书 "+currentMagic.name+" 正面tag和负面tag 会全面替换,除了 tag 之外，还需要额外手动设置参数 \n"+currentMagic.option);
+    }
 
     for (let i in groups) {
 
@@ -2023,6 +2103,7 @@ function parseAll() {
     configUiCtrlElement("show_del");
     configUiCtrlElement("show_cp1");
     initBatchGroup();
+    initMagicBookGroup();
     document.getElementById("selected_btn_div");
 
     document.getElementById("textera_group").value = groupOrder.join(",");
