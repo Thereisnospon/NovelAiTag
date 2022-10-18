@@ -135,7 +135,15 @@
                 </div>
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="show_yuan">
-                    <label class="form-check-label" for="show_en">圆括号加权</label>
+                    <label class="form-check-label" for="show_yuan">圆括号加权</label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="show_numq">
+                    <label class="form-check-label" for="show_numq">数值加权</label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="show_cp1">
+                    <label class="form-check-label" for="show_cp1">点击单个TAG也复制到剪贴板</label>
                 </div>
             </div>
             <div class="collapse" id="collapseExample">
@@ -208,11 +216,21 @@
 
             <div class="collapse" id="col6">
                 <div class="input-group">
-                    <span class="input-group-text">分类</span>
-                    <textarea class="form-control" aria-label="With textarea" id="textera_group_ys"></textarea>
+                    <span class="input-group-text">法典</span>
+                    <textarea class="form-control" aria-label="With textarea" id="magic_book_text" placeholder="" disabled>元素法典来源于 在线共享文档 《元素法典——Novel AI 元素魔法全收录》文档链接可以点击右边按钮 本插件做了一些词条汉化以及导入，主要是为了快速加载预设 tag, 然后能够方便的打开关闭增加某些特性，能够帮助新手快速的出好看的图。如果某个法术的作者不想被添加，可以联系删除.
+                    </textarea>
 
+                    <select class="form-select-sm" aria-label="Default select example" id="magic_book_select">
+                        <!--                        <option selected>Open this select menu</option>-->
+                        <!--                        <option value="1">One</option>-->
+                        <!--                        <option value="2">Two</option>-->
+                        <!--                        <option value="3">Three</option>-->
+                    </select>
                     <div class="btn-group">
-                        <button type="button" class="btn btn-primary btn-sm" id="btn_group_enable_ys">导入法典</button>
+                        <a href="https://docs.qq.com/doc/DWHl3am5Zb05QbGVs?dver=" class="btn btn-success btn-sm" target="_blank">点击查看-法典来源文档</a>
+                        <button type="button" class="btn btn-warning btn-sm" id="magic_book_text_disable">禁用法典</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="magic_book_text_import">导入法典</button>
+
                     </div>
 
                 </div>
@@ -228,6 +246,7 @@
                 </textarea>
                 <button type="button" class="btn btn-sm btn-danger" id="btn_clear">删除本地存储(谨慎)</button>
                 <button type="button" class="btn btn-sm btn-primary" id="btn_reload">重载页面</button>
+                <button type="button" class="btn btn-sm btn-warning" id="btn_reset_all">重置所有Tag</button>
                 <button type="button" class="btn btn-sm btn-primary" id="btn_reset">重置Tag</button>
             </div>
 
