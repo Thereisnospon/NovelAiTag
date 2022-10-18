@@ -1170,15 +1170,21 @@ function createTagBtnGroup(key, info, group) {
     }
     checkBtn.onclick = function () {
         if (checkBtn.checked && uiConfig.show_cp1) {
-            copyToClip(info, false);
+            copyToClip(getWeightInfo(group,key,info), false);
         }
         onTagsUiChange();
     };
     leftBtn.onclick = function () {
         onCheckBoxWeightChange(group,key, checkBtn, checkBadge, -1);
+        if (checkBtn.checked && uiConfig.show_cp1) {
+            copyToClip(getWeightInfo(group,key,info), false);
+        }
     };
     rightBtn.onclick = function () {
         onCheckBoxWeightChange(group,key, checkBtn, checkBadge, 1);
+        if (checkBtn.checked && uiConfig.show_cp1) {
+            copyToClip(getWeightInfo(group,key,info), false);
+        }
     };
 
     checkBtn.setAttribute("tagKey", key);
