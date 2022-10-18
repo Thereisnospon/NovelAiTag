@@ -922,7 +922,8 @@ var uiConfig = {
     "show_yuan": false,
     "show_numq": false,
     "show_cp1": false,
-    "select_magic":""
+    "select_magic":"",
+    "show_autocp":true
 };
 let allData = globalData;
 let allKeyData = {};
@@ -1092,8 +1093,11 @@ function onTagsUiChange() {
 
     document.getElementById("textarea_pos").value = positive;
     document.getElementById("textarea_neg").value = negative;
-    injectPosToWebUi(positive);
-    injectNegToWebUi(negative);
+    if(uiConfig.show_autocp){
+        injectPosToWebUi(positive);
+        injectNegToWebUi(negative);
+    }
+
     saveChecked();
 
 }
@@ -2112,6 +2116,7 @@ function parseAll() {
     configUiCtrlElement("show_en");
     configUiCtrlElement("show_del");
     configUiCtrlElement("show_cp1");
+    configUiCtrlElement("show_autocp");
     initBatchGroup();
     initMagicBookGroup();
     document.getElementById("selected_btn_div");
