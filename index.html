@@ -110,9 +110,9 @@
                     <a class="btn btn-primary btn-sm" data-bs-toggle="collapse" href="#col4" role="button" aria-expanded="false" aria-controls="col4">
                         TAG批量导入/出
                     </a>
-<!--                    <a class="btn btn-danger btn-sm" data-bs-toggle="collapse" href="#col6" role="button" aria-expanded="false" aria-controls="col6">-->
-<!--                        元素法典-->
-<!--                    </a>-->
+                    <a class="btn btn-danger btn-sm" data-bs-toggle="collapse" href="#col6" role="button" aria-expanded="false" aria-controls="col6">
+                        元素法典
+                    </a>
                     <a class="btn btn-danger btn-sm" data-bs-toggle="collapse" href="#col5" role="button" aria-expanded="false" aria-controls="col5">
                         随机抽卡
                     </a>
@@ -214,17 +214,27 @@
 
             </div>
 
-<!--            <div class="collapse" id="col6">-->
-<!--                <div class="input-group">-->
-<!--                    <span class="input-group-text">分类</span>-->
-<!--                    <textarea class="form-control" aria-label="With textarea" id="textera_group_ys" placeholder="水法 火法 光法 机械 龙火 彩虹法..."></textarea>-->
+            <div class="collapse" id="col6">
+                <div class="input-group">
+                    <span class="input-group-text">法典</span>
+                    <textarea class="form-control" aria-label="With textarea" id="magic_book_text" placeholder="" disabled>元素法典来源于 在线共享文档 《元素法典——Novel AI 元素魔法全收录》文档链接可以点击右边按钮 本插件做了一些词条汉化以及导入，主要是为了快速加载预设 tag, 然后能够方便的打开关闭增加某些特性，能够帮助新手快速的出好看的图。如果某个法术的作者不想被添加，可以联系删除.
+                    </textarea>
 
-<!--                    <div class="btn-group">-->
-<!--                        <button type="button" class="btn btn-primary btn-sm" id="btn_group_enable_ys">导入法典</button>-->
-<!--                    </div>-->
+                    <select class="form-select-sm" aria-label="Default select example" id="magic_book_select">
+                        <!--                        <option selected>Open this select menu</option>-->
+                        <!--                        <option value="1">One</option>-->
+                        <!--                        <option value="2">Two</option>-->
+                        <!--                        <option value="3">Three</option>-->
+                    </select>
+                    <div class="btn-group">
+                        <a href="https://docs.qq.com/doc/DWHl3am5Zb05QbGVs?dver=" class="btn btn-success btn-sm" target="_blank">点击查看-法典来源文档</a>
+                        <button type="button" class="btn btn-warning btn-sm" id="magic_book_text_disable">禁用法典</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="magic_book_text_import">导入法典</button>
 
-<!--                </div>-->
-<!--            </div>-->
+                    </div>
+
+                </div>
+            </div>
 
         </div>
         <div class="row">
