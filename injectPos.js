@@ -18,14 +18,23 @@ function setToPromptPos(id) {
         let tags = promptDiv.getElementsByTagName("textarea")
         if (tags != null && tags.length === 1) {
             if (window.novelAi_inject_pos != null) {
-                tags[0].value = window.novelAi_inject_pos;
+                setNativeValue(tags[0],window.novelAi_inject_pos)
             }
 
         }
     }
 
 }
-
+function setNativeValue(element, value) {
+    var evt = new InputEvent('input', {
+        inputType: 'insertText',
+        data: value,
+        dataTransfer: null,
+        isComposing: false
+    });
+    element.value = value;
+    element.dispatchEvent(evt);
+}
 setToPromptPos("txt2img_prompt")
 setToPromptPos("img2img_prompt")
 window.novelAi_inject_pos = null;
