@@ -1035,10 +1035,10 @@ function getWeightInfo(group,key, info) {
  * @returns {boolean}
  */
 function isNegativeGroup(group) {
-    return innerNeg.indexOf(group) > -1 || diyMust.indexOf(group)>-1;
+    return innerNeg.indexOf(group) > -1 || diyNeg.indexOf(group)>-1;
 }
 function isMustGroup(group) {
-    return innerMust.indexOf(group) > -1 ||diyNeg.indexOf(group)>-1;
+    return innerMust.indexOf(group) > -1 ||diyMust.indexOf(group)>-1;
 }
 function tryResetWeight(group,key){
     let wKey=group+"_"+key;
@@ -1092,7 +1092,8 @@ function onTagsUiChange() {
 
     document.getElementById("textarea_pos").value = positive;
     document.getElementById("textarea_neg").value = negative;
-
+    injectPosToWebUi(positive);
+    injectNegToWebUi(negative);
     saveChecked();
 
 }
@@ -2182,7 +2183,41 @@ function setToWebUiPos(k, data) {
     //     toast("err,"+e)
     // }
 }
+function injectPosToWebUi(injectInfo){
+    try {
+        if(chrome==null || chrome.tabs==null){
+            return
+        }
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            chrome.tabs.executeScript(tabs[0].id, {
+                code: "window.novelAi_inject_pos=\""+injectInfo+"\"",
+            });
+            chrome.tabs.executeScript(tabs[0].id, {
+                file: "injectPos.js",
+            });
+        });
+    }catch {
 
+    }
+}
+
+function injectNegToWebUi(injectInfo){
+    try {
+        if(chrome==null || chrome.tabs==null){
+            return
+        }
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            chrome.tabs.executeScript(tabs[0].id, {
+                code: "window.novelAi_inject_neg=\""+injectInfo+"\"",
+            });
+            chrome.tabs.executeScript(tabs[0].id, {
+                file: "injectNeg.js",
+            });
+        });
+    }catch {
+
+    }
+}
 window.onload = function () {
     loadLocalData().then(p => {
         parseAll();

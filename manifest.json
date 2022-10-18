@@ -11,5 +11,8 @@
     "48": "icon.png",
     "128": "icon.png"
   },
-  "permissions": ["storage", "declarativeContent", "activeTab","tabs"]
+  "permissions": ["storage", "declarativeContent", "activeTab","tabs",
+    "http://*/",
+    "file://*/",
+    "https://*/"]
 }
