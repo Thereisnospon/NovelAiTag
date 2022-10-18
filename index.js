@@ -1,16 +1,220 @@
 let globalData = {
 
     "优秀实践": {
+        "1个女孩": "1girl",
+        "solo":"solo",
+        "全身": "full body",
+        "一个极其娇嫩美丽的女孩": "an extremely delicate and beautiful girl",
+        "非常详细2": "extremely detailed",
+        "花丛": "flowering shrubs",
+
+        "极其精致和美丽": "an extremely delicate and beautiful",
+        "细节的水": "starry detailed water",
+        "细节的天空": "beautiful detailed starry sky",
+        "美丽细腻的眼睛": "beautiful detailed eyes",
+
+        "裸露的肩膀": "bare shoulders",
+        "8k壁纸": "8k_wallpaper",
+        "上半身": "upper_body",
+        "详细冰": "detailed ice",
+        "世界杰作剧院": "world masterpiece theater",
+
         "繁花草甸": "Flowery meadow",
         "秃积雨云": "cumulonimbus calvus",
         "鬃积雨云": "cumulonimbus capillatus",
         "璀璨星空": "Bright stars",
 
-        "细节的水": "starry detailed water",
-        "细节的天空": "beautiful detailed starry sky",
-        "花丛": "flowering shrubs",
+        "大前额": "big forhead",
+        "黑色丝带": "black ribbon",
+        "小乳房5": "small breast",
+        "漏光": "light_leaks",
+        "最佳插图": "best illustration",
+        "大号上衣袖子": "large top sleeves",
+        "动态角度": "dynamic angle",
+        "长刘海": "long bangs",
+        "focus on face": "focus_on_face",
+
+        "navel": "navel",
+        "过度暴露": "overexposure",
+        "星空": "starry sky",
+        "美丽的细节辉光": "beautiful detailed glow",
+        "侧面钝刘海": "side blunt bangs",
+
+        "蓝眼睛": "blue eyes",
+        "机器人女孩": "robot girl",
+
+        "随机分布的云": "randomly distributed clouds",
+        "闪耀": "shine",
+        "虚饰": "frills",
+        "机甲服": "mecha clothes",
+        "眼睛之间的毛发": "hairs between eyes",
+        "蓝色头发": "azure hair",
+        "超详细的": "ultra-detailed",
+        "美丽详细的天空7": "beautiful detailed sky",
+        "动漫脸": "anime face",
+        "天蓝色连衣裙": "skyblue dress",
+        "凌乱的长发": "messy_long_hair",
+        "发光的眼睛": "glowing eyes",
+        "冰晶纹理翅膀": "ice crystal texture wings",
+        "非常详细的CG unity 8k壁纸": "extremely detailed CG unity 8k wallpaper",
+        "最好的质量3": "best quality",
+        "蝴蝶结2": "bowties",
+        "插图": "illustration",
+        "中胸": "medium_breast",
+        "阳光": "sunlight",
+        "森林": "forest",
+        "茫然凝视": "blank stare",
+
+        "中音": "midriff",
+        "绘画": "painting",
+        "景深": "Depth of field",
+        "明亮的眼睛": "bright_eyes",
+        "黑色膝盖": "black kneehighs",
+        "1个女孩2": "1 girl",
+        "半闭着的眼睛": "half closed eyes",
+        "精细的细节": "finely detail",
+        "最佳阴影": "best shadow",
+        "戏剧性角度": "dramatic_angle",
+        "鲜花": "flowers",
+        "墨水": "ink",
+        "红色的眼睛": "red eyes",
+        "红色的月亮": "red moon",
+        "中等乳房": "medium_breasts",
+        "燃烧": "burning",
+        "非常详细的CG": "extremely detailed CG",
+        "洛丽": "loli",
+        "高等教育": "highres",
+        "细节照明": "detailed light",
+        "景深2": "depth of field",
+        "面纱": "veil",
+        "素描": "sketch",
+        "裸肩": "bare_shoulder",
+        "漂亮细心的女孩": "beautiful detailed girl",
+        "查看查看器4": "looking at viewer",
+        "red hair": "red hair",
+        "漂浮的头发": "floating hair",
+        "非常接近观众": "very_close_to_viewers",
+
+        "水彩介质": "watercolor_medium",
+        "观看观众": "looking_at_viewers",
+        "花": "flower",
+        "羽毛": "feather",
+        "河": "river",
+        "美丽细腻的水": "beautiful detailed water",
+        "自然界": "nature",
+        "非常细致的眼睛和脸": "extremely_detailed_eyes_and_face",
+        "水彩": "watercolor",
+        "太神了2": "Amazing",
+        "大袖上衣": "big top sleeves",
+        "无表情的": "expressionless",
+        "开花": "bloom",
+        "黑暗魔术师女孩": "dark magician girl",
+        "按钮": "buttons",
+        "漂亮精致的白色手套": "beautiful detailed white gloves",
+        "白色蝴蝶结": "white bowties",
+        "风": "wind",
+        "缎带": "ribbons",
+        "杰作": "masterpiece",
+        "透镜光斑": "lens_flare",
+        "美丽而精致的水": "beautiful and delicate water",
+        "微风": "breeze",
+        "独奏": "solo",
+        "电影照明2": "cinematic lighting",
+        "褶皱裙": "pleated skirt",
+        "蓬乱的头发": "disheveled hair",
+        "白色1": "hiten_1",
+        "日落": "sunset",
+        "浮动": "floating",
+        "白发": "white_hair"
+
 
     },
+    "负面实践": {
+        "欧维斯": "owres",
+        "畸形肢体": "malformed limbs",
+        "绘制不良": "poorly drawn",
+        "画得不好的手": "poorly drawn hands",
+        "残缺不全的": "mutilated",
+        "jpegartifacts": "jpegartifacts",
+        "2条以上大腿": "more than 2 thighs",
+        "文本": "text",
+        "2个以上乳头": "more than 2 nipples",
+        "眼睛不清": "unclear eyes",
+        "缺腿": "missing legs",
+        "mutated hands and fingers": "mutated hands and fingers ",
+        "变形的，变形的": "deformed",
+        "fused fingers": "fused fingers",
+        "缺少fngers": "missing fngers",
+        "绘制不良的面": "poorly drawn face",
+        "用户名": "username",
+        "额外的支腿": "extra legs",
+        "坏面孔": "bad face",
+        "多乳房": "multiple breasts",
+        "畸形的": "malformed",
+        "长机身2": "long body",
+        "jpeg工件3": "jpeg artifacts",
+        "洛尔": "lowres",
+        "肢": "limb",
+        "wort quality ": "wort quality ",
+        "福塔": "futa",
+        "丢失的手指": "missing fingers",
+        "水印": "watermark",
+        "变异的手和手指": "mutated hand and finger",
+        "特兰尼": "tranny",
+        "降低": "lowers",
+        "突变绘制不佳：1.2": "mutation poorly drawn",
+        "三条腿": "three legs",
+        "克隆的脸": "cloned face",
+        "畸形突变": "malformed mutated",
+        "解剖结构不良畸形变异": "bad anatomy disfigured malformed mutated",
+        "比例不好": "bad proportions",
+        "签名": "signature",
+        "更少的数字": "fewer digits",
+        "复制": "duplicate",
+        "脚不好": "bad feet",
+        "帧外": "out of frame",
+        "最差品质": "worstquality",
+        "poorly drawn": "poorly drawn",
+        "艺术家姓名": "artist name",
+        "突变3": "mutation",
+        "裸体": "nude",
+        "大乳房": "large breasts",
+        "毁容的": "disfigured",
+        "低质量": "low quality",
+        "变异的手和手指": "mutated hands and fingers",
+        "套筒": "Sleeveles",
+        "最差质量": "worst quality",
+        "驼背的3": "Humpbacked",
+        "坏手": "bad hands",
+        "裁剪过的": "cropped",
+        "正常质量": "normal quality",
+        "额外的肢体": "extra limbs",
+        "变异的": "mutated",
+        "丑陋的": "ugly",
+        "变异的手": "mutated hands",
+        "手指太多": "too many fingers",
+        "融合肛门": "fused anus",
+        "文本字体用户界面": "text font ui",
+        "错误": "error",
+        "畸形手": "malformed hands",
+        "extra digt ": "extra digt ",
+        "雅依": "yaoi",
+        "缺失的肢体": "missing limb",
+        "病态的": "morbid",
+        "新南威尔士州": "nsfw",
+        "mutation ": "mutation ",
+        "额外的武器": "extra arms",
+        "丢失的手臂": "missing arms",
+        "三个手臂": "three arms",
+        "长机身": "long body",
+        "解剖结构不好": "bad anatomy",
+        "缺少肢体": "Missing limbs",
+        "长脖子": "long neck",
+        "模糊不清的": "blurry",
+        "额外数字": "extra digit"
+
+    },
+
     "画质": {
         "格子的": "checkered",
         "高分辨率": "highres",
@@ -64,6 +268,7 @@ let globalData = {
         "渐变的背景": "gradient_background",
         "背景是前景的放大版": "zoom_layer"
     },
+
     "头发": {
         "短发": "short hair",
         "卷发": "curly hair",
@@ -685,6 +890,7 @@ let globalData = {
         "Humpbacked": "Humpbacked"
     },
 
+
     "自定义": {
         "漂亮眼睛": "beautiful detailed eyes",
         "华丽": "gorgeous"
@@ -696,7 +902,7 @@ var must = [
     "正面常用", "负面常用"
 ];
 var neg = [
-    "负面常用"
+    "负面常用", "负面实践"
 ];
 var checkTab = null;
 let myWeight = {};
@@ -708,7 +914,7 @@ var uiConfig = {
     "show_en": false,
     "show_yuan": false,
     "show_numq": false,
-    "show_cp1":false
+    "show_cp1": false
 };
 let allData = globalData;
 let allKeyData = {};
@@ -751,15 +957,15 @@ function createElement(name, params) {
  * @param badge
  * @param chValue
  */
-function onCheckBoxWeightChange(key, cb, badge, chValue) {
-    var weight = myWeight[key];
+function onCheckBoxWeightChange(group,key, cb, badge, chValue) {
+    var weight = myWeight[group+"_"+key];
     if (weight == null) {
         weight = 0;
     } else {
         weight = parseInt(weight);
     }
     weight += chValue;
-    myWeight[key] = weight;
+    myWeight[group+"_"+key] = weight;
     badge.innerText = weight;
     onTagsUiChange();
 }
@@ -778,8 +984,8 @@ function getStandardTagCheck() {
  * @param info
  * @returns {string}
  */
-function getWeightInfo(key, info) {
-    let weight = myWeight[key];
+function getWeightInfo(group,key, info) {
+    let weight = myWeight[group+"_"+key];
     var weightInfo = info;
     var posL = "{";
     var posR = "}";
@@ -822,7 +1028,15 @@ function getWeightInfo(key, info) {
 function isNegativeGroup(group) {
     return neg.indexOf(group) > -1;
 }
-
+function tryResetWeight(group,key){
+    let wKey=group+"_"+key;
+    let wWei=myWeight[wKey];
+    if(wWei!=null){
+        Reflect.deleteProperty(myWeight,wKey);
+        getOrPutUiGP(group, key).checkBadge.innerText=0;
+    }
+   
+}
 /**
  * 刷新 tag ui
  */
@@ -846,7 +1060,7 @@ function onTagsUiChange() {
                 let tagQuickBtn = createSelectedBtn(tagGroup, tagKey, isNegativeGroup(tagGroup));
                 quickTagLayout.appendChild(tagQuickBtn);
             }
-            let weighInfo = getWeightInfo(tagKey, tagValue);
+            let weighInfo = getWeightInfo(tagGroup,tagKey, tagValue);
             if (isNegativeGroup(tagGroup)) {
                 negativeTags.push(weighInfo);
             } else {
@@ -857,6 +1071,8 @@ function onTagsUiChange() {
                 uiEle.quickBtn = null;
                 tryRemoveFromParent(quickBtn);
             }
+           tryResetWeight(tagGroup,tagKey);
+
         }
     }
     let positive = positiveTags.join(",")
@@ -913,6 +1129,7 @@ function createTagBtnGroup(key, info, group) {
     getStandardTagCheck().push(checkBtn);
     let holder = getOrPutUiGP(group, key);
     holder.mainCheck = checkBtn;
+
     holder.checkBoxs.push(checkBtn);
 
     if (checked.indexOf(group + "_" + key) > -1) {
@@ -932,24 +1149,24 @@ function createTagBtnGroup(key, info, group) {
     let checkBadge = createElement("span", {
         "class": "badge bg-secondary"
     });
-
-    let mW = myWeight[key];
+    holder.checkBadge=checkBadge;
+    let mW = myWeight[group+"_"+key];
     if (mW != null) {
         checkBadge.innerText = mW;
     } else {
         checkBadge.innerText = 0;
     }
-    checkBtn.onclick = function (){
-        if(checkBtn.checked && uiConfig.show_cp1){
-            copyToClip(info,false);
+    checkBtn.onclick = function () {
+        if (checkBtn.checked && uiConfig.show_cp1) {
+            copyToClip(info, false);
         }
         onTagsUiChange();
     };
     leftBtn.onclick = function () {
-        onCheckBoxWeightChange(key, checkBtn, checkBadge, -1);
+        onCheckBoxWeightChange(group,key, checkBtn, checkBadge, -1);
     };
     rightBtn.onclick = function () {
-        onCheckBoxWeightChange(key, checkBtn, checkBadge, 1);
+        onCheckBoxWeightChange(group,key, checkBtn, checkBadge, 1);
     };
 
     checkBtn.setAttribute("tagKey", key);
@@ -1295,20 +1512,20 @@ function toast(text, time) {
     }, time)
 }
 
-function copyToClip(content,t2) {
+function copyToClip(content, t2) {
     const inputDom = document.createElement('input');
     inputDom.setAttribute('value', content);
     document.body.appendChild(inputDom);
     inputDom.select();
     document.execCommand('copy');
     document.body.removeChild(inputDom);
-    if(t2!==false){
+    if (t2 !== false) {
         toast("已复制到剪贴板")
     }
 
 }
 
-function resetCheck(resetAll) {
+function resetCheck(resetAll, restMust) {
     var checked = localStorage.getItem("checked_data")
     if (checked == null) {
         checked = [];
@@ -1319,8 +1536,15 @@ function resetCheck(resetAll) {
         let info = cb.getAttribute("tagKey");
         var g = cb.getAttribute("tagGroup");
         if (g != null && info != null && (!(checked.indexOf(g + "_" + info) > -1) || resetAll)) {
-            cb.checked = must.indexOf(g) > -1
+            if (restMust === true) {
+                cb.checked = false;
+            } else {
+                cb.checked = must.indexOf(g) > -1
+            }
         }
+    }
+    if(resetAll){
+        myWeight=[];
     }
     onTagsUiChange();
 }
@@ -1461,11 +1685,11 @@ function saveGroupOrder(order) {
     saveStorage("groupOrder", order);
 }
 
-async function loadNegDat(){
+async function loadNegDat() {
     for (let i in groupOrder) {
-        let n=groupOrder[i];
-        if(n.startsWith("负面")){
-            if(!neg.indexOf(n)>-1){
+        let n = groupOrder[i];
+        if (n.startsWith("负面")) {
+            if (!neg.indexOf(n) > -1) {
                 neg.push(n)
             }
         }
@@ -1641,7 +1865,7 @@ function tryAddBatch(group, text) {
             let line = lines[i];
 
             let data = line.split(splitChar);
-            console.log(line,data);
+            console.log(line, data);
             if (data != null && data.length === 2) {
                 let k = data[0];
                 let v = data[1];
@@ -1723,7 +1947,7 @@ function formatMagicStr(str) {
     return str.replace("-", " ").replace("_", " ")
 }
 
-function fillMagic(from, to, weights) {
+function fillMagic(group,from, to, weights) {
 
     for (let i in from) {
         let k = from[i];
@@ -1734,7 +1958,7 @@ function fillMagic(from, to, weights) {
             tran = k;
         }
         if (w != null) {
-            myWeight[tran] = w;
+            myWeight[group+"_"+tran] = w;
         }
         to[tran] = k;
     }
@@ -1747,11 +1971,12 @@ async function parseMagicBook() {
     let magicBook = window.magic_books[0];
     let posx = {};
     let negx = {};
-    fillMagic(magicBook.pos, posx, magicBook.weight)
-    fillMagic(magicBook.neg, negx, magicBook.weight)
     let gKey = "魔法书-" + magicBook.name
     let pG = gKey + "-正"
     let nG = gKey + "-负"
+    fillMagic(pG,magicBook.pos, posx, magicBook.weight)
+    fillMagic(nG,magicBook.neg, negx, magicBook.weight)
+
     allData[pG] = posx;
     allData[nG] = negx;
     neg = []
@@ -1806,6 +2031,9 @@ function parseAll() {
         toast("重新加载页面后生效", 2000);
     }
     document.getElementById("btn_group_modify").onclick = modifyGroupData;
+    document.getElementById("btn_reset_all").onclick=function () {
+        resetCheck(true,true);
+    };
 
     document.getElementById("textarea_pos").onclick = function () {
         copyToClip(document.getElementById("textarea_pos").value)
