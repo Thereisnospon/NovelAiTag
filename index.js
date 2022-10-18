@@ -1950,11 +1950,13 @@ function initMagicBookGroup(){
         let book=getSelectBook();
         uiConfig.select_magic=book
         saveUiConfig();
+        resetCheck(true,true);
         toast("加载魔法书 "+book+" 成功，重新加载后生效", 2000);
     }
     disableBtn.onclick=function (){
         uiConfig.select_magic="";
         saveUiConfig();
+        resetCheck(true,true);
         toast("已经禁用魔法书,重新加载后生效", 2000);
     }
 }
@@ -2063,6 +2065,7 @@ async function parseMagicBook() {
     innerMust.push(nG);
     magicBooksOrder.push(pG);
     magicBooksOrder.push(nG);
+    console.log(innerNeg,innerMust);
 }
 
 function parseAll() {
