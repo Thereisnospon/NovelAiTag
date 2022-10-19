@@ -1,4 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
+import { ElNotification } from 'element-plus';
 
 export default defineStore({
     id: 'app',
@@ -60,13 +61,49 @@ export default defineStore({
          */
         addTag(tag, state) {
             // console.log(tag);
-
             let num = this.tagName.indexOf(tag.key);
 
+            //  没有在缓存中找到
             if (num == -1) {
                 this.selectedTag.push(tag);
-            } else {
+            }
+            // 在缓存中找到了
+            else {
                 this.selectedTag[num].time += 1;
+            }
+
+            // console.log(this.selectedTag);
+
+            this.renderOutput();
+        },
+
+        /**
+         * 减少 1 的标签对象
+         * @param {*} tag
+         */
+        minusTag(tag, state) {
+            // console.log(tag);
+            let num = this.tagName.indexOf(tag.key);
+
+            //  没有在缓存中找到
+            if (num == -1) {
+                // TODO: 这里要和 thereisnospon 商量一下凭空减少怎么做, 负面还是不动, 暂时不动
+                ElNotification({
+                    title: '别乱动',
+                    message: '没有数量就别瞎减哦',
+                    type: 'info'
+                });
+            }
+            // 在缓存中找到了
+            else {
+                // 刚好为1 -> 删掉
+                if (this.selectedTag[num].time == 1) {
+                    this.selectedTag.splice(num, 1);
+                }
+                // 不是1 -> 减1
+                else {
+                    this.selectedTag[num].time -= 1;
+                }
             }
 
             // console.log(this.selectedTag);
@@ -82,10 +119,13 @@ export default defineStore({
         setTag(tag, state) {
             let num = this.tagName.indexOf(tag.key);
 
+            //  没有在缓存中找到
             if (num == -1) {
                 tag.time = 1;
                 this.selectedTag.push(tag);
-            } else {
+            }
+            // 在缓存中找到了 -> 删掉
+            else {
                 this.selectedTag.splice(num, 1);
             }
 

@@ -50,7 +50,7 @@
                 <div v-for="(_content, _key) in dictionary[active]" :key="_key">
                     <div class="btn_group mr-1 mb-1">
                         <!-- 减号 -->
-                        <button class="btn_l">-</button>
+                        <button class="btn_l" @click="tagManage_minus(_key, _content)">-</button>
 
                         <!-- 内容 -->
                         <button
@@ -123,8 +123,20 @@ const isTagSelected = _key => {
  * @param {*} _content tag原名
  */
 const tagManage_add = (_key, _content) => {
-    console.log('tag: ', _key, '  raw: ', _content);
+    // console.log('tag: ', _key, '  raw: ', _content);
     PromptStore.addTag({ key: _key, content: _content, time: 1 });
+
+    // console.log('output', PromptStore.output);
+};
+
+/**
+ * 点击减少 tag
+ * @param {*} _key tag中文名
+ * @param {*} _content tag原名
+ */
+const tagManage_minus = (_key, _content) => {
+    // console.log('tag: ', _key, '  raw: ', _content);
+    PromptStore.minusTag({ key: _key, content: _content });
 
     // console.log('output', PromptStore.output);
 };
@@ -136,8 +148,9 @@ const tagManage_add = (_key, _content) => {
  */
 const tagManage_reset = (_key, _content) => {
     //DEBUG:  bug 修理中
-    console.log('tag: ', _key, '  raw: ', _content);
+    // console.log('tag: ', _key, '  raw: ', _content);
     PromptStore.setTag({ key: _key, content: _content });
+
     // console.log('output', PromptStore.output);
 };
 
