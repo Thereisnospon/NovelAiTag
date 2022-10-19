@@ -5,7 +5,7 @@
             <div class="input-group">
                 <div class="input-group__title">
                     <div class="pb-1">正面 Tag</div>
-                    <div><el-button>复制</el-button></div>
+                    <div><el-button @click="copy2Clipboard('positive')">复制</el-button></div>
                 </div>
                 <div class="input-group__content">
                     <textarea class="form-control" aria-label="With textarea" id="textarea_pos" :value="PromptStore.output"></textarea>
@@ -18,7 +18,7 @@
             <div class="input-group">
                 <div class="input-group__title">
                     <div class="pb-1">负面 Tag</div>
-                    <div><el-button>复制</el-button></div>
+                    <div><el-button @click="copy2Clipboard('negative')">复制</el-button></div>
                 </div>
                 <div class="input-group__content">
                     <textarea class="form-control" aria-label="With textarea" id="textarea_pos"></textarea>
@@ -34,7 +34,8 @@
             <div class="rowTagCategories">
                 <div v-for="(_content, _key) in dictionary" :key="_key">
                     <button
-                        class="transition-200 px-4 py-2 mb-2 mr-2 text-white bg-green-400 border border-green-200 rounded hover:bg-green-500"
+                        class="transition-200 px-4 py-2 mb-2 mr-2 text-white bg-green-600 border border-green-200 rounded hover:opacity-80 active:bg-green-800"
+                        :class="{ 'bg-green-800 border-red-900': _key == active }"
                         @click="jumpPage(_key)"
                     >
                         {{ _key }}
@@ -61,11 +62,11 @@
 <script setup>
 import good_practice from '../dictionaries/good_practice';
 import { ref, reactive } from 'vue';
+import { ElNotification } from 'element-plus';
 
 // store 引用
 import usePromptStore from '@/stores/stores.js';
 let PromptStore = usePromptStore();
-// console.log('PromptStore: ', PromptStore);
 
 // 字典对象
 const dictionary = reactive(good_practice);
@@ -73,17 +74,50 @@ const dictionary = reactive(good_practice);
 // 当前激活字典页面
 const active = ref('优秀实践');
 
-// 跳转 tag 页面
+/**
+ * 跳转 tag 页面
+ * @param {*} index
+ */
 const jumpPage = index => {
     active.value = index;
     console.log('打开页面: ', active.value);
 };
 
-// 点击 tag 添加或消除
+/**
+ * 点击 tag 添加或消除
+ * @param {*} _key tag中文名
+ * @param {*} _content tag原名
+ */
 const tagManage = (_key, _content) => {
     console.log('tag: ', _key, '  raw: ', _content);
     PromptStore.addTag({ key: _key, content: _content, time: 1 });
     console.log('output', PromptStore.output);
+};
+
+/**
+ * 复制到剪切板,
+ * @param {*} place 正面1 /负面0 /可能还有单个标签的复制
+ */
+const copy2Clipboard = place => {
+    const obj = { positive: PromptStore.output, negative: 'negative 还没弄好' };
+
+    let text = obj[place];
+
+    if (navigator.clipboard) {
+        new Promise((res, rej) => {
+            console.log(999);
+            navigator.clipboard.writeText(text);
+            res();
+        }).then(res => {
+            ElNotification({
+                title: 'Success',
+                message: '您已复制成功\n' + text.slice(0, 20) + '...',
+                type: 'success'
+            });
+        });
+    } else {
+        alert('您的浏览器版本暂时不支持复制, 请手动复制');
+    }
 };
 </script>
 <style lang="scss" scoped>
