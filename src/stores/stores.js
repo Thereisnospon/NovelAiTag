@@ -27,6 +27,24 @@ export default defineStore({
          */
         tagName(state) {
             return state.selectedTag.map(el => el.key);
+        },
+
+        /**
+         * 查询指定 tag 的 times
+         */
+        tagNum(state) {
+            return _key => {
+                let item = state.selectedTag.find(user => user.key === _key);
+                let res = null;
+                // console.log(item);
+                if (item) {
+                    // console.log(Object.keys(item));
+                    // console.log(Object.values(item));
+                    res = Object.entries(item)[2][1];
+                }
+                // console.log(res);
+                return res;
+            };
         }
     },
 
@@ -37,7 +55,7 @@ export default defineStore({
         // }
 
         /**
-         * 添加标签对象
+         * 增加 1 的标签对象
          * @param {*} tag
          */
         addTag(tag, state) {
@@ -49,6 +67,26 @@ export default defineStore({
                 this.selectedTag.push(tag);
             } else {
                 this.selectedTag[num].time += 1;
+            }
+
+            // console.log(this.selectedTag);
+
+            this.renderOutput();
+        },
+
+        /**
+         * 重置标签对象 -> 为1 或者 删除
+         * @param {*} tag
+         * @param {*} state
+         */
+        setTag(tag, state) {
+            let num = this.tagName.indexOf(tag.key);
+
+            if (num == -1) {
+                tag.time = 1;
+                this.selectedTag.push(tag);
+            } else {
+                this.selectedTag.splice(num, 1);
             }
 
             // console.log(this.selectedTag);

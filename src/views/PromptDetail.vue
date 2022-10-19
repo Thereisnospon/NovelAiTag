@@ -53,7 +53,7 @@
                         <button class="btn_l">-</button>
 
                         <!-- 内容 -->
-                        <button class="btn_c">{{ _key }}:{{ _content }}</button>
+                        <button class="btn_c" @click="tagManage_reset(_key, _content)">{{ _key }}:{{ _content }}</button>
 
                         <!-- 数量 badge -->
                         <button
@@ -62,8 +62,9 @@
                             :class="{ 'btn_c_times  pl-0': PromptStore.tagName.includes(_key) }"
                         >
                             <span class="inline-block text-white bg-black ml-0 text-.8rem lh-1rem px-2 py-1 rounded-full">
-                                <!-- {{ PromptStore.selectedTag[PromptStore.tagName.indexOf(_key)] }} -->
-                                {{ buffer(_key) }}
+                                <!-- DEBUG: 这里有点脏, 之后想办法解决一下 proxy 或者 pinia 的 vue3 读取问题  -->
+                                <!-- 优雅但是没做出来的方法 -->
+                                {{ PromptStore.tagName.includes(_key) ? PromptStore.tagNum(_key) : '' }}
                             </span>
                         </button>
 
@@ -71,7 +72,7 @@
                         <button class="btn_c btn_c_delete">xxx</button>
 
                         <!-- 加号 -->
-                        <button class="btn_r" @click="tagManage(_key, _content)">+</button>
+                        <button class="btn_r" @click="tagManage_add(_key, _content)">+</button>
                     </div>
                 </div>
             </div>
@@ -82,6 +83,7 @@
 import good_practice from '../dictionaries/good_practice';
 import { ref, reactive } from 'vue';
 import { ElNotification } from 'element-plus';
+import { storeToRefs } from 'pinia';
 
 // store 引用
 import usePromptStore from '@/stores/stores.js';
@@ -103,14 +105,34 @@ const jumpPage = index => {
 };
 
 /**
- * 点击 tag 添加或消除
+ * 检测 tag 是否被选中
+ * @param {*} _key
+ */
+const isTagSelected = _key => {
+    return PromptStore.tagName.includes(_key);
+};
+
+/**
+ * 点击增加 tag
  * @param {*} _key tag中文名
  * @param {*} _content tag原名
  */
-const tagManage = (_key, _content) => {
+const tagManage_add = (_key, _content) => {
     console.log('tag: ', _key, '  raw: ', _content);
     PromptStore.addTag({ key: _key, content: _content, time: 1 });
 
+    // console.log('output', PromptStore.output);
+};
+
+/**
+ * 点击重置 tag
+ * @param {*} _key tag中文名
+ * @param {*} _content tag原名
+ */
+const tagManage_reset = (_key, _content) => {
+    //DEBUG:  bug 修理中
+    console.log('tag: ', _key, '  raw: ', _content);
+    PromptStore.setTag({ key: _key, content: _content });
     // console.log('output', PromptStore.output);
 };
 
@@ -139,21 +161,6 @@ const copy2Clipboard = place => {
     } else {
         alert('您的浏览器版本暂时不支持复制, 请手动复制');
     }
-};
-
-// 显示所点击 tag 的次数
-// TODO: 这里强行拆掉 proxy 有点低级, 回头找找别的方式
-let buffer = _key => {
-    let num = PromptStore.tagName.indexOf(_key);
-    let res = Object.entries(PromptStore.selectedTag)[num];
-    // console.log(res);
-    if (res) {
-        let res2 = Object.entries(res[1]);
-        let res3 = res2[2][1];
-        // console.log(res3);
-        return res3;
-    }
-    // console.log(Object.keys(PromptStore.selectedTag));
 };
 </script>
 <style lang="scss" scoped>
@@ -188,6 +195,11 @@ let buffer = _key => {
 .rowTagShow {
     display: flex;
     flex-wrap: wrap;
+
+    .btn_group {
+        // display: flow-root;
+        overflow: hidden;
+    }
 
     .btn_group:hover {
         // background-color: green;
