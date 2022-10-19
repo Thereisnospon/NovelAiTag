@@ -17,7 +17,16 @@
 
 1. [] 实现 tag 搜索功能
 2. [] 迁移数据存储方式
-3. [] vue 框架迁移 (暂定使用 Vue3 + Vite + Element_Plus)
+3. [x] vue 框架迁移 (暂定使用 Vue3 + Vite + Element_Plus)
+
+## 进度
+
+1. [x] 基本样式
+2. [x] 基本的 tag 添加操作完成
+3. [ ] 负面 tag 设置
+4. [ ] 独立形式显示已经选择的 tag
+5. [ ] localStorage 数据存储
+6. ......
 
 ## 技术栈
 
