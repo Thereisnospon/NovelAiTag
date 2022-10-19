@@ -53,18 +53,23 @@
                         <button class="btn_l">-</button>
 
                         <!-- 内容 -->
-                        <button class="btn_c" @click="tagManage_reset(_key, _content)">{{ _key }}:{{ _content }}</button>
+                        <button
+                            class="btn_c transition-200"
+                            :class="{ 'bg-blue-700 text-white ': isTagSelected(_key) }"
+                            @click="tagManage_reset(_key, _content)"
+                        >
+                            {{ _key }}:{{ _content }}
+                        </button>
 
                         <!-- 数量 badge -->
                         <button
-                            class="btn_c"
-                            v-show="PromptStore.tagName.includes(_key)"
-                            :class="{ 'btn_c_times  pl-0': PromptStore.tagName.includes(_key) }"
+                            class="btn_c transition-200"
+                            v-show="isTagSelected(_key)"
+                            :class="{ 'btn_c_times pl-0 bg-blue-700 text-white ': isTagSelected(_key) }"
                         >
                             <span class="inline-block text-white bg-black ml-0 text-.8rem lh-1rem px-2 py-1 rounded-full">
                                 <!-- DEBUG: 这里有点脏, 之后想办法解决一下 proxy 或者 pinia 的 vue3 读取问题  -->
-                                <!-- 优雅但是没做出来的方法 -->
-                                {{ PromptStore.tagName.includes(_key) ? PromptStore.tagNum(_key) : '' }}
+                                {{ isTagSelected(_key) ? PromptStore.tagNum(_key) : '' }}
                             </span>
                         </button>
 
@@ -106,7 +111,7 @@ const jumpPage = index => {
 
 /**
  * 检测 tag 是否被选中
- * @param {*} _key
+ * @param {*} _key tag中文名
  */
 const isTagSelected = _key => {
     return PromptStore.tagName.includes(_key);
