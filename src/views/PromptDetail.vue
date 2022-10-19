@@ -51,22 +51,27 @@
                     <div class="btn_group mr-1 mb-1">
                         <!-- 减号 -->
                         <button class="btn_l">-</button>
-                        <button class="btn_c" @click="tagManage(_key, _content)">{{ _key }}:{{ _content }}</button>
+
+                        <!-- 内容 -->
+                        <button class="btn_c">{{ _key }}:{{ _content }}</button>
+
+                        <!-- 数量 badge -->
                         <button
                             class="btn_c"
                             v-show="PromptStore.tagName.includes(_key)"
-                            :class="{ btn_c_times: PromptStore.tagName.includes(_key) }"
+                            :class="{ 'btn_c_times  pl-0': PromptStore.tagName.includes(_key) }"
                         >
-                            <span class="text-red">100</span>
+                            <span class="inline-block text-white bg-black ml-0 text-.8rem lh-1rem px-2 py-1 rounded-full">
+                                <!-- {{ PromptStore.selectedTag[PromptStore.tagName.indexOf(_key)] }} -->
+                                {{ buffer(_key) }}
+                            </span>
                         </button>
-
-                        <!-- <button class="btn_c btn_c_times">xxx</button> -->
 
                         <!-- 可能的删除按钮 -->
                         <button class="btn_c btn_c_delete">xxx</button>
 
                         <!-- 加号 -->
-                        <button class="btn_r">+</button>
+                        <button class="btn_r" @click="tagManage(_key, _content)">+</button>
                     </div>
                 </div>
             </div>
@@ -134,6 +139,21 @@ const copy2Clipboard = place => {
     } else {
         alert('您的浏览器版本暂时不支持复制, 请手动复制');
     }
+};
+
+// 显示所点击 tag 的次数
+// TODO: 这里强行拆掉 proxy 有点低级, 回头找找别的方式
+let buffer = _key => {
+    let num = PromptStore.tagName.indexOf(_key);
+    let res = Object.entries(PromptStore.selectedTag)[num];
+    // console.log(res);
+    if (res) {
+        let res2 = Object.entries(res[1]);
+        let res3 = res2[2][1];
+        // console.log(res3);
+        return res3;
+    }
+    // console.log(Object.keys(PromptStore.selectedTag));
 };
 </script>
 <style lang="scss" scoped>
