@@ -51,7 +51,7 @@ export default defineStore({
                 this.selectedTag[num].time += 1;
             }
 
-            console.log(this.selectedTag);
+            // console.log(this.selectedTag);
 
             this.renderOutput();
         },
@@ -75,8 +75,8 @@ export default defineStore({
                 res += ',';
             });
 
-            // slice 去掉最后的逗号
-            res = res.slice(0, res.length - 1);
+            // // slice 去掉最后的逗号
+            // res = res.slice(0, res.length - 1);
 
             this.output = res;
             // console.log(res);

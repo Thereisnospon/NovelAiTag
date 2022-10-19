@@ -49,9 +49,23 @@
             <div class="rowTagShow">
                 <div v-for="(_content, _key) in dictionary[active]" :key="_key">
                     <div class="btn_group mr-1 mb-1">
+                        <!-- 减号 -->
                         <button class="btn_l">-</button>
                         <button class="btn_c" @click="tagManage(_key, _content)">{{ _key }}:{{ _content }}</button>
-                        <button class="btn_c">xxx</button>
+                        <button
+                            class="btn_c"
+                            v-show="PromptStore.tagName.includes(_key)"
+                            :class="{ btn_c_times: PromptStore.tagName.includes(_key) }"
+                        >
+                            <span class="text-red">100</span>
+                        </button>
+
+                        <!-- <button class="btn_c btn_c_times">xxx</button> -->
+
+                        <!-- 可能的删除按钮 -->
+                        <button class="btn_c btn_c_delete">xxx</button>
+
+                        <!-- 加号 -->
                         <button class="btn_r">+</button>
                     </div>
                 </div>
@@ -91,7 +105,8 @@ const jumpPage = index => {
 const tagManage = (_key, _content) => {
     console.log('tag: ', _key, '  raw: ', _content);
     PromptStore.addTag({ key: _key, content: _content, time: 1 });
-    console.log('output', PromptStore.output);
+
+    // console.log('output', PromptStore.output);
 };
 
 /**
@@ -99,6 +114,7 @@ const tagManage = (_key, _content) => {
  * @param {*} place 正面1 /负面0 /可能还有单个标签的复制
  */
 const copy2Clipboard = place => {
+    //TODO: negative 没弄好
     const obj = { positive: PromptStore.output, negative: 'negative 还没弄好' };
 
     let text = obj[place];
@@ -166,9 +182,12 @@ const copy2Clipboard = place => {
         width: 2rem;
         line-height: 2rem;
         border-right: none;
+
+        background-color: #dc3545;
     }
     .btn_c {
         border: 0.15rem solid red;
+        // height: 2rem;
         line-height: 2rem;
         border-right: none;
         border-left: none;
@@ -180,6 +199,15 @@ const copy2Clipboard = place => {
         width: 2rem;
         line-height: 2rem;
         border-left: none;
+
+        background-color: #1a8754;
+    }
+
+    .btn_c_times {
+        // display: none;
+    }
+    .btn_c_delete {
+        display: none;
     }
 }
 </style>
