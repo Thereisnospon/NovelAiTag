@@ -1,5 +1,15 @@
 let globalData = {
-
+    "画质": {
+        "格子的": "checkered",
+        "高分辨率": "highres",
+        "超高分辨率": "absurdres",
+        "极高分辨率": "incredibly_absurdres",
+        "超级高分辨率大文件": "huge_filesize",
+        "壁纸": "wallpaper",
+        "点阵图": "pixel_art",
+        "单色图片": "monochrome",
+        "色彩斑斓的": "colorful",
+    },
     "优秀实践": {
         "1个女孩": "1girl",
         "solo": "solo",
@@ -215,17 +225,7 @@ let globalData = {
 
     },
 
-    "画质": {
-        "格子的": "checkered",
-        "高分辨率": "highres",
-        "超高分辨率": "absurdres",
-        "极高分辨率": "incredibly_absurdres",
-        "超级高分辨率大文件": "huge_filesize",
-        "壁纸": "wallpaper",
-        "点阵图": "pixel_art",
-        "单色图片": "monochrome",
-        "色彩斑斓的": "colorful",
-    },
+
     "风格": {
         "原画": "artbook",
         "游戏": "game_cg",
@@ -1109,19 +1109,23 @@ function onTagsUiChange() {
 
         }
     }
-    let checkedInfo = getAllCheckedInfo()
+    let checkedInfo = getAllCheckedInfo();
+    // console.log(checkedInfo,checkMap);
     for (let i in checkedInfo) {
         let checkInfo = checkedInfo[i];
-        let saveState = checkMap[checkInfo.gk]
-        let weighInfo = getWeightInfoFromLabel(checkInfo.gk, saveState["info"]);
-        if (saveState["neg"] === true) {
-            negativeTags.push(weighInfo);
-        } else {
-            positiveTags.push(weighInfo);
+        let saveState = checkMap[checkInfo.gk];
+        if(saveState!=null){
+            let weighInfo = getWeightInfoFromLabel(checkInfo.gk, saveState["info"]);
+            if (saveState["neg"] === true) {
+                negativeTags.push(weighInfo);
+            } else {
+                positiveTags.push(weighInfo);
+            }
         }
+
     }
-    let positive = positiveTags.join(",")
-    let negative = negativeTags.join(",")
+    let positive = positiveTags.join(",");
+    let negative = negativeTags.join(",");
 
     document.getElementById("textarea_pos").value = positive;
     document.getElementById("textarea_neg").value = negative;
@@ -1584,10 +1588,10 @@ function copyToClip(content, t2) {
 
 function resetFromCheckData(){
     let all=getAllCheckedInfo();
+
     for(let i in all){
         let info=all[i];
         if(info.check){
-            console.log(info);
             uiElements[info.gk].mainCheck.checked=true;
         }
     }
@@ -1707,9 +1711,8 @@ async function loadCheckConfig() {
     }
     for (let i in checked) {
         let gk = checked[i];
-        onTagCheckChangeByLabel(gk,false);
+        onTagCheckChangeByLabel(gk,true);
     }
-    console.log("checkde",checked,checkedInfo);
 }
 
 async function loadWeightConfig() {
@@ -1782,6 +1785,16 @@ function getAllCheckedInfo() {
     }
     return checked;
 }
+function getAllCheckedInfoGk() {
+    let checked = [];
+    for (let i in checkedInfo) {
+        let info = checkedInfo[i];
+        if (info.check) {
+            checked.push(info.gk);
+        }
+    }
+    return checked;
+}
 
 
 function onTagCheckChange(group, key, check) {
@@ -1798,19 +1811,17 @@ function onTagCheckChangeByLabel(gk, check) {
             if(info.gk===gk){
                 info.check=check;
             }else{
-                newChek.push(info.gk)
+                newChek.push(info)
             }
         }
-
     }
-    console.log("newch",newChek);
     if(!check){
         checkedInfo=newChek;
     }
 }
 
 function saveChecked() {
-    var checked = getAllCheckedInfo();
+    var checked = getAllCheckedInfoGk();
     // let checkBoxs = getStandardTagCheck()
     // for (var i = 0; i < checkBoxs.length; i++) {
     //     let tagCbUi = checkBoxs[i];
