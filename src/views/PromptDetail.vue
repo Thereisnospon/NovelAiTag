@@ -59,13 +59,16 @@
             <!-- 该 tag 分类下的所有 tag -->
             <div class="rowTagShow">
                 <div v-for="(_content, _key) in dictionary[active]" :key="_key">
-                    <div class="btn_group mr-2 mb-2">
+                    <div class="btn_group relative mr-2 mb-2">
                         <!-- 减号 -->
-                        <button class="btn_left" @click="tagManage_minus(_key, _content)">-</button>
+                        <button class="btn_left absolute left-0 top-0 bottom-0" @click="tagManage_minus(_key, _content)">-</button>
+
+                        <!-- 减号 button 占位 -->
+                        <!-- <button class="btn_center w-2rem">x</button> -->
 
                         <!-- tag 内容 -->
                         <button
-                            class="btn_center"
+                            class="btn_center btn_left_cover btn_right_cover"
                             :class="{ 'bg-blue-700 text-white ': isTagSelected(_key) }"
                             @click="tagManage_reset(_key, _content)"
                         >
@@ -73,9 +76,12 @@
                         </button>
 
                         <!-- 数量 badge -->
-                        <button class="btn_center" :class="{ 'btn_center_times pl-0 bg-blue-700 text-white ': isTagSelected(_key) }">
+                        <button
+                            class="btn_center w-3rem absolute top-0 bottom-0 right-2rem px-0 inline-block"
+                            :class="{ 'btn_center_times bg-blue-700 text-white ': isTagSelected(_key) }"
+                        >
                             <span
-                                class="inline-block text-white bg-black ml-0 text-.8rem lh-1rem px-2 py-1 rounded-full"
+                                class="inline-block text-white text-center bg-black m-0 text-.8rem lh-1rem px-2 py-1 rounded-full w-1.5rem"
                                 :class="{ 'bg-gray': !isTagSelected(_key) }"
                             >
                                 <!-- DEBUG: 这里有点脏, 之后想办法解决一下 proxy 或者 pinia 的 vue3 读取问题  -->
@@ -84,10 +90,10 @@
                         </button>
 
                         <!-- 可能的删除按钮 -->
-                        <button class="btn_center btn_center_delete">xxx</button>
+                        <!-- <button class="btn_center btn_center_delete">xxx</button> -->
 
                         <!-- 加号 -->
-                        <button class="btn_right" @click="tagManage_add(_key, _content)">+</button>
+                        <button class="btn_right z-1000 absolute right-0 top-0 bottom-0" @click="tagManage_add(_key, _content)">+</button>
                     </div>
                 </div>
             </div>
@@ -303,6 +309,14 @@ const copy2Clipboard = place => {
         }
         .btn_center_delete {
             display: none;
+        }
+
+        .btn_left_cover {
+            padding-left: calc(2rem + 6px);
+        }
+
+        .btn_right_cover {
+            padding-right: calc(5rem + 6px);
         }
     }
 
