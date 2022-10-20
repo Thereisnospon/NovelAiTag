@@ -2,7 +2,7 @@ let globalData = {
 
     "优秀实践": {
         "1个女孩": "1girl",
-        "solo":"solo",
+        "solo": "solo",
         "全身": "full body",
         "一个极其娇嫩美丽的女孩": "an extremely delicate and beautiful girl",
         "非常详细2": "extremely detailed",
@@ -898,19 +898,14 @@ let globalData = {
 };
 
 
-
 var innerMust = [
     "正面常用", "负面常用"
 ];
 var innerNeg = [
     "负面常用", "负面实践"
 ];
-var diyMust=[
-
-];
-var diyNeg=[
-
-];
+var diyMust = [];
+var diyNeg = [];
 var checkTab = null;
 let myWeight = {};
 var checked = [];
@@ -922,8 +917,8 @@ var uiConfig = {
     "show_yuan": false,
     "show_numq": false,
     "show_cp1": false,
-    "select_magic":"",
-    "show_autocp":true
+    "select_magic": "",
+    "show_autocp": true
 };
 let allData = globalData;
 let allKeyData = {};
@@ -944,7 +939,7 @@ let uiElements = {
     "checkBox_array": [],
     "uiMap": {}
 };
-let magicBooks=window.magic_books;
+let magicBooks = window.magic_books;
 
 /**
  * 创建一个 html element
@@ -967,15 +962,15 @@ function createElement(name, params) {
  * @param badge
  * @param chValue
  */
-function onCheckBoxWeightChange(group,key, cb, badge, chValue) {
-    var weight = myWeight[group+"_"+key];
+function onCheckBoxWeightChange(group, key, cb, badge, chValue) {
+    var weight = myWeight[group + "_" + key];
     if (weight == null) {
         weight = 0;
     } else {
         weight = parseInt(weight);
     }
     weight += chValue;
-    myWeight[group+"_"+key] = weight;
+    myWeight[group + "_" + key] = weight;
     badge.innerText = weight;
     onTagsUiChange();
 }
@@ -994,8 +989,12 @@ function getStandardTagCheck() {
  * @param info
  * @returns {string}
  */
-function getWeightInfo(group,key, info) {
-    let weight = myWeight[group+"_"+key];
+function getWeightInfo(group, key, info) {
+    return getWeightInfoFromLabel(group + "_" + key, info)
+}
+
+function getWeightInfoFromLabel(gk, info) {
+    let weight = myWeight[gk];
     var weightInfo = info;
     var posL = "{";
     var posR = "}";
@@ -1036,20 +1035,42 @@ function getWeightInfo(group,key, info) {
  * @returns {boolean}
  */
 function isNegativeGroup(group) {
-    return innerNeg.indexOf(group) > -1 || diyNeg.indexOf(group)>-1;
+    return innerNeg.indexOf(group) > -1 || diyNeg.indexOf(group) > -1;
 }
+
 function isMustGroup(group) {
-    return innerMust.indexOf(group) > -1 ||diyMust.indexOf(group)>-1;
+    return innerMust.indexOf(group) > -1 || diyMust.indexOf(group) > -1;
 }
-function tryResetWeight(group,key){
-    let wKey=group+"_"+key;
-    let wWei=myWeight[wKey];
-    if(wWei!=null){
-        Reflect.deleteProperty(myWeight,wKey);
-        getOrPutUiGP(group, key).checkBadge.innerText=0;
+
+function getAllMustGroup(){
+    let todata={};
+    for(let i in innerMust){
+        let g=innerMust[i];
+        let group=allData[g];
+        if(group!=null){
+            todata[g]=group;
+        }
+    }
+    for(let i in diyMust){
+        let g=diyMust[i];
+        let group=allData[g];
+        if(group!=null){
+            todata[g]=group;
+        }
+    }
+    return todata;
+}
+
+function tryResetWeight(group, key) {
+    let wKey = group + "_" + key;
+    let wWei = myWeight[wKey];
+    if (wWei != null) {
+        Reflect.deleteProperty(myWeight, wKey);
+        getOrPutUiGP(group, key).checkBadge.innerText = 0;
     }
 
 }
+
 /**
  * 刷新 tag ui
  */
@@ -1058,6 +1079,7 @@ function onTagsUiChange() {
     let negativeTags = [];
     let quickTagLayout = document.getElementById("selected_btn_div");
     let tagCheckBoxs = getStandardTagCheck();
+    let checkMap = {};
     for (var i = 0; i < tagCheckBoxs.length; i++) {
         let tagCbUi = tagCheckBoxs[i];
         let tagValue = tagCbUi.getAttribute("tagValue");
@@ -1069,23 +1091,33 @@ function onTagsUiChange() {
         let uiEle = getOrPutUiGP(tagGroup, tagKey);
         let quickBtn = uiEle.quickBtn;
         if (tagCbUi.checked) {
+            checkMap[tagGroup + "_" + tagKey] = {
+                "info": tagValue,
+                "neg": isNegativeGroup(tagGroup)
+            };
             if (quickBtn == null) {
                 let tagQuickBtn = createSelectedBtn(tagGroup, tagKey, isNegativeGroup(tagGroup));
                 quickTagLayout.appendChild(tagQuickBtn);
             }
-            let weighInfo = getWeightInfo(tagGroup,tagKey, tagValue);
-            if (isNegativeGroup(tagGroup)) {
-                negativeTags.push(weighInfo);
-            } else {
-                positiveTags.push(weighInfo);
-            }
+
         } else {
             if (quickBtn != null) {
                 uiEle.quickBtn = null;
                 tryRemoveFromParent(quickBtn);
             }
-           tryResetWeight(tagGroup,tagKey);
+            tryResetWeight(tagGroup, tagKey);
 
+        }
+    }
+    let checkedInfo = getAllCheckedInfo()
+    for (let i in checkedInfo) {
+        let checkInfo = checkedInfo[i];
+        let saveState = checkMap[checkInfo.gk]
+        let weighInfo = getWeightInfoFromLabel(checkInfo.gk, saveState["info"]);
+        if (saveState["neg"] === true) {
+            negativeTags.push(weighInfo);
+        } else {
+            positiveTags.push(weighInfo);
         }
     }
     let positive = positiveTags.join(",")
@@ -1093,7 +1125,7 @@ function onTagsUiChange() {
 
     document.getElementById("textarea_pos").value = positive;
     document.getElementById("textarea_neg").value = negative;
-    if(uiConfig.show_autocp){
+    if (uiConfig.show_autocp) {
         injectPosToWebUi(positive);
         injectNegToWebUi(negative);
     }
@@ -1166,8 +1198,8 @@ function createTagBtnGroup(key, info, group) {
     let checkBadge = createElement("span", {
         "class": "badge bg-secondary"
     });
-    holder.checkBadge=checkBadge;
-    let mW = myWeight[group+"_"+key];
+    holder.checkBadge = checkBadge;
+    let mW = myWeight[group + "_" + key];
     if (mW != null) {
         checkBadge.innerText = mW;
     } else {
@@ -1175,20 +1207,21 @@ function createTagBtnGroup(key, info, group) {
     }
     checkBtn.onclick = function () {
         if (checkBtn.checked && uiConfig.show_cp1) {
-            copyToClip(getWeightInfo(group,key,info), false);
+            copyToClip(getWeightInfo(group, key, info), false);
         }
+        onTagCheckChange(group, key, checkBtn.checked);
         onTagsUiChange();
     };
     leftBtn.onclick = function () {
-        onCheckBoxWeightChange(group,key, checkBtn, checkBadge, -1);
+        onCheckBoxWeightChange(group, key, checkBtn, checkBadge, -1);
         if (checkBtn.checked && uiConfig.show_cp1) {
-            copyToClip(getWeightInfo(group,key,info), false);
+            copyToClip(getWeightInfo(group, key, info), false);
         }
     };
     rightBtn.onclick = function () {
-        onCheckBoxWeightChange(group,key, checkBtn, checkBadge, 1);
+        onCheckBoxWeightChange(group, key, checkBtn, checkBadge, 1);
         if (checkBtn.checked && uiConfig.show_cp1) {
-            copyToClip(getWeightInfo(group,key,info), false);
+            copyToClip(getWeightInfo(group, key, info), false);
         }
     };
 
@@ -1210,7 +1243,7 @@ function createTagBtnGroup(key, info, group) {
             "id": "btn_" + key + "_del"
         });
         delBtn.onclick = function () {
-
+            onTagCheckChange(group, key, false);
             deleteTag(group, key);
             toast("重新加载后生效", 1000);
 
@@ -1548,26 +1581,68 @@ function copyToClip(content, t2) {
 
 }
 
-function resetCheck(resetAll, restMust) {
-    var checked = localStorage.getItem("checked_data")
-    if (checked == null) {
-        checked = [];
+
+function resetFromCheckData(){
+    let all=getAllCheckedInfo();
+    for(let i in all){
+        let info=all[i];
+        if(info.check){
+            console.log(info);
+            uiElements[info.gk].mainCheck.checked=true;
+        }
     }
+}
+function resetFromMustData(){
+    let allG=getAllMustGroup();
+    for(let g in  allG){
+        let gData=allG[g];
+        for(let k in gData){
+            onTagCheckChange(g,k,true);
+            getOrPutUiGP(g,k).mainCheck.checked=true;
+        }
+    }
+}
+function resetALlCheckBox(){
     let checkBoxs = getStandardTagCheck()
     for (var i = 0; i < checkBoxs.length; i++) {
         var cb = checkBoxs[i];
         let info = cb.getAttribute("tagKey");
         var g = cb.getAttribute("tagGroup");
-        if (g != null && info != null && (!(checked.indexOf(g + "_" + info) > -1) || resetAll)) {
-            if (restMust === true) {
-                cb.checked = false;
-            } else {
-                cb.checked = isMustGroup(g);
-            }
+        if (g != null && info != null ) {
+            cb.checked = false;
         }
     }
-    if(resetAll){
-        myWeight=[];
+}
+
+function resetCheck(resetAll, restMust) {
+    resetALlCheckBox();
+    if(restMust){
+        return
+    }
+    if(!resetAll){
+        resetFromCheckData();
+    }
+    resetFromMustData();
+    // var checked = localStorage.getItem("checked_data")
+    // if (checked == null) {
+    //     checked = [];
+    // }
+    // let checkBoxs = getStandardTagCheck()
+    // for (var i = 0; i < checkBoxs.length; i++) {
+    //     var cb = checkBoxs[i];
+    //     let info = cb.getAttribute("tagKey");
+    //     var g = cb.getAttribute("tagGroup");
+    //     if (g != null && info != null && (!(checked.indexOf(g + "_" + info) > -1) || resetAll)) {
+    //         if (restMust === true) {
+    //             cb.checked = false;
+    //         } else {
+    //             cb.checked = isMustGroup(g);
+    //         }
+    //     }
+    // }
+
+    if (resetAll) {
+        myWeight = [];
     }
     onTagsUiChange();
 }
@@ -1623,10 +1698,18 @@ async function loadUiConfig() {
 }
 
 async function loadCheckConfig() {
-    checked = localStorage.getItem("checked_data")
+    let x = localStorage.getItem("checked_data")
+    if(x!=null){
+        checked=JSON.parse(x);
+    }
     if (checked == null) {
         checked = [];
     }
+    for (let i in checked) {
+        let gk = checked[i];
+        onTagCheckChangeByLabel(gk,false);
+    }
+    console.log("checkde",checked,checkedInfo);
 }
 
 async function loadWeightConfig() {
@@ -1661,17 +1744,82 @@ async function loadLocalGroupConfig() {
 
 }
 
-function saveChecked() {
-    var checked = [];
-    let checkBoxs = getStandardTagCheck()
-    for (var i = 0; i < checkBoxs.length; i++) {
-        let tagCbUi = checkBoxs[i];
-        let tagKey = tagCbUi.getAttribute("tagKey");
-        let tagGroup = tagCbUi.getAttribute("tagGroup");
-        if (tagKey != null && tagGroup != null && tagCbUi.checked) {
-            checked.push(tagGroup + "_" + tagKey);
+let checkedInfo = [];
+
+function getOrPutCheckedInfoByLabel(gk) {
+    for (let i in checkedInfo) {
+        let info = checkedInfo[i];
+        if (info.gk === gk) {
+            return info;
         }
     }
+    let newInfo = checkedInfo.push({
+        "gk": gk
+    })
+    return newInfo;
+}
+
+function getOrPutCheckedInfo(group, key) {
+    for (let i in checkedInfo) {
+        let info = checkedInfo[i];
+        if (info.gk === group + "_" + key) {
+            return info;
+        }
+    }
+    let newInfo = checkedInfo.push({
+        "gk": group + "_" + key,
+    })
+    return newInfo;
+}
+
+function getAllCheckedInfo() {
+    let checked = [];
+    for (let i in checkedInfo) {
+        let info = checkedInfo[i];
+        if (info.check) {
+            checked.push(info);
+        }
+    }
+    return checked;
+}
+
+
+function onTagCheckChange(group, key, check) {
+    onTagCheckChangeByLabel(group+"_"+key,check)
+}
+function onTagCheckChangeByLabel(gk, check) {
+    //TODO 优化性能，不需要遍历两次
+    getOrPutCheckedInfoByLabel(gk);
+    let newChek=[];
+
+    for (let i in checkedInfo) {
+        let info = checkedInfo[i];
+        if(info.gk!=null){
+            if(info.gk===gk){
+                info.check=check;
+            }else{
+                newChek.push(info.gk)
+            }
+        }
+
+    }
+    console.log("newch",newChek);
+    if(!check){
+        checkedInfo=newChek;
+    }
+}
+
+function saveChecked() {
+    var checked = getAllCheckedInfo();
+    // let checkBoxs = getStandardTagCheck()
+    // for (var i = 0; i < checkBoxs.length; i++) {
+    //     let tagCbUi = checkBoxs[i];
+    //     let tagKey = tagCbUi.getAttribute("tagKey");
+    //     let tagGroup = tagCbUi.getAttribute("tagGroup");
+    //     if (tagKey != null && tagGroup != null && tagCbUi.checked) {
+    //         checked.push(tagGroup + "_" + tagKey);
+    //     }
+    // }
     saveStorage("checked_data", checked);
     saveStorage("myWeight", myWeight);
 
@@ -1835,6 +1983,7 @@ function getOrPutUiGP(group, key) {
         }
         groupData[key] = keyData;
     }
+    uiElements[group+"_"+key]=keyData;
     return keyData
 }
 
@@ -1871,6 +2020,7 @@ function createSelectedBtn(group, key, danger) {
         })
         uiData.quickBtn = null;
         tryRemoveFromParent(btn);
+        onTagCheckChange(group, key, false);
         onTagsUiChange();
     }
     return btn;
@@ -1934,18 +2084,20 @@ function printBatchTag(group, textArea) {
     textArea.value = cpData;
     toast("分组 " + group + "的数据已经 拷贝到粘贴板", 2000);
 }
+
 function getSelectBook() {
     let splitSelect = document.getElementById("magic_book_select");
     return splitSelect.options[splitSelect.selectedIndex].value
 }
-function initMagicBookGroup(){
-    let bookNames=getMagicBookNames();
-    let inputBtn=document.getElementById("magic_book_text_import");
-    let disableBtn=document.getElementById("magic_book_text_disable");
-    let inputSelect=document.getElementById("magic_book_select");
+
+function initMagicBookGroup() {
+    let bookNames = getMagicBookNames();
+    let inputBtn = document.getElementById("magic_book_text_import");
+    let disableBtn = document.getElementById("magic_book_text_disable");
+    let inputSelect = document.getElementById("magic_book_select");
     var sle = true;
-    for(let i in bookNames){
-        let bookName=bookNames[i];
+    for (let i in bookNames) {
+        let bookName = bookNames[i];
         let optionEle = createElement("option", {
             "value": bookName
         })
@@ -1957,17 +2109,17 @@ function initMagicBookGroup(){
         }
         inputSelect.appendChild(optionEle);
     }
-    inputBtn.onclick=function (){
-        let book=getSelectBook();
-        uiConfig.select_magic=book
+    inputBtn.onclick = function () {
+        let book = getSelectBook();
+        uiConfig.select_magic = book
         saveUiConfig();
-        resetCheck(true,true);
-        toast("加载魔法书 "+book+" 成功，重新加载后生效", 2000);
+        resetCheck(true, true);
+        toast("加载魔法书 " + book + " 成功，重新加载后生效", 2000);
     }
-    disableBtn.onclick=function (){
-        uiConfig.select_magic="";
+    disableBtn.onclick = function () {
+        uiConfig.select_magic = "";
         saveUiConfig();
-        resetCheck(true,true);
+        resetCheck(true, true);
         toast("已经禁用魔法书,重新加载后生效", 2000);
     }
 }
@@ -2008,7 +2160,7 @@ function formatMagicStr(str) {
     return str.replace("-", " ").replace("_", " ")
 }
 
-function fillMagic(group,from, to, weights) {
+function fillMagic(group, from, to, weights) {
 
     for (let i in from) {
         let k = from[i];
@@ -2019,7 +2171,7 @@ function fillMagic(group,from, to, weights) {
             tran = k;
         }
         if (w != null) {
-            myWeight[group+"_"+tran] = w;
+            myWeight[group + "_" + tran] = w;
         }
         to[tran] = k;
     }
@@ -2027,36 +2179,37 @@ function fillMagic(group,from, to, weights) {
 
 let magicBooksOrder = [];
 
-function getMagicBookNames(){
-    let names=[];
-    for(let i in magicBooks){
-        let magicBook =magicBooks[i];
+function getMagicBookNames() {
+    let names = [];
+    for (let i in magicBooks) {
+        let magicBook = magicBooks[i];
         names.push(magicBook.name);
     }
     return names;
 }
-var currentMagic=null;
 
-function showTipsInfo(text){
-    document.getElementById("textera_holder").value=text;
+var currentMagic = null;
+
+function showTipsInfo(text) {
+    document.getElementById("textera_holder").value = text;
 }
+
 async function parseMagicBook() {
     translate = window.magic_trans;
 
-    let selectBook=uiConfig.select_magic;
-    var magicBook=null;
-    for(let i in magicBooks){
-        let book=magicBooks[i];
-        if(book.name===selectBook){
-            magicBook=book;
+    let selectBook = uiConfig.select_magic;
+    var magicBook = null;
+    for (let i in magicBooks) {
+        let book = magicBooks[i];
+        if (book.name === selectBook) {
+            magicBook = book;
             break;
         }
     }
-    if(magicBook==null){
+    if (magicBook == null) {
         return;
     }
-    currentMagic=magicBook;
-
+    currentMagic = magicBook;
 
 
     let posx = {};
@@ -2064,8 +2217,8 @@ async function parseMagicBook() {
     let gKey = "魔法书-" + magicBook.name
     let pG = gKey + "-正"
     let nG = gKey + "-负"
-    fillMagic(pG,magicBook.pos, posx, magicBook.weight)
-    fillMagic(nG,magicBook.neg, negx, magicBook.weight)
+    fillMagic(pG, magicBook.pos, posx, magicBook.weight)
+    fillMagic(nG, magicBook.neg, negx, magicBook.weight)
 
     allData[pG] = posx;
     allData[nG] = negx;
@@ -2076,7 +2229,7 @@ async function parseMagicBook() {
     innerMust.push(nG);
     magicBooksOrder.push(pG);
     magicBooksOrder.push(nG);
-    console.log(innerNeg,innerMust);
+    console.log(innerNeg, innerMust);
 }
 
 function parseAll() {
@@ -2093,8 +2246,8 @@ function parseAll() {
         groups.push(magicBooksOrder[i]);
     }
 
-    if(currentMagic!=null){
-        showTipsInfo("手动设置参数 "+currentMagic.option+" \n正式开启魔法书 "+currentMagic.name+" 正面tag和负面tag 会全面替换");
+    if (currentMagic != null) {
+        showTipsInfo("手动设置参数 " + currentMagic.option + " \n正式开启魔法书 " + currentMagic.name + " 正面tag和负面tag 会全面替换");
     }
 
     for (let i in groups) {
@@ -2127,8 +2280,8 @@ function parseAll() {
         toast("重新加载页面后生效", 2000);
     }
     document.getElementById("btn_group_modify").onclick = modifyGroupData;
-    document.getElementById("btn_reset_all").onclick=function () {
-        resetCheck(true,true);
+    document.getElementById("btn_reset_all").onclick = function () {
+        resetCheck(true, true);
     };
 
     document.getElementById("textarea_pos").onclick = function () {
@@ -2188,41 +2341,43 @@ function setToWebUiPos(k, data) {
     //     toast("err,"+e)
     // }
 }
-function injectPosToWebUi(injectInfo){
+
+function injectPosToWebUi(injectInfo) {
     try {
-        if(chrome==null || chrome.tabs==null){
+        if (chrome == null || chrome.tabs == null) {
             return
         }
-        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
             chrome.tabs.executeScript(tabs[0].id, {
-                code: "window.novelAi_inject_pos=\""+injectInfo+"\"",
+                code: "window.novelAi_inject_pos=\"" + injectInfo + "\"",
             });
             chrome.tabs.executeScript(tabs[0].id, {
                 file: "injectPos.js",
             });
         });
-    }catch {
+    } catch {
 
     }
 }
 
-function injectNegToWebUi(injectInfo){
+function injectNegToWebUi(injectInfo) {
     try {
-        if(chrome==null || chrome.tabs==null){
+        if (chrome == null || chrome.tabs == null) {
             return
         }
-        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
             chrome.tabs.executeScript(tabs[0].id, {
-                code: "window.novelAi_inject_neg=\""+injectInfo+"\"",
+                code: "window.novelAi_inject_neg=\"" + injectInfo + "\"",
             });
             chrome.tabs.executeScript(tabs[0].id, {
                 file: "injectNeg.js",
             });
         });
-    }catch {
+    } catch {
 
     }
 }
+
 window.onload = function () {
     loadLocalData().then(p => {
         parseAll();
