@@ -8,7 +8,13 @@
                     <div><el-button @click="copy2Clipboard('positive')">复制</el-button></div>
                 </div>
                 <div class="input-group__content">
-                    <textarea class="form-control" aria-label="With textarea" id="textarea_pos" :value="PromptStore.output"></textarea>
+                    <textarea
+                        @click="copy2Clipboard('positive')"
+                        class="form-control"
+                        aria-label="With textarea"
+                        id="textarea_pos"
+                        :value="PromptStore.output"
+                    ></textarea>
                 </div>
             </div>
         </div>
@@ -21,7 +27,12 @@
                     <div><el-button @click="copy2Clipboard('negative')">复制</el-button></div>
                 </div>
                 <div class="input-group__content">
-                    <textarea class="form-control" aria-label="With textarea" id="textarea_pos"></textarea>
+                    <textarea
+                        @click="copy2Clipboard('negative')"
+                        class="form-control"
+                        aria-label="With textarea"
+                        id="textarea_pos"
+                    ></textarea>
                 </div>
             </div>
         </div>
@@ -48,13 +59,13 @@
             <!-- 该 tag 分类下的所有 tag -->
             <div class="rowTagShow">
                 <div v-for="(_content, _key) in dictionary[active]" :key="_key">
-                    <div class="btn_group mr-1 mb-1">
+                    <div class="btn_group mr-2 mb-2">
                         <!-- 减号 -->
-                        <button class="btn_l" @click="tagManage_minus(_key, _content)">-</button>
+                        <button class="btn_left" @click="tagManage_minus(_key, _content)">-</button>
 
                         <!-- 内容 -->
                         <button
-                            class="btn_c transition-200"
+                            class="btn_center"
                             :class="{ 'bg-blue-700 text-white ': isTagSelected(_key) }"
                             @click="tagManage_reset(_key, _content)"
                         >
@@ -63,9 +74,9 @@
 
                         <!-- 数量 badge -->
                         <button
-                            class="btn_c transition-200"
+                            class="btn_center"
                             v-show="isTagSelected(_key)"
-                            :class="{ 'btn_c_times pl-0 bg-blue-700 text-white ': isTagSelected(_key) }"
+                            :class="{ 'btn_center_times pl-0 bg-blue-700 text-white ': isTagSelected(_key) }"
                         >
                             <span class="inline-block text-white bg-black ml-0 text-.8rem lh-1rem px-2 py-1 rounded-full">
                                 <!-- DEBUG: 这里有点脏, 之后想办法解决一下 proxy 或者 pinia 的 vue3 读取问题  -->
@@ -74,10 +85,10 @@
                         </button>
 
                         <!-- 可能的删除按钮 -->
-                        <button class="btn_c btn_c_delete">xxx</button>
+                        <button class="btn_center btn_center_delete">xxx</button>
 
                         <!-- 加号 -->
-                        <button class="btn_r" @click="tagManage_add(_key, _content)">+</button>
+                        <button class="btn_right" @click="tagManage_add(_key, _content)">+</button>
                     </div>
                 </div>
             </div>
@@ -164,9 +175,20 @@ const copy2Clipboard = place => {
 
     let text = obj[place];
 
+    // 无标签检测
+    if (!text) {
+        ElNotification({
+            title: '没有文本',
+            message: '您似乎没有选择该区域的任何标签',
+            type: 'warning'
+        });
+        return;
+    }
+
+    // 复制
     if (navigator.clipboard) {
         new Promise((res, rej) => {
-            console.log(999);
+            console.log(`> [${place}]标签 复制到粘贴板`);
             navigator.clipboard.writeText(text);
             res();
         }).then(res => {
@@ -181,7 +203,48 @@ const copy2Clipboard = place => {
     }
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+// 两个边框颜色变量
+$tag_border_normal: red;
+$tag_border_hover: rgb(0, 119, 255);
+
+// 提出 tag 的样式, 将边框颜色所谓变量
+@mixin btn_left($color) {
+    transition: all 0.2s;
+
+    border: 0.15rem solid $color;
+    border-top-left-radius: 0.75rem;
+    border-bottom-left-radius: 0.75rem;
+    width: 2rem;
+    line-height: 2rem;
+    border-right: none;
+
+    background-color: #dc3545;
+}
+
+@mixin btn_center($color) {
+    transition: all 0.2s;
+
+    border: 0.15rem solid $color;
+    // height: 2rem;
+    line-height: 2rem;
+    border-right: none;
+    border-left: none;
+}
+
+@mixin btn_right($color) {
+    transition: all 0.2s;
+
+    border: 0.15rem solid $color;
+    border-top-right-radius: 0.75rem;
+    border-bottom-right-radius: 0.75rem;
+    width: 2rem;
+    line-height: 2rem;
+    border-left: none;
+
+    background-color: #1a8754;
+}
+
 .input-group {
     display: flex;
     justify-content: stretch;
@@ -216,48 +279,41 @@ const copy2Clipboard = place => {
 
     .btn_group {
         // display: flow-root;
+        border-radius: 0.75rem;
         overflow: hidden;
+        transition: all 0.2s;
+        box-shadow: 0px 0px rgba(0, 0, 0, 0.4);
+        // box-shadow: rgba(0, 0, 0, 0.1) 10px 10px 30px;
+
+        .btn_left {
+            @include btn_left($tag_border_normal);
+        }
+        .btn_center {
+            @include btn_center($tag_border_normal);
+        }
+        .btn_right {
+            @include btn_right($tag_border_normal);
+        }
+
+        .btn_center_times {
+            // display: none;
+        }
+        .btn_center_delete {
+            display: none;
+        }
     }
 
     .btn_group:hover {
-        // background-color: green;
-        transition: all 0.3s;
-        filter: opacity(75%);
-    }
-
-    .btn_l {
-        border: 0.15rem solid red;
-        border-top-left-radius: 0.75rem;
-        border-bottom-left-radius: 0.75rem;
-        width: 2rem;
-        line-height: 2rem;
-        border-right: none;
-
-        background-color: #dc3545;
-    }
-    .btn_c {
-        border: 0.15rem solid red;
-        // height: 2rem;
-        line-height: 2rem;
-        border-right: none;
-        border-left: none;
-    }
-    .btn_r {
-        border: 0.15rem solid red;
-        border-top-right-radius: 0.75rem;
-        border-bottom-right-radius: 0.75rem;
-        width: 2rem;
-        line-height: 2rem;
-        border-left: none;
-
-        background-color: #1a8754;
-    }
-
-    .btn_c_times {
-        // display: none;
-    }
-    .btn_c_delete {
-        display: none;
+        box-shadow: 5px 5px 0px 0px $tag_border_hover;
+        .btn_left {
+            @include btn_left($tag_border_hover);
+        }
+        .btn_center {
+            @include btn_center($tag_border_hover);
+        }
+        .btn_right {
+            @include btn_right($tag_border_hover);
+        }
     }
 }
 </style>
