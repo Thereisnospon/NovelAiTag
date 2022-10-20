@@ -1,18 +1,19 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { ElNotification } from 'element-plus';
 
+import Storages from '../utils/storages';
+
 export default defineStore({
     id: 'app',
     state: () => ({
-        // count: 100,
-
         /**
          * 所有已选择信息,
          * key : 翻译名
          * content : 原英文名
          * time : 次数
          */
-        selectedTag: [],
+        tag_positive: [],
+        tag_negative: [],
 
         /**
          * 最终输出结果
@@ -27,7 +28,7 @@ export default defineStore({
          * @returns
          */
         tagName(state) {
-            return state.selectedTag.map(el => el.key);
+            return state.tag_positive.map(el => el.key);
         },
 
         /**
@@ -35,7 +36,7 @@ export default defineStore({
          */
         tagNum(state) {
             return _key => {
-                let item = state.selectedTag.find(user => user.key === _key);
+                let item = state.tag_positive.find(user => user.key === _key);
                 let res = null;
                 // console.log(item);
                 if (item) {
@@ -50,11 +51,6 @@ export default defineStore({
     },
 
     actions: {
-        // reset() {
-        //     // this.count = 100;
-        //     this.$reset();
-        // }
-
         /**
          * 增加 1 的标签对象
          * @param {*} tag
@@ -65,18 +61,18 @@ export default defineStore({
 
             //  没有在缓存中找到
             if (num == -1) {
-                this.selectedTag.push(tag);
+                this.tag_positive.push(tag);
             }
             // 在缓存中找到了
             else {
-                if (this.selectedTag[num].time == -1) {
-                    this.selectedTag[num].time = 1;
+                if (this.tag_positive[num].time == -1) {
+                    this.tag_positive[num].time = 1;
                 } else {
-                    this.selectedTag[num].time += 1;
+                    this.tag_positive[num].time += 1;
                 }
             }
 
-            // console.log(this.selectedTag);
+            // console.log(this.tag_positive);
 
             this.renderOutput();
         },
@@ -100,30 +96,30 @@ export default defineStore({
             }
             // 在缓存中找到了
             else {
-                // console.log(this.selectedTag[num].time);
+                // console.log(this.tag_positive[num].time);
 
                 // 存在降权
                 // 刚好为 1 -> 变 -1
-                if (this.selectedTag[num].time == 1) {
-                    this.selectedTag[num].time = -1;
+                if (this.tag_positive[num].time == 1) {
+                    this.tag_positive[num].time = -1;
                 }
                 // 不是1 -> 减1
                 else {
-                    this.selectedTag[num].time -= 1;
+                    this.tag_positive[num].time -= 1;
                 }
 
                 // // 原先无降权的样子
                 // // 刚好为1 -> 删掉
-                // if (this.selectedTag[num].time == 1) {
-                //     this.selectedTag.splice(num, 1);
+                // if (this.tag_positive[num].time == 1) {
+                //     this.tag_positive.splice(num, 1);
                 // }
                 // // 不是1 -> 减1
                 // else {
-                //     this.selectedTag[num].time -= 1;
+                //     this.tag_positive[num].time -= 1;
                 // }
             }
 
-            // console.log(this.selectedTag);
+            // console.log(this.tag_positive);
 
             this.renderOutput();
         },
@@ -139,14 +135,14 @@ export default defineStore({
             //  没有在缓存中找到
             if (num == -1) {
                 tag.time = 1;
-                this.selectedTag.push(tag);
+                this.tag_positive.push(tag);
             }
             // 在缓存中找到了 -> 删掉
             else {
-                this.selectedTag.splice(num, 1);
+                this.tag_positive.splice(num, 1);
             }
 
-            // console.log(this.selectedTag);
+            // console.log(this.tag_positive);
 
             this.renderOutput();
         },
@@ -158,7 +154,7 @@ export default defineStore({
             let res = '';
 
             // 循环把字符串加好
-            this.selectedTag.forEach(el => {
+            this.tag_positive.forEach(el => {
                 // 等于 1
                 if (el.time == 1) {
                     res += el.content;
@@ -198,6 +194,60 @@ export default defineStore({
 
             this.output = res;
             // console.log(res);
+
+            //TODO:  negative 还没搞定
+            this.storageSet_write('positive');
+        },
+
+        // -------------- localStorage 操作
+
+        /**
+         * 读取 localStorage
+         * @param {positive/negative} item
+         */
+        storageSet_read(item) {
+            /**
+             * localStorage 存储类型
+             */
+            let storageType = {
+                positive: this.tag_positive,
+                negative: this.tag_negative
+            };
+
+            switch (item) {
+                case 'positive':
+                    this.tag_positive = Storages.getItem(item);
+                    break;
+                case 'negative':
+                    this.tag_negative = Storages.getItem(item);
+                    break;
+            }
+            console.log('已读取: ', item);
+        },
+        /**
+         * 写入 localStorage
+         * @param {positive/negative} item
+         */
+        storageSet_write(item) {
+            /**
+             * localStorage 存储类型
+             */
+            let storageType = {
+                positive: this.tag_positive,
+                negative: this.tag_negative
+            };
+            Storages.setItem(item, storageType[item]);
+        },
+
+        /**
+         * 初始化 localStorage
+         */
+        storage_init() {
+            //TODO: 初始化完整, negative 还没搞定
+            this.storageSet_read('positive');
+            // this.storageSet_read('negative')
+
+            this.renderOutput();
         }
     }
 });

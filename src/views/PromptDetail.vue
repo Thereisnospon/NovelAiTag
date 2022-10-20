@@ -109,7 +109,9 @@ import { storeToRefs } from 'pinia';
 
 // store 引用
 import usePromptStore from '@/stores/stores.js';
-let PromptStore = usePromptStore();
+const PromptStore = usePromptStore();
+// store -> localStorage 初始化读取
+PromptStore.storage_init();
 
 // 字典对象
 const dictionary = reactive(good_practice);
