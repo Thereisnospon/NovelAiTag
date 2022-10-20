@@ -1,4 +1,11 @@
+const MAGIC_VERSION = "2.2";
 
+let updateLog={
+    "2.2":["固定tag顺序，之前点击 tag 的顺序并不会依次显示在最终的文本里，而是会乱序"],
+    "2.1/2.0":["2.0 开始浏览器插件，点击tag自动复制内容到webui 文本框，无需手动复制，2.1修复2.0 bug"],
+    "1.4":["内置元素法典，可以用预设的风/水/核/彩虹 等各种魔法书快速得到好的效果"],
+    "1.1":["增加抽卡功能可以随机抽卡组合"],
+}
 
 let allData = window.globalData;
 let magicBooks = window.magic_books;
@@ -125,20 +132,20 @@ function isMustGroup(group) {
     return innerMust.indexOf(group) > -1 || diyMust.indexOf(group) > -1;
 }
 
-function getAllMustGroup(){
-    let todata={};
-    for(let i in innerMust){
-        let g=innerMust[i];
-        let group=allData[g];
-        if(group!=null){
-            todata[g]=group;
+function getAllMustGroup() {
+    let todata = {};
+    for (let i in innerMust) {
+        let g = innerMust[i];
+        let group = allData[g];
+        if (group != null) {
+            todata[g] = group;
         }
     }
-    for(let i in diyMust){
-        let g=diyMust[i];
-        let group=allData[g];
-        if(group!=null){
-            todata[g]=group;
+    for (let i in diyMust) {
+        let g = diyMust[i];
+        let group = allData[g];
+        if (group != null) {
+            todata[g] = group;
         }
     }
     return todata;
@@ -197,7 +204,7 @@ function onTagsUiChange() {
     for (let i in checkedInfo) {
         let checkInfo = checkedInfo[i];
         let saveState = checkMap[checkInfo.gk];
-        if(saveState!=null){
+        if (saveState != null) {
             let weighInfo = getWeightInfoFromLabel(checkInfo.gk, saveState["info"]);
             if (saveState["neg"] === true) {
                 negativeTags.push(weighInfo);
@@ -642,34 +649,42 @@ function createNavTab(navUl, navContent, tabName, active) {
 }
 
 
+function resetFromCheckData() {
+    let all = getAllCheckedInfo();
 
-function resetFromCheckData(){
-    let all=getAllCheckedInfo();
+    for (let i in all) {
+        let info = all[i];
+        if (info.check) {
+            let ua=uiElements[info.gk];
+            if(ua!=null){
+                let ma=  uiElements[info.gk].mainCheck;
+                if(ma!=null){
+                    ma.checked=true;
+                }
+            }
 
-    for(let i in all){
-        let info=all[i];
-        if(info.check){
-            uiElements[info.gk].mainCheck.checked=true;
         }
     }
 }
-function resetFromMustData(){
-    let allG=getAllMustGroup();
-    for(let g in  allG){
-        let gData=allG[g];
-        for(let k in gData){
-            onTagCheckChange(g,k,true);
-            getOrPutUiGP(g,k).mainCheck.checked=true;
+
+function resetFromMustData() {
+    let allG = getAllMustGroup();
+    for (let g in allG) {
+        let gData = allG[g];
+        for (let k in gData) {
+            onTagCheckChange(g, k, true);
+            getOrPutUiGP(g, k).mainCheck.checked = true;
         }
     }
 }
-function resetALlCheckBox(){
+
+function resetALlCheckBox() {
     let checkBoxs = getStandardTagCheck()
     for (var i = 0; i < checkBoxs.length; i++) {
         var cb = checkBoxs[i];
         let info = cb.getAttribute("tagKey");
         var g = cb.getAttribute("tagGroup");
-        if (g != null && info != null ) {
+        if (g != null && info != null) {
             cb.checked = false;
         }
     }
@@ -677,10 +692,10 @@ function resetALlCheckBox(){
 
 function resetCheck(resetAll, restMust) {
     resetALlCheckBox();
-    if(restMust){
+    if (restMust) {
         return
     }
-    if(!resetAll){
+    if (!resetAll) {
         resetFromCheckData();
     }
     resetFromMustData();
@@ -760,15 +775,15 @@ async function loadUiConfig() {
 
 async function loadCheckConfig() {
     let x = localStorage.getItem("checked_data")
-    if(x!=null){
-        checked=JSON.parse(x);
+    if (x != null) {
+        checked = JSON.parse(x);
     }
     if (checked == null) {
         checked = [];
     }
     for (let i in checked) {
         let gk = checked[i];
-        onTagCheckChangeByLabel(gk,true);
+        onTagCheckChangeByLabel(gk, true);
     }
 }
 
@@ -819,19 +834,6 @@ function getOrPutCheckedInfoByLabel(gk) {
     return newInfo;
 }
 
-function getOrPutCheckedInfo(group, key) {
-    for (let i in checkedInfo) {
-        let info = checkedInfo[i];
-        if (info.gk === group + "_" + key) {
-            return info;
-        }
-    }
-    let newInfo = checkedInfo.push({
-        "gk": group + "_" + key,
-    })
-    return newInfo;
-}
-
 function getAllCheckedInfo() {
     let checked = [];
     for (let i in checkedInfo) {
@@ -842,6 +844,7 @@ function getAllCheckedInfo() {
     }
     return checked;
 }
+
 function getAllCheckedInfoGk() {
     let checked = [];
     for (let i in checkedInfo) {
@@ -855,25 +858,26 @@ function getAllCheckedInfoGk() {
 
 
 function onTagCheckChange(group, key, check) {
-    onTagCheckChangeByLabel(group+"_"+key,check)
+    onTagCheckChangeByLabel(group + "_" + key, check)
 }
+
 function onTagCheckChangeByLabel(gk, check) {
     //TODO 优化性能，不需要遍历两次
     getOrPutCheckedInfoByLabel(gk);
-    let newChek=[];
+    let newChek = [];
 
     for (let i in checkedInfo) {
         let info = checkedInfo[i];
-        if(info.gk!=null){
-            if(info.gk===gk){
-                info.check=check;
-            }else{
+        if (info.gk != null) {
+            if (info.gk === gk) {
+                info.check = check;
+            } else {
                 newChek.push(info)
             }
         }
     }
-    if(!check){
-        checkedInfo=newChek;
+    if (!check) {
+        checkedInfo = newChek;
     }
 }
 
@@ -1051,7 +1055,7 @@ function getOrPutUiGP(group, key) {
         }
         groupData[key] = keyData;
     }
-    uiElements[group+"_"+key]=keyData;
+    uiElements[group + "_" + key] = keyData;
     return keyData
 }
 
@@ -1222,8 +1226,6 @@ function initBatchGroup() {
 }
 
 
-
-
 function formatMagicStr(str) {
     return str.replace("-", " ").replace("_", " ")
 }
@@ -1299,6 +1301,30 @@ async function parseMagicBook() {
     console.log(innerNeg, innerMust);
 }
 
+
+function initTopAlert(){
+    var alert=document.getElementById("top_alert");
+    alert.onclick=function (){
+        localStorage.setItem("magic_version",MAGIC_VERSION);
+        alert.hidden=true;
+    }
+    let now=localStorage.getItem("magic_version");
+    if(now!==MAGIC_VERSION){
+        alert.hidden=false;
+    }else{
+        alert.hidden=true;
+    }
+    alert.innerHTML+="更新日志,当前版本为 "+MAGIC_VERSION+" 每次更新或者清除本地缓存后显示该页面，点击该文本后不再显示"+"<br/>";
+    for(let version in updateLog){
+        let versionLog=updateLog[version];
+        alert.innerHTML+=""+version+" 版本更新 :"+"<br/>";
+        for(let i in versionLog){
+            let log =versionLog[i];
+            alert.innerHTML+=log+"<br/>";
+        }
+    }
+}
+
 function parseAll() {
     let navUi = document.getElementById("myTab");
     let navContent = document.getElementById("myTabContent");
@@ -1331,6 +1357,7 @@ function parseAll() {
 
     }
     resetCheck(false);
+    initTopAlert();
     configUiCtrlElement("show_numq");
     configUiCtrlElement("show_yuan");
     configUiCtrlElement("show_en");
@@ -1376,7 +1403,6 @@ function parseAll() {
     initRandLayout();
     onTagsUiChange();
 }
-
 
 
 window.onload = function () {
