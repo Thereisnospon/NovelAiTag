@@ -233,7 +233,6 @@ const copy2Clipboard = place => {
     transition: all 0.2s;
 
     border: 0.15rem solid $color;
-    // height: 2rem;
     line-height: 2rem;
     border-right: none;
     border-left: none;

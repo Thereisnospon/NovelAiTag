@@ -69,7 +69,11 @@ export default defineStore({
             }
             // 在缓存中找到了
             else {
-                this.selectedTag[num].time += 1;
+                if (this.selectedTag[num].time == -1) {
+                    this.selectedTag[num].time = 1;
+                } else {
+                    this.selectedTag[num].time += 1;
+                }
             }
 
             // console.log(this.selectedTag);
@@ -90,20 +94,33 @@ export default defineStore({
                 // TODO: 这里要和 thereisnospon 商量一下凭空减少怎么做, 负面还是不动, 暂时不动
                 ElNotification({
                     title: '别乱动',
-                    message: '没有数量就别瞎减哦',
+                    message: '没有数量就别瞎减哦, 想减先点标签添加',
                     type: 'info'
                 });
             }
             // 在缓存中找到了
             else {
-                // 刚好为1 -> 删掉
+                // console.log(this.selectedTag[num].time);
+
+                // 存在降权
+                // 刚好为 1 -> 变 -1
                 if (this.selectedTag[num].time == 1) {
-                    this.selectedTag.splice(num, 1);
+                    this.selectedTag[num].time = -1;
                 }
                 // 不是1 -> 减1
                 else {
                     this.selectedTag[num].time -= 1;
                 }
+
+                // // 原先无降权的样子
+                // // 刚好为1 -> 删掉
+                // if (this.selectedTag[num].time == 1) {
+                //     this.selectedTag.splice(num, 1);
+                // }
+                // // 不是1 -> 减1
+                // else {
+                //     this.selectedTag[num].time -= 1;
+                // }
             }
 
             // console.log(this.selectedTag);
@@ -142,15 +159,38 @@ export default defineStore({
 
             // 循环把字符串加好
             this.selectedTag.forEach(el => {
+                // 等于 1
                 if (el.time == 1) {
                     res += el.content;
-                } else {
+
+                    // 逗号分割
+                    res += ',';
+                }
+                // 大于 1
+                else if (el.time > 1) {
                     let prev = '{'.repeat(el.time - 1);
                     let next = '}'.repeat(el.time - 1);
                     let tmp = prev + el.content + next;
                     res += tmp;
+
+                    // 逗号分割
+                    res += ',';
                 }
-                res += ',';
+
+                // 等于 0
+                else if (el.time == 0) {
+                }
+
+                // 等于 0
+                else if (el.time < 0) {
+                    let prev = '['.repeat(-el.time);
+                    let next = ']'.repeat(-el.time);
+                    let tmp = prev + el.content + next;
+                    res += tmp;
+
+                    // 逗号分割
+                    res += ',';
+                }
             });
 
             // // slice 去掉最后的逗号
