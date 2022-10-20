@@ -1,32 +1,14 @@
 <script setup>
 import { ref } from 'vue';
-// import useAppStore from '@/stores/app.js';
-// import useUserStore from '@/stores/user.js';
-
-// defineProps({
-//     msg: String
-// });
-
-// let appStore = useAppStore();
-// console.log('appStore: ', appStore);
-
-// const add = () => {
-//     appStore.addCount();
-// };
-// const reset = () => {
-//     appStore.reset();
-// };
 </script>
 
 <template>
     <!-- 主页 -->
     <div id="main" class="container mx-auto">
+        <!-- 一个摆着的东西 -->
         <div id="_app">App.vue</div>
 
-        <!-- <div>app count {{ appStore.count }}</div>
-        <button @click="add">add</button>
-        <button @click="reset">reset</button> -->
-
+        <!-- 入口 -->
         <router-view></router-view>
     </div>
     <!-- <HelloWorld msg="Vite + Vue" /> -->
@@ -34,9 +16,12 @@ import { ref } from 'vue';
 
 <style lang="scss">
 // 重置样式
-@import './style.css';
+@import '@/assets/styles/reset_style.css';
+// 全局样式
+@import '@/assets/styles/global_variables.scss';
 
 // 临时全局样式 (显示器太亮, 部署时删掉)
+html,
 body {
     background-color: rgb(164, 164, 164);
 }

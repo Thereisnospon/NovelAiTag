@@ -63,7 +63,7 @@
                         <!-- 减号 -->
                         <button class="btn_left" @click="tagManage_minus(_key, _content)">-</button>
 
-                        <!-- 内容 -->
+                        <!-- tag 内容 -->
                         <button
                             class="btn_center"
                             :class="{ 'bg-blue-700 text-white ': isTagSelected(_key) }"
@@ -73,14 +73,13 @@
                         </button>
 
                         <!-- 数量 badge -->
-                        <button
-                            class="btn_center"
-                            v-show="isTagSelected(_key)"
-                            :class="{ 'btn_center_times pl-0 bg-blue-700 text-white ': isTagSelected(_key) }"
-                        >
-                            <span class="inline-block text-white bg-black ml-0 text-.8rem lh-1rem px-2 py-1 rounded-full">
+                        <button class="btn_center" :class="{ 'btn_center_times pl-0 bg-blue-700 text-white ': isTagSelected(_key) }">
+                            <span
+                                class="inline-block text-white bg-black ml-0 text-.8rem lh-1rem px-2 py-1 rounded-full"
+                                :class="{ 'bg-gray': !isTagSelected(_key) }"
+                            >
                                 <!-- DEBUG: 这里有点脏, 之后想办法解决一下 proxy 或者 pinia 的 vue3 读取问题  -->
-                                {{ isTagSelected(_key) ? PromptStore.tagNum(_key) : '' }}
+                                {{ isTagSelected(_key) ? PromptStore.tagNum(_key) : '无' }}
                             </span>
                         </button>
 
@@ -204,9 +203,11 @@ const copy2Clipboard = place => {
 };
 </script>
 <style lang="scss">
+// 全局样式
+@import '@/assets/styles/global_variables.scss';
 // 两个边框颜色变量
-$tag_border_normal: red;
-$tag_border_hover: rgb(0, 119, 255);
+// $tag_border_normal: red;
+// $tag_border_hover: rgb(0, 119, 255);
 
 // 提出 tag 的样式, 将边框颜色所谓变量
 @mixin btn_left($color) {
@@ -283,16 +284,18 @@ $tag_border_hover: rgb(0, 119, 255);
         overflow: hidden;
         transition: all 0.2s;
         box-shadow: 0px 0px rgba(0, 0, 0, 0.4);
-        // box-shadow: rgba(0, 0, 0, 0.1) 10px 10px 30px;
 
         .btn_left {
             @include btn_left($tag_border_normal);
+            font-size: inherit;
         }
         .btn_center {
             @include btn_center($tag_border_normal);
+            font-size: inherit;
         }
         .btn_right {
             @include btn_right($tag_border_normal);
+            font-size: inherit;
         }
 
         .btn_center_times {
