@@ -79,6 +79,7 @@
                         <button
                             class="btn_center w-3rem absolute top-0 bottom-0 right-2rem px-0 inline-block"
                             :class="{ 'btn_center_times bg-blue-700 text-white ': isTagSelected(_key) }"
+                            @click="tagManage_reset(_key, _content)"
                         >
                             <span
                                 class="inline-block text-white text-center bg-black m-0 text-.8rem lh-1rem px-2 py-1 rounded-full w-1.5rem"
