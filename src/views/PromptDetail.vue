@@ -4,8 +4,8 @@
         <div class="rowPositive">
             <div class="input-group">
                 <div class="input-group__title">
-                    <div class="pb-2">正面 Tag</div>
                     <div class="pb-2"><el-button @click="copy2Clipboard('positive')">复制</el-button></div>
+                    <div class="pb-2">正面 Tag</div>
                     <div class="pb-2"><el-button type="danger" @click="clearTag('positive')">清空</el-button></div>
                 </div>
                 <div class="input-group__content">
@@ -21,6 +21,7 @@
         </div>
 
         <!-- 负面 tag 输入框 -->
+        <!-- TODO: 负面 tag 输入框的记得补上 -->
         <div class="rowNegative mb-2">
             <div class="input-group">
                 <div class="input-group__title">
