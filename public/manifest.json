@@ -1,0 +1,18 @@
+{
+
+  "name": "NovelAI魔导书",
+  "description" : "帮助NovelAI生成Tag",
+  "version": "1.0",
+  "manifest_version": 2,
+  "devtools_page": "devtools.html",
+  "icons":
+  {
+    "16": "logo.jpg",
+    "48": "logo.jpg",
+    "128": "logo.jpg"
+  },
+  "permissions": ["storage", "declarativeContent", "activeTab","tabs",
+    "http://*/",
+    "file://*/",
+    "https://*/"]
+}
