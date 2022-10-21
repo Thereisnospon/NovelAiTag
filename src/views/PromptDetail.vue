@@ -4,8 +4,9 @@
         <div class="rowPositive">
             <div class="input-group">
                 <div class="input-group__title">
-                    <div class="pb-1">正面 Tag</div>
-                    <div><el-button @click="copy2Clipboard('positive')">复制</el-button></div>
+                    <div class="pb-2">正面 Tag</div>
+                    <div class="pb-2"><el-button @click="copy2Clipboard('positive')">复制</el-button></div>
+                    <div class="pb-2"><el-button type="danger" @click="clearTag('positive')">清空</el-button></div>
                 </div>
                 <div class="input-group__content">
                     <textarea
@@ -175,7 +176,7 @@ const tagManage_reset = (_key, _content) => {
 
 /**
  * 复制到剪切板,
- * @param {*} place 正面1 /负面0 /可能还有单个标签的复制
+ * @param {*} place 正面 / 负面 / 可能还有单个标签的复制
  */
 const copy2Clipboard = place => {
     //TODO: negative 没弄好
@@ -209,6 +210,21 @@ const copy2Clipboard = place => {
     } else {
         alert('您的浏览器版本暂时不支持复制, 请手动复制');
     }
+};
+
+/**
+ * 清空 tag
+ * @param {*} place 正面 / 负面
+ */
+const clearTag = place => {
+    // switch (place) {
+    //     case 'positive':
+    //         break;
+    //     case 'negative':
+    //         break;
+    // }
+
+    PromptStore.storage_reset(place);
 };
 </script>
 <style lang="scss">

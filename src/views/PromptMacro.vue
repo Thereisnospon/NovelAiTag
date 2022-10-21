@@ -16,7 +16,9 @@
         </div>
     </div>
 </template>
-<script>
-export default {};
+<script setup>
+// store 引用
+import usePromptStore from '@/stores/stores.js';
+const PromptStore = usePromptStore();
 </script>
 <style lang="scss" scoped></style>

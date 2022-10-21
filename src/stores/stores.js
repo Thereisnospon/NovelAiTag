@@ -51,6 +51,8 @@ export default defineStore({
     },
 
     actions: {
+        // -------------- 单个标签操作
+
         /**
          * 增加 1 的标签对象
          * @param {*} tag
@@ -76,7 +78,6 @@ export default defineStore({
 
             this.renderOutput();
         },
-
         /**
          * 减少 1 的标签对象
          * @param {*} tag
@@ -123,7 +124,6 @@ export default defineStore({
 
             this.renderOutput();
         },
-
         /**
          * 重置标签对象 -> 为1 或者 删除
          * @param {*} tag
@@ -247,6 +247,22 @@ export default defineStore({
             this.storageSet_read('positive');
             // this.storageSet_read('negative')
 
+            this.renderOutput();
+        },
+
+        /**
+         * 清空 tag & localStorage
+         * @param {positive/negative} item
+         */
+        storage_reset(item) {
+            switch (item) {
+                case 'positive':
+                    this.tag_positive = [];
+                    break;
+                case 'negative':
+                    this.tag_negative = [];
+                    break;
+            }
             this.renderOutput();
         }
     }
