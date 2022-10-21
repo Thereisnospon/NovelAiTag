@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>NovelAI魔导书</title>
+    <link rel="icon" type="image/x-icon" href="icon.png" />
+    <link rel="stylesheet" href="bootstrap.min.css"/>
+    <script src="bootstrap.bundle.min.js"></script>
+    <script src="tag_data.js"></script>
+    <script src="utils.js"></script>
+    <script src="magic_trans.js"></script>
+    <script src="magic_book.js"></script>
+    <script src="index.js"></script>
+
+    <style>
+        #myTab{
+            margin-top: 5px;
+        }
+        .tag_btn_group{
+            margin: 3px;
+        }
+
+        @keyframes show {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes hide {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .toast_box {
+            /* width: 100%; */
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            /* justify-content: center; */
+            z-index: 10;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        .toast_box p {
+            box-sizing: border-box;
+            padding: 10px 20px;
+            width: max-content;
+            /* 提示框的背景色 */
+            background: #707070;
+            color: #fff;
+            font-size: 16px;
+            text-align: center;
+            border-radius: 6px;
+            opacity: 0.8;
+        }
+        .custom-tooltip {
+            --bs-tooltip-bg: var(--bs-primary);
+        }
+        .toliet {
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+
+<body >
+<div id="hotal">
+    <!-- 提示框 -->
+    <div class="toast_box">
+        <p id="toast"></p>
+    </div>
+
+</div>
+
+
+
+<div class="container">
+
+
+    <div class="container text-center">
+
+        <div class="row">
+            <div class="alert alert-primary" role="alert" id="top_alert">
+
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="input-group">
+                <span class="input-group-text">魔导</span>
+                <textarea class="form-control" aria-label="With textarea" id="textera_tabs" disabled></textarea>
+
+                <div class="btn-group">
+                    <a class="btn btn-primary btn-sm" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                        功能介绍&bug帮助
+                    </a>
+
+                    <a class="btn btn-primary btn-sm" data-bs-toggle="collapse" href="#col2" role="button" aria-expanded="false" aria-controls="col2">
+                        各种设置面板
+
+                    </a>
+                    <a class="btn btn-primary btn-sm" data-bs-toggle="collapse" href="#col3" role="button" aria-expanded="false" aria-controls="col3">
+                        分类/TAB 排序/增删
+                    </a>
+                    <a class="btn btn-primary btn-sm" data-bs-toggle="collapse" href="#col4" role="button" aria-expanded="false" aria-controls="col4">
+                        TAG批量导入/出
+                    </a>
+                    <a class="btn btn-danger btn-sm" data-bs-toggle="collapse" href="#col6" role="button" aria-expanded="false" aria-controls="col6">
+                        元素法典
+                    </a>
+                    <a class="btn btn-danger btn-sm" data-bs-toggle="collapse" href="#col5" role="button" aria-expanded="false" aria-controls="col5">
+                        随机抽卡
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="collapse" id="col2">
+
+
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="show_del">
+                    <label class="form-check-label" for="show_del">显示tag删除按钮</label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="show_en">
+                    <label class="form-check-label" for="show_en">显示TAG英文</label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="show_yuan">
+                    <label class="form-check-label" for="show_yuan">圆括号加权</label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="show_numq">
+                    <label class="form-check-label" for="show_numq">数值加权</label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="show_cp1">
+                    <label class="form-check-label" for="show_cp1">点击单个TAG也复制到剪贴板</label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="show_autocp">
+                    <label class="form-check-label" for="show_cp1">自动填充web-ui</label>
+                </div>
+            </div>
+            <div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                    <p>0.删除本地存储可以解决大部分bug，但是意味着分组顺序以及添加tag会被清空</p>
+                    <p> 1. TAG 点击左边是减少权重，中间是打开关闭 TAG ，右边是增加权重，没有打开 TAG 只增减权重不会添加TAG。</p>
+                    <p> 2. 分组管理用法：在文本框调节分组顺序，或者新增删除分组.
+                        比如是 [头,脚] 改成 [m1 头]
+                        相当于 头 分类的顺序调节到最后,并且删掉了 脚分组，而且增加了一个 m1 分组
+                        新增的分组必须以 m 开头，分组之间用英文逗号,分割</p>
+                    <p>ui控制面板可以调节加权括号</p>
+                    <a href="https://space.bilibili.com/6537379" class="link-primary" target="_blank">点击查看-B站完整功能视频介绍</a>
+                </div>
+            </div>
+
+            <div class="collapse" id="col3">
+                <div class="input-group">
+                    <span class="input-group-text">分类</span>
+                    <textarea class="form-control" aria-label="With textarea" id="textera_group"></textarea>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary btn-sm" id="btn_group_reset">重置分组顺序</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="btn_group_modify">修改分组/TAB</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="collapse" id="col4">
+                <div class="input-group">
+                    <span class="input-group-text">分组</span>
+                    <select class="form-select-sm" aria-label="Default select example" id="batch_group_select">
+                        <!--                        <option selected>Open this select menu</option>-->
+                        <!--                        <option value="1">One</option>-->
+                        <!--                        <option value="2">Two</option>-->
+                        <!--                        <option value="3">Three</option>-->
+                    </select>
+                    <span class="input-group-text">分隔符</span>
+                    <select class="form-select-sm" aria-label="Default select example" id="batch_group_select_split">
+                        <option value="," >,</option>
+                        <option value=":" >:</option>
+                        <option value="@" >@</option>
+                        <option value="$" >$</option>
+                    </select>
+                    <textarea class="form-control" aria-label="With textarea" id="batch_group_text"  style="resize:none"  placeholder="(在此输入)批量导入，每条数据一行,tag名字和tag内容用分割符号隔开。如选择了英文逗号则是 头发,hair， 如果选择了英文冒号，则头发:hair "></textarea>
+                    <button type="button" class="btn btn-primary btn-sm" id="batch_group_btn">批量导入</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="batch_group_print">批量导出</button>
+
+                </div>
+
+            </div>
+
+            <div class="collapse" id="col5">
+                <div class="input-group">
+                    <span class="input-group-text">抽卡</span>
+                    <textarea class="form-control" aria-label="With textarea" id="textera_go" disabled></textarea>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-danger btn-sm" id="btn_rnd1">每分组随机+1</button>
+                        <button type="button" class="btn btn-success btn-sm" id="btn_rnd2">每分组随机-1</button>
+                        <button type="button" class="btn btn-danger btn-sm" id="btn_rnd3">随机一个分组+1</button>
+                        <button type="button" class="btn btn-success btn-sm" id="btn_rnd4">随机一个分组-1</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="collapse" id="col6">
+                <div class="input-group">
+                    <span class="input-group-text">法典</span>
+                    <textarea class="form-control" aria-label="With textarea" id="magic_book_text" placeholder="" disabled>元素法典来源于 在线共享文档 《元素法典——Novel AI 元素魔法全收录》文档链接可以点击右边按钮 本插件做了一些词条汉化以及导入，主要是为了快速加载预设 tag, 然后能够方便的打开关闭增加某些特性，能够帮助新手快速的出好看的图。如果某个法术的作者不想被添加，可以联系删除.
+                    </textarea>
+
+                    <select class="form-select-sm" aria-label="Default select example" id="magic_book_select">
+                        <!--                        <option selected>Open this select menu</option>-->
+                        <!--                        <option value="1">One</option>-->
+                        <!--                        <option value="2">Two</option>-->
+                        <!--                        <option value="3">Three</option>-->
+                    </select>
+                    <div class="btn-group">
+                        <a href="https://docs.qq.com/doc/DWHl3am5Zb05QbGVs?dver=" class="btn btn-success btn-sm" target="_blank">点击查看-法典来源文档</a>
+                        <button type="button" class="btn btn-warning btn-sm" id="magic_book_text_disable">禁用法典</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="magic_book_text_import">导入法典</button>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+
+            <div class="input-group">
+                <span class="input-group-text">操作</span>
+                <textarea class="form-control" aria-label="With textarea" id="textera_holder" disabled>
+
+                </textarea>
+                <button type="button" class="btn btn-sm btn-danger" id="btn_clear">删除本地存储(谨慎)</button>
+                <button type="button" class="btn btn-sm btn-primary" id="btn_reload">重载页面</button>
+                <button type="button" class="btn btn-sm btn-warning" id="btn_reset_all">重置所有Tag</button>
+                <button type="button" class="btn btn-sm btn-primary" id="btn_reset">重置Tag</button>
+            </div>
+
+
+        </div>
+
+        <div class="row">
+            <div class="input-group">
+                <span class="input-group-text">正面</span>
+                <textarea class="form-control" aria-label="With textarea" id="textarea_pos"></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-group">
+                <span class="input-group-text">负面</span>
+                <textarea class="form-control" aria-label="With textarea" id="textarea_neg"></textarea>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row align-items-start">
+        <div class="col" id="selected_btn_div">
+
+        </div>
+
+
+
+    </div>
+
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <!--        <li class="nav-item" role="presentation">-->
+        <!--            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button"-->
+        <!--                    role="tab" aria-controls="home" aria-selected="true">Home-->
+        <!--            </button>-->
+        <!--        </li>-->
+        <!-- <li class="nav-item" role="presentation">
+             <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
+                     role="tab" aria-controls="profile" aria-selected="false">Profile
+             </button>
+         </li>
+         <li class="nav-item" role="presentation">
+             <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button"
+                     role="tab" aria-controls="contact" aria-selected="false">Contact
+             </button>
+         </li>-->
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <!--        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">-->
+
+        <!--        </div>-->
+        <!--        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>-->
+        <!--        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>-->
+    </div>
+</div>
+
+
+</body>
+</html>
