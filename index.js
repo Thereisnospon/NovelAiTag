@@ -388,7 +388,11 @@ function randGroupPlusOne(checks, group) {
     }
     if (opData.length > 0) {
         let rnd = Math.floor(Math.random() * (opData.length));
-        opData[rnd].checked = true;
+        let checkBox= opData[rnd];
+        let tagGroup = checkBox.getAttribute("tagGroup");
+        let tagKey = checkBox.getAttribute("tagKey");
+        onTagCheckChange(tagGroup,tagKey,true);
+        checkBox.checked = true;
     }
 }
 
@@ -402,7 +406,11 @@ function randGroupMinusOne(checks, group) {
     }
     if (opData.length > 0) {
         let rnd = Math.floor(Math.random() * (opData.length));
-        opData[rnd].checked = false;
+        let checkBox= opData[rnd];
+        let tagGroup = checkBox.getAttribute("tagGroup");
+        let tagKey = checkBox.getAttribute("tagKey");
+        onTagCheckChange(tagGroup,tagKey,false);
+        checkBox.checked = false;
     }
 
 }
@@ -574,15 +582,16 @@ function checkBoxCount(checks, check) {
 function randomOneInc() {
     let toALL = getAllCanRandomGroup();
     let all = [];
+
     for (let i in toALL) {
         let g = toALL[i];
         let checks = getGroupAllCheck(g);
-
-        if (checkBoxCount(checks, true) > 0) {
+        console.log(toALL,"checks",checks);
+        if (checkBoxCount(checks, false) > 0) {
             all.push(g);
         }
     }
-
+    console.log(all);
     if (all.length <= 0) {
         return
     }
@@ -596,7 +605,7 @@ function randomOneDec() {
     for (let i in toALL) {
         let g = toALL[i];
         let checks = getGroupAllCheck(g);
-        if (checkBoxCount(checks, false) > 0) {
+        if (checkBoxCount(checks, true) > 0) {
             all.push(g);
         }
     }
