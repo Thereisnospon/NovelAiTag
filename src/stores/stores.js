@@ -216,10 +216,10 @@ export default defineStore({
 
             switch (item) {
                 case 'positive':
-                    this.tag_positive = Storages.getItem(item);
+                    this.tag_positive = Storages.getItem(item) || [];
                     break;
                 case 'negative':
-                    this.tag_negative = Storages.getItem(item);
+                    this.tag_negative = Storages.getItem(item) || [];
                     break;
             }
             console.log('已读取: ', item);
